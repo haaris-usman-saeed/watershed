@@ -1,0 +1,101 @@
+contract: OK
+{
+ "ML": 2.332333455339604,
+ "HGB (v1 features)": 2.318014558297505,
+ "HGB + SWE": 2.323130844144417,
+ "HGB no weather": 2.4495156905632154,
+ "Ridge": 3.3463880215904522,
+ "Persistence": 5.782239533139996,
+ "30-day trend": 4.793364909594576,
+ "Historical seasonal": 2.976516286695643,
+ "Smoothed DOY seasonal": 2.969354735255069,
+ "coverage": 0.9207419898819561,
+ "mean_width": 13.09349995151965,
+ "n": 593
+}
+{
+ "ML minus Smoothed DOY seasonal": {
+  "5_weeks": {
+   "estimate": -0.6370212799154649,
+   "ci95_low": -1.0197687244677995,
+   "ci95_high": -0.3477888961204786,
+   "share_better": 1.0,
+   "block_weeks": 5,
+   "n_boot": 2000
+  },
+  "9_weeks": {
+   "estimate": -0.6370212799154649,
+   "ci95_low": -1.068479818448661,
+   "ci95_high": -0.3414313833331829,
+   "share_better": 1.0,
+   "block_weeks": 9,
+   "n_boot": 2000
+  },
+  "13_weeks": {
+   "estimate": -0.6370212799154649,
+   "ci95_low": -1.1032373488102794,
+   "ci95_high": -0.34145923634519004,
+   "share_better": 1.0,
+   "block_weeks": 13,
+   "n_boot": 2000
+  }
+ },
+ "ML minus Historical seasonal (monthly)": {
+  "5_weeks": {
+   "estimate": -0.6441828313560389,
+   "ci95_low": -1.0116364592017189,
+   "ci95_high": -0.3726850088400889,
+   "share_better": 1.0,
+   "block_weeks": 5,
+   "n_boot": 2000
+  },
+  "9_weeks": {
+   "estimate": -0.6441828313560389,
+   "ci95_low": -1.0485800433047145,
+   "ci95_high": -0.372660298090569,
+   "share_better": 1.0,
+   "block_weeks": 9,
+   "n_boot": 2000
+  },
+  "13_weeks": {
+   "estimate": -0.6441828313560389,
+   "ci95_low": -1.0794271664526154,
+   "ci95_high": -0.3804875095809794,
+   "share_better": 1.0,
+   "block_weeks": 13,
+   "n_boot": 2000
+  }
+ }
+}
+{
+ "n_common_rows": 571,
+ "excluded": "ORO rows with origin before 2024-07-02 (v1 used the post-2024 capacity for those rows)",
+ "v1_gbm_mae": 2.764416116579008,
+ "v2_primary_mae": 2.296547232930387,
+ "bootstrap_v2_minus_v1": {
+  "5_weeks": {
+   "estimate": -0.4678688836486211,
+   "ci95_low": -0.6843689486107407,
+   "ci95_high": -0.2928534814328025,
+   "share_better": 1.0,
+   "block_weeks": 5,
+   "n_boot": 2000
+  },
+  "9_weeks": {
+   "estimate": -0.4678688836486211,
+   "ci95_low": -0.6868398040244497,
+   "ci95_high": -0.27172806694642404,
+   "share_better": 1.0,
+   "block_weeks": 9,
+   "n_boot": 2000
+  },
+  "13_weeks": {
+   "estimate": -0.4678688836486211,
+   "ci95_low": -0.6681942460895368,
+   "ci95_high": -0.257189769580983,
+   "share_better": 1.0,
+   "block_weeks": 13,
+   "n_boot": 2000
+  }
+ }
+}

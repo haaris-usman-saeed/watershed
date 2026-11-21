@@ -1,0 +1,18 @@
+{
+  "first_run_utc": "2026-11-21T10:46:10Z",
+  "git_commit_at_run": "e47deabb647f0cd99d60103ea754a4b7e4b5cd00",
+  "frozen_hashes": {
+    "config/v2_frozen.json": "02cfcfd007b0513a50d00b60354c31d102d4452f381dfcce329f692e866c230c",
+    "src/train_v2.py": "3d2f6b0730255c2ad6dfce1ec2e0988f65f48c222535ba17a786e679467c3149",
+    "src/models.py": "416210cfc76d1908feff580dc18929b22fc45dac578eaa35fa6112a4c29ade97",
+    "src/features.py": "68912938f3512b719c2d448d276a3faa532b0629aea007688c553eb686afda3a",
+    "src/evaluation.py": "da29e5683c29c18b6831d603b468f3309da22cc21ccf01457db6ba417761a01d",
+    "src/build_dataset.py": "b40a6d9b1fd3bcb77688a727d0ed1e2669a06f150889729fb37f31d42b94125c"
+  },
+  "headline": {
+    "ML": 2.332333455339604,
+    "Smoothed DOY seasonal": 2.969354735255069,
+    "Historical seasonal": 2.976516286695643,
+    "interval_90_coverage": 0.9207419898819561
+  }
+}
