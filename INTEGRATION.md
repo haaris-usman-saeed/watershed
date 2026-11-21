@@ -51,3 +51,4 @@ Open the UI PR against `main`; after merging, tag the integrated commit `submiss
 - Preserve all synthetic/unverified-data banners, warning watermarks and missing-file states.
 
 Local verification performed before packaging: Python compilation, original synthetic checker, unit-level v2 bootstrap parser check, historical-capacity calculation check, and Plotly figure smoke tests. **A full real-output Streamlit test has not been performed in this environment**, because the private v2 output ZIP and Streamlit installation were not available here.
+CI note: GitHub Actions validates backend-only tests and synthetic fixtures. It does not replace the manual Streamlit review against private real v2 outputs.
