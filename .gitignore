@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+*.joblib
+data/raw/*
+data/processed/*
+outputs/*
+models/*
+!.gitkeep
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+.DS_Store
