@@ -4,7 +4,7 @@ WatershedShift is a historical backtest of 30-day storage change at six Californ
 
 **Software.** Python 3.14.5 (tested on macOS only), git, and about 1 GB of disk space. Package versions: `requirements.txt` (exact verified versions in `requirements-lock.txt`).
 
-**Getting the data bundle.** The public repository has no CDEC-derived values. Ask the owner for `watershedshift_v2_bundle.tar.gz` and its `.sha256` file, sent privately. It must not be reposted: CDEC redistribution terms are unconfirmed.
+**Getting the data bundle.** The public repository does not include raw CDEC responses or the complete daily storage dataset. It does include derived historical prediction labels, model outputs, and aggregate evaluation results. Redistribution terms for the underlying observations remain under review. Ask the owner for `watershedshift_v2_bundle.tar.gz` and its `.sha256` file, sent privately. It must not be reposted: CDEC redistribution terms are unconfirmed.
 
 **What the bundle contains, and what it leaves out.** `SOURCE_COMMIT.txt` names the git commit the bundle was built from.
 
