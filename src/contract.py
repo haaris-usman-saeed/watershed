@@ -88,6 +88,35 @@ def validate_dir(path) -> list:
             unknown = set(p.station_id) - set(frames["stations.csv"].station_id)
             if unknown:
                 errors.append(f"test_predictions.csv: station_id not in stations.csv {unknown}")
+    if "metrics.json" in frames:
+        errors += _check_additive(frames["metrics.json"], frames.get("feature_catalog.json"))
+    return errors
+
+
+def _check_additive(m, catalog):
+    """Optional additive v2 handoff fields (docs/UI_CONTRACT.md section 3.8). Checked only when present."""
+    errors = []
+    for name, obj in (("metrics.json", m), ("feature_catalog.json", catalog or {})):
+        pmf = obj.get("primary_model_features")
+        if pmf is not None and not (isinstance(pmf, list) and pmf and all(isinstance(x, str) for x in pmf)):
+            errors.append(f"{name}: primary_model_features must be a non-empty list of strings")
+    if catalog and "primary_model_features" in catalog and "primary_model_features" in m \
+            and catalog["primary_model_features"] != m["primary_model_features"]:
+        errors.append("primary_model_features differs between metrics.json and feature_catalog.json")
+    bt = m.get("backtest")
+    if bt is not None and bt.get("is_live_forecast") is not False:
+        errors.append("metrics.json: backtest.is_live_forecast must be false")
+    rel = m.get("interval_reliability")
+    if rel is not None:
+        thr = rel.get("threshold_min_coverage")
+        for sid, st in m.get("per_station", {}).items():
+            flag = st.get("interval_reliable")
+            if not isinstance(flag, bool):
+                errors.append(f"metrics.json: per_station.{sid}.interval_reliable must be true or false")
+            elif isinstance(thr, (int, float)) and flag != (st.get("interval_90_coverage", -1) >= thr):
+                errors.append(f"metrics.json: per_station.{sid}.interval_reliable disagrees with the threshold rule")
+            elif rel.get("by_station", {}).get(sid) != flag:
+                errors.append(f"metrics.json: interval_reliability.by_station.{sid} disagrees with per_station")
     return errors
 
 

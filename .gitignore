@@ -15,3 +15,10 @@ __pycache__/
 !.env.example
 .streamlit/secrets.toml
 .DS_Store
+
+# full-resolution local copies (contain CDEC-derived storage values; not for public repo)
+results/*/local_full/
+dist/
+
+# rehearsal UI copies contain CDEC-derived storage values
+results/v2/rehearsal/ui_outputs_rehearsal/

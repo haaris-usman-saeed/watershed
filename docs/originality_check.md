@@ -1,28 +1,67 @@
-# Originality check (modest, 2026-11-21)
+# Originality check and relation to prior work (v2, 2026-11-21)
 
-**Claim we can make:** WatershedShift assembles a *joint* dataset that combines CDEC daily reservoir storage (sensor 15) for six verified California reservoirs with NASA POWER daily point weather, for 2018–2025. It documents verification (date convention, capacities, Oroville's storage-table break) and evaluates 30-day storage-change forecasts against baselines on held-out dates.
-**Claim we cannot make:** that this exact combination has never been used for ML. A short web search does not establish novelty.
+## Our claim, stated narrowly
 
-## What was searched
+**We do not claim that reservoir forecasting, reservoir machine learning, or the use of CDEC data is new.** All three have clear precedent (below).
 
-The searches were run through the general web search tool on 2026-11-21. Only titles and search-result summaries were screened; the papers were not read in full.
+The contribution of WatershedShift is an **independently assembled and quality-audited reservoir-weather-snow dataset for six large California reservoirs, 2001 to 2025, with reproducible 30-day evaluation**. In particular:
+1. **Verification of historical measurements.** End-of-day semantics were checked against hourly records in 2003, 2010 and 2024. Spike candidates were adjudicated against the independent elevation sensor. Storage was cross-checked value by value against ResOpsUS. That check is only partly independent: two of its records come from non-CDEC sources (Bureau of Reclamation for FOL, USGS for DNP), and the other four come from CDEC.
+2. **Correction of an inconsistent date convention.** CDEC `OBS DATE` differs by operator, so we use `DATE TIME`.
+3. **Historically appropriate capacity normalization.** This covers Oroville's July 2024 elevation-storage table change, located in both the hourly and daily raw records.
+4. **Environmental data integration.** NASA POWER point weather and CDEC snow-pillow SWE are mapped to the upstream basins, with a predetermined core-station rule.
+5. **Temporal feature engineering with explicit prediction-time rules,** tested by perturbing future data.
+6. **Ground-truth 30-day storage-change labels in pp of the capacity in force,** never interpolated and never spanning a reporting break.
+7. **Full provenance:** URLs, retrieval times and SHA-256 hashes for every raw response.
+8. **Reproducible evaluation:** rolling water-year folds, a preregistered single held-out run, and block-bootstrap uncertainty.
 
-1. "machine learning forecast California reservoir storage CDEC NASA POWER"
-2. "Shasta Oroville Folsom reservoir storage prediction gradient boosting dataset"
-3. "California reservoir storage forecasting machine learning CDEC daily storage dataset github kaggle"
+On the evidence below, we found no public dataset or study that combines exactly these elements for these reservoirs. **That is a statement about a limited search, not proof that no such work exists.**
 
-## What was found (closest related work)
+## Closest prior work
 
-- An informal capstone write-up (Medium) applied time-series ML to California reservoir levels **using CDEC data**. So *CDEC + ML for California reservoirs is not new.* — https://medium.com/mlearning-ai/can-machine-learning-be-used-in-long-term-reservoir-level-prediction-e088d27e370b
-- A UCLA drought-classification study used NASA POWER data. It targets drought categories, not reservoir storage. — https://www.cambridge.org/core/product/298F98C659D4E27B49B9616D6593243E
-- Tree-based and statistical-learning reservoir-level prediction: Lake Lanier and Lake Travis (Sci. Rep. 2018). — https://par.nsf.gov/servlets/purl/10067871
-- Decision-tree modelling of California reservoir operations, including Oroville. — https://escholarship.org/content/qt6vh7s39d/qt6vh7s39d.pdf
-- Deep learning for 17 Texas reservoirs. — https://par.nsf.gov/servlets/purl/10530470
-- Forecast-informed operations work at Don Pedro and New Bullards Bar. — https://escholarship.org/content/qt4sm711xr/qt4sm711xr.pdf
-- Reclamation publishes daily CVP operations reports and modelled storage series. These are official data products, not ML datasets. — https://www.usbr.gov/mp/cvo/
+| Work | What it provides | Relation to WatershedShift |
+|---|---|---|
+| **ResOpsUS** (Steyaert et al., *Scientific Data* 9, 34, 2022; doi:10.1038/s41597-022-01134-7) | Daily historical inflow, outflow and storage for 679 major US reservoirs, compiled from about 40 agencies with direct agency requests. Sources report differing earliest years, with best coverage in recent decades. | The most important precedent for an assembled, documented reservoir-operations dataset. It contains all six of our reservoirs (DAM_ID 132, 148, 182, 198, 210, 214). Its storage sources are CDEC for SHA, ORO, NML and EXC, the Bureau of Reclamation for FOL and USGS 11287500 for DNP. The record ends around 2020. Our work is much narrower (6 reservoirs) and differs in focus: it extends through 2025, joins weather and snow covariates, adds 30-day forecasting labels, historical capacity normalization and an evaluation protocol. **Value-level comparison (`results/v2/resopsus_check/report.md`):** FOL and DNP (independent sources) agree with our dates and values (FOL 99.6% identical). The CDEC-sourced ResOpsUS ORO record is predominantly offset by one day from our end-of-day dates. For EXC, the offset changes across periods: zero lag in about April 2003 to May 2014, one day elsewhere. Both match CDEC `OBS DATE` keying. The authors' intended date convention is unknown, and we do not claim an error; the offsets matter mainly for daily-resolution analysis. |
+| Fill-and-Spill (arXiv 2403.04195, 2024) | Deep reinforcement learning for reservoir operation at Folsom, using CDEC daily storage and release | Uses the same CDEC source for one of our reservoirs, for operations and control rather than forecasting |
+| Informal capstone on California reservoir levels (Medium, mlearning-ai) | Time-series ML on CDEC reservoir data, including Folsom | Shows CDEC plus ML forecasting of California reservoirs has been done informally. Results were mixed and attributed to human operations. |
+| Decision-tree and regression-tree models of California reservoir operations (eScholarship qt6vh7s39d) | Data-driven release-rule modelling, including Oroville | ML on California reservoir operations; models releases, not 30-day storage change |
+| LSTM storage and release models for 17 Texas reservoirs (*Environmental Data Science*, Cambridge) | Deep learning storage prediction from climate, hydrology and storage inputs | Methodological precedent outside California |
+| Upper Colorado reservoir release LSTM (Frontiers in Water, doi:10.3389/frwa.2023.1112970) | LSTM release prediction for 30 reservoirs; storage and inflow more influential than precipitation and temperature | Consistent with our finding that weather adds little beyond storage history |
+| Conditioned LSTM for daily releases over CONUS (PNNL, 2025) | Large-sample release prediction | Large-sample ML precedent, likely built on ResOpsUS-type data |
+| Hybrid rule-based plus LSTM operation model (Gangrade et al.) | Release simulation with storage by water balance | Operations modelling, not storage-change forecasting |
+| Weekly storage forecasting with SWE (ESSOAr preprint 10.1002/essoar.10503913.1) | Deep learning weekly storage forecasts using historical SWE in runoff season | Direct precedent for SWE as a storage-forecast input |
+| Forecast-informed operations at Don Pedro and New Bullards Bar (eScholarship qt4sm711xr) | Storage initialization and inflow uncertainty by lead time | Supports the role of initial storage at short leads, as we find |
+| Bureau of Reclamation CVP operations reports (usbr.gov/mp/cvo) | Official daily storage, inflow and release reports | Official data products, not an ML benchmark |
 
-No GitHub, Kaggle or paper result was found that combines **CDEC sensor-15 daily storage for these six reservoirs with NASA POWER T2M/PRECTOTCORR/RH2M into a documented 30-day-change benchmark**. That absence reflects a limited search, not proof.
+Note: v1 of this file attributed the Cambridge URL above to a NASA POWER drought-classification study. Later search summaries attributed the same URL to the Texas LSTM storage paper. We could not resolve this without reading the article, so the drought-study attribution has been removed.
 
-## Not checked (would strengthen the claim)
+## Searches performed
 
-Google Scholar or Web of Science keyword searches; GitHub code search for `CSVDataServlet` combined with `power.larc.nasa.gov`; Kaggle dataset search; AGU/EGU abstracts.
+The searches used a general web search tool on 2026-11-21. Results were screened from titles and result summaries; papers were not read in full.
+- "machine learning forecast California reservoir storage CDEC NASA POWER"
+- "Shasta Oroville Folsom reservoir storage prediction gradient boosting dataset"
+- "California reservoir storage forecasting machine learning CDEC daily storage dataset github kaggle"
+- "ResOpsUS dataset historical reservoir operations contiguous United States Scientific Data 2022 Steyaert"
+- "machine learning reservoir release storage prediction California CDEC daily data study"
+- "ResOpsUS machine learning reservoir storage forecasting LSTM inflow snow water equivalent"
+
+## Not checked (would strengthen or weaken the claim)
+
+- Google Scholar, Web of Science and Scopus keyword searches.
+- GitHub code search for `CSVDataServlet` together with `power.larc.nasa.gov` or sensor 82.
+- Kaggle and Zenodo dataset search for CDEC storage-plus-snow joins.
+- CDEC Bulletin 120 forecast products, which are official seasonal runoff forecasts and relevant baselines.
+
+## Sources
+
+- https://www.nature.com/articles/s41597-022-01134-7
+- https://www.osti.gov/pages/biblio/1899724-resopsus-dataset-historical-reservoir-operations-contiguous-united-states
+- https://arxiv.org/pdf/2403.04195
+- https://medium.com/mlearning-ai/can-machine-learning-be-used-in-long-term-reservoir-level-prediction-e088d27e370b
+- https://escholarship.org/content/qt6vh7s39d/qt6vh7s39d.pdf
+- https://www.cambridge.org/core/product/298F98C659D4E27B49B9616D6593243E
+- https://www.doi.org/10.3389/frwa.2023.1112970
+- https://www.pnnl.gov/publications/improving-prediction-daily-reservoir-releases-over-conus-using-conditioned-lstm
+- https://www.osti.gov/pages/servlets/purl/1908076
+- https://essopenarchive.org/doi/full/10.1002/essoar.10503913.1
+- https://escholarship.org/content/qt4sm711xr/qt4sm711xr.pdf
+- https://www.usbr.gov/mp/cvo/

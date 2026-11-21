@@ -1,0 +1,352 @@
+{
+  "pooled_mae_all_folds": {
+    "HGB no weather": 3.077257900011009,
+    "HGB": 2.9582195339627426,
+    "HGB + SWE": 2.882571163666283,
+    "HGB SWE no weather": 2.8812645500072107,
+    "Ridge": 3.6018152386890465,
+    "Persistence": 5.327895923258489,
+    "30-day trend": 4.5823642386472905,
+    "Monthly seasonal": 3.779429035027818,
+    "Smoothed DOY seasonal": 3.675277865038141
+  },
+  "pooled_mae_tuning_folds": {
+    "HGB no weather": 2.85340639640818,
+    "HGB": 2.6836609353033896,
+    "HGB + SWE": 2.5956826955020924,
+    "HGB SWE no weather": 2.6013701231847586,
+    "Ridge": 3.3052516397018623,
+    "Persistence": 4.892377649586125,
+    "30-day trend": 3.9945390779093115,
+    "Monthly seasonal": 3.347400145206675,
+    "Smoothed DOY seasonal": 3.2402147387742266
+  },
+  "pooled_mae_confirmation_folds": {
+    "HGB no weather": 3.3000349163965437,
+    "HGB": 3.2314602513485307,
+    "HGB + SWE": 3.1680825671832857,
+    "HGB SWE no weather": 3.1598154835809154,
+    "Ridge": 3.896955332401092,
+    "Persistence": 5.761323709217225,
+    "30-day trend": 5.167367838613727,
+    "Monthly seasonal": 4.209384186177819,
+    "Smoothed DOY seasonal": 4.1082526882959876
+  },
+  "primary_model": "HGB SWE no weather",
+  "primary_feature_set": "storage_snow",
+  "primary_hyperparameters": {
+    "learning_rate": 0.03,
+    "max_iter": 150,
+    "max_depth": null,
+    "min_samples_leaf": 30
+  },
+  "all_hgb_hyperparameters": {
+    "HGB": {
+      "learning_rate": 0.03,
+      "max_iter": 150,
+      "max_depth": null,
+      "min_samples_leaf": 30
+    },
+    "HGB + SWE": {
+      "learning_rate": 0.03,
+      "max_iter": 150,
+      "max_depth": null,
+      "min_samples_leaf": 30
+    },
+    "HGB SWE no weather": {
+      "learning_rate": 0.03,
+      "max_iter": 150,
+      "max_depth": null,
+      "min_samples_leaf": 30
+    },
+    "HGB no weather": {
+      "learning_rate": 0.03,
+      "max_iter": 150,
+      "max_depth": null,
+      "min_samples_leaf": 30
+    }
+  },
+  "strongest_baseline": "Smoothed DOY seasonal",
+  "interval_method": "sym_season",
+  "wins_by_water_year_vs_strongest_baseline": {
+    "HGB no weather": {
+      "folds_beating_strongest_baseline": 14,
+      "of": 16
+    },
+    "HGB": {
+      "folds_beating_strongest_baseline": 14,
+      "of": 16
+    },
+    "HGB + SWE": {
+      "folds_beating_strongest_baseline": 15,
+      "of": 16
+    },
+    "HGB SWE no weather": {
+      "folds_beating_strongest_baseline": 15,
+      "of": 16
+    },
+    "Ridge": {
+      "folds_beating_strongest_baseline": 8,
+      "of": 16
+    }
+  },
+  "ablations_mae_difference": {
+    "weather (HGB vs HGB no weather)": {
+      "confirmation_WY2016_2023": {
+        "5_weeks": {
+          "estimate": -0.06857466504801302,
+          "ci95_low": -0.17619699423997273,
+          "ci95_high": 0.03360260026329085,
+          "share_better": 0.8955,
+          "block_weeks": 5,
+          "n_boot": 2000
+        },
+        "9_weeks": {
+          "estimate": -0.06857466504801302,
+          "ci95_low": -0.17431166017560704,
+          "ci95_high": 0.0417991243116467,
+          "share_better": 0.8875,
+          "block_weeks": 9,
+          "n_boot": 2000
+        },
+        "13_weeks": {
+          "estimate": -0.06857466504801302,
+          "ci95_low": -0.17383879332869687,
+          "ci95_high": 0.03503106741674616,
+          "share_better": 0.8925,
+          "block_weeks": 13,
+          "n_boot": 2000
+        }
+      },
+      "all_WY2008_2023": {
+        "5_weeks": {
+          "estimate": -0.11903836604826656,
+          "ci95_low": -0.19505698163918017,
+          "ci95_high": -0.044573335148762314,
+          "share_better": 0.999,
+          "block_weeks": 5,
+          "n_boot": 2000
+        },
+        "9_weeks": {
+          "estimate": -0.11903836604826656,
+          "ci95_low": -0.19944266141660608,
+          "ci95_high": -0.04534479319106461,
+          "share_better": 1.0,
+          "block_weeks": 9,
+          "n_boot": 2000
+        },
+        "13_weeks": {
+          "estimate": -0.11903836604826656,
+          "ci95_low": -0.2018342902004254,
+          "ci95_high": -0.039132701738179294,
+          "share_better": 0.9985,
+          "block_weeks": 13,
+          "n_boot": 2000
+        }
+      }
+    },
+    "SWE given weather (HGB + SWE vs HGB)": {
+      "confirmation_WY2016_2023": {
+        "5_weeks": {
+          "estimate": -0.06337768416524492,
+          "ci95_low": -0.1598730150919357,
+          "ci95_high": 0.03465639558572922,
+          "share_better": 0.882,
+          "block_weeks": 5,
+          "n_boot": 2000
+        },
+        "9_weeks": {
+          "estimate": -0.06337768416524492,
+          "ci95_low": -0.17170988963356373,
+          "ci95_high": 0.0462963716359821,
+          "share_better": 0.8745,
+          "block_weeks": 9,
+          "n_boot": 2000
+        },
+        "13_weeks": {
+          "estimate": -0.06337768416524492,
+          "ci95_low": -0.17676187174455818,
+          "ci95_high": 0.049900501580286735,
+          "share_better": 0.8605,
+          "block_weeks": 13,
+          "n_boot": 2000
+        }
+      },
+      "all_WY2008_2023": {
+        "5_weeks": {
+          "estimate": -0.07564837029645943,
+          "ci95_low": -0.14604036443281088,
+          "ci95_high": -0.005991251430582266,
+          "share_better": 0.985,
+          "block_weeks": 5,
+          "n_boot": 2000
+        },
+        "9_weeks": {
+          "estimate": -0.07564837029645943,
+          "ci95_low": -0.15495807765469016,
+          "ci95_high": -0.0016952534824547154,
+          "share_better": 0.9765,
+          "block_weeks": 9,
+          "n_boot": 2000
+        },
+        "13_weeks": {
+          "estimate": -0.07564837029645943,
+          "ci95_low": -0.15659390222416217,
+          "ci95_high": 0.002124623538157096,
+          "share_better": 0.972,
+          "block_weeks": 13,
+          "n_boot": 2000
+        }
+      }
+    },
+    "SWE without weather (HGB SWE no weather vs HGB no weather)": {
+      "confirmation_WY2016_2023": {
+        "5_weeks": {
+          "estimate": -0.14021943281562832,
+          "ci95_low": -0.2776328726063759,
+          "ci95_high": 0.011207398984442863,
+          "share_better": 0.9675,
+          "block_weeks": 5,
+          "n_boot": 2000
+        },
+        "9_weeks": {
+          "estimate": -0.14021943281562832,
+          "ci95_low": -0.28141246859416735,
+          "ci95_high": 0.016849869141656128,
+          "share_better": 0.957,
+          "block_weeks": 9,
+          "n_boot": 2000
+        },
+        "13_weeks": {
+          "estimate": -0.14021943281562832,
+          "ci95_low": -0.28922139215551695,
+          "ci95_high": 0.03043754965716314,
+          "share_better": 0.951,
+          "block_weeks": 13,
+          "n_boot": 2000
+        }
+      },
+      "all_WY2008_2023": {
+        "5_weeks": {
+          "estimate": -0.19599335000379847,
+          "ci95_low": -0.3009980064791076,
+          "ci95_high": -0.08700169699607817,
+          "share_better": 1.0,
+          "block_weeks": 5,
+          "n_boot": 2000
+        },
+        "9_weeks": {
+          "estimate": -0.19599335000379847,
+          "ci95_low": -0.3197983698283381,
+          "ci95_high": -0.0862557355642254,
+          "share_better": 1.0,
+          "block_weeks": 9,
+          "n_boot": 2000
+        },
+        "13_weeks": {
+          "estimate": -0.19599335000379847,
+          "ci95_low": -0.3137711125643648,
+          "ci95_high": -0.07851719021729017,
+          "share_better": 0.998,
+          "block_weeks": 13,
+          "n_boot": 2000
+        }
+      }
+    },
+    "primary vs strongest baseline": {
+      "confirmation_WY2016_2023": {
+        "5_weeks": {
+          "estimate": -0.9484372047150722,
+          "ci95_low": -1.226023209091877,
+          "ci95_high": -0.6796873749655278,
+          "share_better": 1.0,
+          "block_weeks": 5,
+          "n_boot": 2000
+        },
+        "9_weeks": {
+          "estimate": -0.9484372047150722,
+          "ci95_low": -1.2615875084697794,
+          "ci95_high": -0.6367203080971471,
+          "share_better": 1.0,
+          "block_weeks": 9,
+          "n_boot": 2000
+        },
+        "13_weeks": {
+          "estimate": -0.9484372047150722,
+          "ci95_low": -1.2797831510609547,
+          "ci95_high": -0.6257284121149317,
+          "share_better": 1.0,
+          "block_weeks": 13,
+          "n_boot": 2000
+        }
+      },
+      "all_WY2008_2023": {
+        "5_weeks": {
+          "estimate": -0.7940133150309303,
+          "ci95_low": -0.984876613617739,
+          "ci95_high": -0.6030927598175662,
+          "share_better": 1.0,
+          "block_weeks": 5,
+          "n_boot": 2000
+        },
+        "9_weeks": {
+          "estimate": -0.7940133150309303,
+          "ci95_low": -1.0226119348318046,
+          "ci95_high": -0.5774394610029415,
+          "share_better": 1.0,
+          "block_weeks": 9,
+          "n_boot": 2000
+        },
+        "13_weeks": {
+          "estimate": -0.7940133150309303,
+          "ci95_low": -1.042923668780897,
+          "ci95_high": -0.5680279589985944,
+          "share_better": 1.0,
+          "block_weeks": 13,
+          "n_boot": 2000
+        }
+      }
+    }
+  },
+  "n_rows": {
+    "all": 4988,
+    "tuning": 2488,
+    "confirmation": 2500
+  },
+  "folds": {
+    "tuning": [
+      2008,
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015
+    ],
+    "confirmation": [
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023
+    ],
+    "interval": [
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "version": "v2",
+  "dataset_period": ["2001-01-01", "2025-12-31"],
+  "stations_rule": "status == included in data/processed/coverage.csv (<= 10% missing storage days)",
+  "horizon_days": 30,
+  "weather_lag_days": 7,
+  "snow_lag_days": 1,
+  "train_rule": "all weekly rows with target_date < 2024-01-01",
+  "test_rule": "origin date >= 2024-01-01 and target_date <= 2025-12-31",
+  "primary_model": {
+    "name": "HGB SWE no weather",
+    "estimator": "sklearn HistGradientBoostingRegressor",
+    "features": ["storage_pct", "prev7_pct", "prev30_pct", "prev60_pct", "swe_basin_in", "swe_change_14d_in", "swe_anom_in", "season_sin", "season_cos", "station one-hot"],
+    "hyperparameters": {"learning_rate": 0.03, "max_iter": 150, "max_depth": null, "min_samples_leaf": 30, "l2_regularization": 1.0, "random_state": 42},
+    "snow_anomaly_climatology": "smoothed day-of-year mean of basin SWE from snow index dates < 2024-01-01, Gaussian sigma 10 days"
+  },
+  "secondary_models": ["HGB (v1 features: storage + weather + season)", "HGB + SWE (storage + weather + SWE + season)", "HGB no weather (storage + season)", "Ridge (v1 features, StandardScaler + RidgeCV alphas logspace(-2,3,20))"],
+  "baselines": ["Persistence (0)", "30-day trend (prev30_pct)", "Monthly seasonal (station x origin month mean of training targets)", "Smoothed DOY seasonal (station, Gaussian kernel sigma 15 days on origin day of year over training targets)"],
+  "strongest_baseline": "Smoothed DOY seasonal",
+  "interval": {"method": "sym_season", "nominal": 0.90, "calibration": "absolute out-of-fold residuals of the primary model from development folds WY2008-2023 (results/v2/development/oof_predictions.csv), 90th percentile (method=higher) per origin season DJF/MAM/JJA/SON, fallback global if a group has < 150 residuals"},
+  "bootstrap": {"type": "moving-block over weekly origin dates, all reservoirs on a date resampled jointly", "block_weeks": [5, 9, 13], "n_boot": 2000, "seed": 42, "ci": "two-sided 95% percentile"},
+  "metrics": ["MAE pp overall", "MAE by reservoir", "MAE by origin season", "MAE by water year", "interval coverage and mean width overall, by reservoir, by season", "primary minus strongest baseline with block CIs", "primary minus monthly seasonal with block CIs", "paired v1 GBM vs v2 primary on rows with identical target definitions"]
+}

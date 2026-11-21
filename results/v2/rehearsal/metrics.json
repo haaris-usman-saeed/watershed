@@ -1,0 +1,296 @@
+{
+  "schema_version": "1.0",
+  "data_mode": "real",
+  "model_version": "v2",
+  "evaluation_mode": "rehearsal",
+  "generated_utc": "2026-11-21T10:45:00Z",
+  "ML": 3.0225575563711207,
+  "HGB (v1 features)": 3.3632080218570897,
+  "HGB + SWE": 2.9952818532651353,
+  "HGB no weather": 3.516869706958619,
+  "Ridge": 4.868634171786372,
+  "Persistence": 7.296936199844382,
+  "30-day trend": 7.163405400058214,
+  "Historical seasonal": 4.848989506761137,
+  "Smoothed DOY seasonal": 4.834344582324808,
+  "interval_90_coverage": 0.8923611111111112,
+  "interval_90_halfwidth_pp": 6.119909484266954,
+  "interval_90_halfwidth_by_season_pp": {
+    "DJF": 9.525984952685253,
+    "JJA": 3.709042711303976,
+    "MAM": 8.181943776217086,
+    "SON": 4.110689717913288
+  },
+  "interval_90_mean_width_pp": 12.239818968533909,
+  "train_count": 6764,
+  "val_count": 4676,
+  "test_count": 288,
+  "test_station_count": 6,
+  "note": "v2 historical backtest; not an operational forecast. ML = HistGradientBoosting on storage history, basin snow water equivalent (CDEC snow pillows, t-1) and season; NASA POWER weather is not an input of the primary model. The v2 configuration was developed after the v1 results on this same 2024-2025 test period were seen, so this period is not fully independent of the revision. Overlapping 30-day windows: CIs use moving-block bootstrap over dates. Season-conditional 90% intervals calibrated on 2008-2023 rolling out-of-fold residuals; coverage is not guaranteed. SWE and weather are retrospective (revised) series.",
+  "split": {
+    "train_target_end_exclusive": "2023-01-01",
+    "val_start": "rolling folds WY2008-2023",
+    "val_target_end_exclusive": "2023-01-01",
+    "test_start": "2023-01-01",
+    "test_target_end_inclusive": "2023-12-27",
+    "horizon_days": 30,
+    "weather_lag_days": 7,
+    "snow_lag_days": 1,
+    "sampling": "weekly (Mondays)",
+    "data_period": [
+      "2001-01-01",
+      "2025-12-31"
+    ]
+  },
+  "per_station": {
+    "DNP": {
+      "n": 48,
+      "ML": 3.1346610912802304,
+      "HGB (v1 features)": 3.9834648148802585,
+      "HGB + SWE": 3.163745959412802,
+      "HGB no weather": 4.073071564716603,
+      "Ridge": 5.438098358246196,
+      "Persistence": 5.8043811576354685,
+      "30-day trend": 8.215364326765188,
+      "Historical seasonal": 5.1337356939575445,
+      "Smoothed DOY seasonal": 5.142788343799314,
+      "interval_90_coverage": 0.8541666666666666,
+      "interval_mean_width_pp": 12.23981896853391
+    },
+    "EXC": {
+      "n": 48,
+      "ML": 4.9833154349274515,
+      "HGB (v1 features)": 5.716026276578387,
+      "HGB + SWE": 5.108251229815338,
+      "HGB no weather": 5.858423488120452,
+      "Ridge": 7.231521906382959,
+      "Persistence": 9.245561275945084,
+      "30-day trend": 11.389530060511419,
+      "Historical seasonal": 7.21293882407542,
+      "Smoothed DOY seasonal": 7.184196911036703,
+      "interval_90_coverage": 0.75,
+      "interval_mean_width_pp": 12.23981896853391
+    },
+    "FOL": {
+      "n": 48,
+      "ML": 2.85692717551868,
+      "HGB (v1 features)": 3.260792242189406,
+      "HGB + SWE": 2.767915228846501,
+      "HGB no weather": 3.6149967832880385,
+      "Ridge": 5.996143642789299,
+      "Persistence": 8.522025332650971,
+      "30-day trend": 7.305870436711021,
+      "Historical seasonal": 4.277821032933811,
+      "Smoothed DOY seasonal": 4.234932961654169,
+      "interval_90_coverage": 0.875,
+      "interval_mean_width_pp": 12.23981896853391
+    },
+    "NML": {
+      "n": 48,
+      "ML": 2.318959686125901,
+      "HGB (v1 features)": 2.218497094646246,
+      "HGB + SWE": 1.9795965693549957,
+      "HGB no weather": 2.444300839568458,
+      "Ridge": 3.815608509671995,
+      "Persistence": 5.397725694444444,
+      "30-day trend": 4.362086805555555,
+      "Historical seasonal": 4.7356630770125685,
+      "Smoothed DOY seasonal": 4.763310284030414,
+      "interval_90_coverage": 1.0,
+      "interval_mean_width_pp": 12.23981896853391
+    },
+    "ORO": {
+      "n": 48,
+      "ML": 1.7201816257395646,
+      "HGB (v1 features)": 1.751856065124092,
+      "HGB + SWE": 1.7322834592593885,
+      "HGB no weather": 1.9728506203346654,
+      "Ridge": 2.989909297869469,
+      "Persistence": 7.392958631477609,
+      "30-day trend": 4.866554848134754,
+      "Historical seasonal": 3.5947867210665607,
+      "Smoothed DOY seasonal": 3.603707221073732,
+      "interval_90_coverage": 0.9791666666666666,
+      "interval_mean_width_pp": 12.23981896853391
+    },
+    "SHA": {
+      "n": 48,
+      "ML": 3.121300324634897,
+      "HGB (v1 features)": 3.2486116377241494,
+      "HGB + SWE": 3.219898672901786,
+      "HGB no weather": 3.1375749457234985,
+      "Ridge": 3.7405233157583133,
+      "Persistence": 7.4189651069127125,
+      "30-day trend": 6.841025922671354,
+      "Historical seasonal": 4.138991691520915,
+      "Smoothed DOY seasonal": 4.077131772354515,
+      "interval_90_coverage": 0.8958333333333334,
+      "interval_mean_width_pp": 12.23981896853391
+    }
+  },
+  "per_season": {
+    "DJF": {
+      "n": 54,
+      "ML": 5.141427928561885,
+      "HGB (v1 features)": 5.212430477101613,
+      "HGB + SWE": 5.257492652466351,
+      "HGB no weather": 5.465269945438303,
+      "Ridge": 8.5752368988985,
+      "Persistence": 10.294117934591586,
+      "30-day trend": 12.642428958238778,
+      "Historical seasonal": 6.703008349524738,
+      "Smoothed DOY seasonal": 6.744396193608359,
+      "interval_90_coverage": 0.8703703703703703,
+      "interval_mean_width_pp": 19.0519699053705
+    },
+    "JJA": {
+      "n": 78,
+      "ML": 1.414016454986307,
+      "HGB (v1 features)": 2.003570465443142,
+      "HGB + SWE": 1.456502685812514,
+      "HGB no weather": 1.8955829283997307,
+      "Ridge": 3.081774957758339,
+      "Persistence": 7.028789762802485,
+      "30-day trend": 6.177745359920211,
+      "Historical seasonal": 3.8182698443200533,
+      "Smoothed DOY seasonal": 3.6024090274677123,
+      "interval_90_coverage": 0.9230769230769231,
+      "interval_mean_width_pp": 7.418085422607955
+    },
+    "MAM": {
+      "n": 78,
+      "ML": 4.959333150418345,
+      "HGB (v1 features)": 5.584003215698446,
+      "HGB + SWE": 4.8842926236318,
+      "HGB no weather": 5.9672671406556566,
+      "Ridge": 7.135030523779829,
+      "Persistence": 9.218976925972376,
+      "30-day trend": 9.221577355196212,
+      "Historical seasonal": 7.366756272242482,
+      "Smoothed DOY seasonal": 7.515482904142516,
+      "interval_90_coverage": 0.8076923076923077,
+      "interval_mean_width_pp": 16.363887552434164
+    },
+    "SON": {
+      "n": 78,
+      "ML": 1.2274128060381804,
+      "HGB (v1 features)": 1.2218194538757792,
+      "HGB + SWE": 1.078904312442558,
+      "HGB no weather": 1.3388665790268417,
+      "Ridge": 1.8229874535125548,
+      "Persistence": 3.5680699405486824,
+      "30-day trend": 2.297723329394756,
+      "Historical seasonal": 2.0783908971922274,
+      "Smoothed DOY seasonal": 2.0627983921678887,
+      "interval_90_coverage": 0.9615384615384616,
+      "interval_mean_width_pp": 8.221379435826574
+    }
+  },
+  "per_water_year": {
+    "2023": {
+      "n": 234,
+      "ML": 3.4311829035192676,
+      "HGB (v1 features)": 3.8450583323850496,
+      "HGB + SWE": 3.4323444972519086,
+      "HGB no weather": 3.999689153886969,
+      "Ridge": 5.600876679934592,
+      "Persistence": 8.319956376918954,
+      "30-day trend": 8.270452932703204,
+      "Historical seasonal": 5.4620619449700465,
+      "Smoothed DOY seasonal": 5.4429456877582565,
+      "interval_90_coverage": 0.8760683760683761,
+      "interval_mean_width_pp": 13.167151168389447
+    },
+    "2024": {
+      "n": 54,
+      "ML": 1.2518477187291497,
+      "HGB (v1 features)": 1.2751900095692643,
+      "HGB + SWE": 1.1013437293224517,
+      "HGB no weather": 1.42465210360244,
+      "Ridge": 1.6955833031440861,
+      "Persistence": 2.8638487658545664,
+      "30-day trend": 2.3661994252632574,
+      "Historical seasonal": 2.192342274522529,
+      "Smoothed DOY seasonal": 2.197073125446528,
+      "interval_90_coverage": 0.9629629629629629,
+      "interval_mean_width_pp": 8.221379435826577
+    }
+  },
+  "bootstrap": {
+    "method": "moving-block bootstrap over weekly test origin dates (reservoirs resampled jointly per date); two-sided 95% percentile CI; block lengths fixed in advance at 5, 9 and 13 weeks",
+    "n_boot": 2000,
+    "block_weeks": 5,
+    "best_baseline": "Smoothed DOY seasonal",
+    "best_baseline_selected_on": "rolling development folds WY2016-2023",
+    "mae_diff_ml_minus_best_baseline": {
+      "estimate": -1.811787025953687,
+      "ci95_low": -2.980703913884541,
+      "ci95_high": -0.7913860710950712,
+      "share_boot_ml_better": 1.0
+    },
+    "by_comparison_and_block": {
+      "ML minus Smoothed DOY seasonal": {
+        "5_weeks": {
+          "estimate": -1.811787025953687,
+          "ci95_low": -2.980703913884541,
+          "ci95_high": -0.7913860710950712,
+          "share_better": 1.0,
+          "block_weeks": 5,
+          "n_boot": 2000
+        },
+        "9_weeks": {
+          "estimate": -1.811787025953687,
+          "ci95_low": -3.2526009033985477,
+          "ci95_high": -0.8503280424360654,
+          "share_better": 1.0,
+          "block_weeks": 9,
+          "n_boot": 2000
+        },
+        "13_weeks": {
+          "estimate": -1.811787025953687,
+          "ci95_low": -3.278601097679869,
+          "ci95_high": -0.7956240652104078,
+          "share_better": 1.0,
+          "block_weeks": 13,
+          "n_boot": 2000
+        }
+      },
+      "ML minus Historical seasonal (monthly)": {
+        "5_weeks": {
+          "estimate": -1.826431950390016,
+          "ci95_low": -3.003790837683353,
+          "ci95_high": -0.7983120203151265,
+          "share_better": 1.0,
+          "block_weeks": 5,
+          "n_boot": 2000
+        },
+        "9_weeks": {
+          "estimate": -1.826431950390016,
+          "ci95_low": -3.250146780424805,
+          "ci95_high": -0.8922969123221894,
+          "share_better": 1.0,
+          "block_weeks": 9,
+          "n_boot": 2000
+        },
+        "13_weeks": {
+          "estimate": -1.826431950390016,
+          "ci95_low": -3.3201379482490454,
+          "ci95_high": -0.8251584811728935,
+          "share_better": 1.0,
+          "block_weeks": 13,
+          "n_boot": 2000
+        }
+      }
+    }
+  },
+  "v1_vs_v2": null,
+  "v1_reference": null,
+  "frozen_hashes": {
+    "config/v2_frozen.json": "02cfcfd007b0513a50d00b60354c31d102d4452f381dfcce329f692e866c230c",
+    "src/train_v2.py": "3d2f6b0730255c2ad6dfce1ec2e0988f65f48c222535ba17a786e679467c3149",
+    "src/models.py": "416210cfc76d1908feff580dc18929b22fc45dac578eaa35fa6112a4c29ade97",
+    "src/features.py": "68912938f3512b719c2d448d276a3faa532b0629aea007688c553eb686afda3a",
+    "src/evaluation.py": "da29e5683c29c18b6831d603b468f3309da22cc21ccf01457db6ba417761a01d",
+    "src/build_dataset.py": "b40a6d9b1fd3bcb77688a727d0ed1e2669a06f150889729fb37f31d42b94125c"
+  }
+}

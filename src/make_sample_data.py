@@ -134,7 +134,7 @@ def main():
     (OUT / "feature_catalog.json").write_text(json.dumps({"schema_version": SCHEMA_VERSION, "features": [
         {"name": n, "description": d, "units": u, "source": s, "min_lag_days": l} for n, d, u, s, l in FEATURES]},
         indent=2))
-    (OUT / "README.md").write_text(f"# SYNTHETIC UI FIXTURES — NOT REAL DATA\n\n{SYN_NOTE}\n\n"
+    (OUT / "README.md").write_text(f"# SYNTHETIC UI FIXTURES: NOT REAL DATA\n\n{SYN_NOTE}\n\n"
                                    "Regenerate with `python -m src.make_sample_data`. Schema: docs/UI_CONTRACT.md.\n")
     errs = validate_dir(OUT)
     if errs:

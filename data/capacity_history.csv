@@ -1,0 +1,8 @@
+station_id,valid_from,valid_to,capacity_af,source
+SHA,1900-01-01,2100-01-01,4552000,CDEC Daily Reservoir Storage Summary (RES) retrieved 2026-11-21
+ORO,1900-01-01,2024-07-01,3537577,"DWR: original 1968 capacity figure used until the new elevation-storage table (https://water.ca.gov/News/Blog/2024/Jun-24/Climate-Readiness---Using-Advanced-Lasers-and-Sonar-to-Determine-if-Lake-Oroville-Has-Lost-Capacity); CDEC daily sensor 15 on old basis through 2024-07-01"
+ORO,2024-07-02,2100-01-01,3424753,"DWR new capacity effective 2024-07-01 (hourly sensor 15 step at 2024-07-01 00:00 of -110,466 AF); first CDEC daily value on new basis 2024-07-02; CDEC RES report retrieved 2026-11-21"
+FOL,1900-01-01,2100-01-01,977000,CDEC Daily Reservoir Storage Summary (RES) retrieved 2026-11-21
+NML,1900-01-01,2100-01-01,2400000,CDEC Daily Reservoir Storage Summary (RES) retrieved 2026-11-21
+DNP,1900-01-01,2100-01-01,2030000,CDEC Daily Reservoir Storage Summary (RES) retrieved 2026-11-21
+EXC,1900-01-01,2100-01-01,1024600,CDEC Daily Reservoir Storage Summary (RES) retrieved 2026-11-21

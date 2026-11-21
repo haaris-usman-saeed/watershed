@@ -1,0 +1,141 @@
+{
+  "schema_version": "1.0",
+  "data_mode": "real",
+  "generated_utc": "2026-11-21T09:18:40Z",
+  "ML": 2.8143752794039925,
+  "Ridge": 3.4091459942704323,
+  "Persistence": 5.789461853566497,
+  "30-day trend": 4.799334508605734,
+  "Historical seasonal": 3.158000823207522,
+  "interval_90_coverage": 0.9629005059021922,
+  "interval_90_halfwidth_pp": 9.991508685051516,
+  "train_count": 1486,
+  "val_count": 288,
+  "test_count": 593,
+  "test_station_count": 6,
+  "note": "Historical backtest on 2024-2025 held-out dates; not an operational forecast. Weekly origins have overlapping 30-day windows, so rows are not independent; CIs use a moving-block bootstrap over dates. 90% interval = 90th percentile of absolute 2023 validation errors (single wet year); coverage is not guaranteed under distribution shift. Weather is NASA POWER grid-cell data at the dam, not watershed rainfall, and is a retrospective (revised) series. ORO windows spanning the 2024-07-02 storage-table change are excluded.",
+  "split": {
+    "train_target_end_exclusive": "2023-01-01",
+    "val_start": "2023-01-01",
+    "val_target_end_exclusive": "2024-01-01",
+    "test_start": "2024-01-01",
+    "test_target_end_inclusive": "2025-12-31",
+    "horizon_days": 30,
+    "weather_lag_days": 7,
+    "sampling": "weekly (Mondays)"
+  },
+  "validation": {
+    "scores_mae_pp": {
+      "ML": 4.082588088224757,
+      "Ridge": 4.9772113239629965,
+      "Persistence": 7.3375280889839205,
+      "30-day trend": 7.1901257788313195,
+      "Historical seasonal": 5.360883644902994
+    },
+    "gbm_grid_mae_pp": [
+      4.192178087699542,
+      4.176757293011409,
+      4.14527928224394,
+      4.082588088224757,
+      4.1591151566826365
+    ],
+    "gbm_selected_params": {
+      "learning_rate": 0.05,
+      "max_iter": 150,
+      "min_samples_leaf": 40,
+      "max_depth": null
+    },
+    "best_baseline_on_validation": "Historical seasonal"
+  },
+  "per_station": {
+    "DNP": {
+      "n": 101,
+      "ML": 1.7614670515616373,
+      "Ridge": 2.1245719610829914,
+      "Persistence": 3.8604672486953127,
+      "30-day trend": 2.7901829000634053,
+      "Historical seasonal": 2.5583167664827617,
+      "interval_90_coverage": 1.0
+    },
+    "EXC": {
+      "n": 101,
+      "ML": 2.311095623539686,
+      "Ridge": 2.976495109040587,
+      "Persistence": 5.595605529711667,
+      "30-day trend": 4.334445898230268,
+      "Historical seasonal": 3.211974352147247,
+      "interval_90_coverage": 0.9900990099009901
+    },
+    "FOL": {
+      "n": 101,
+      "ML": 4.532812324047288,
+      "Ridge": 6.172930335273265,
+      "Persistence": 9.80589904435684,
+      "30-day trend": 9.241524367380443,
+      "Historical seasonal": 5.470177987003224,
+      "interval_90_coverage": 0.9108910891089109
+    },
+    "NML": {
+      "n": 101,
+      "ML": 1.1457256317897806,
+      "Ridge": 1.9135382913349948,
+      "Persistence": 1.8481831683168317,
+      "30-day trend": 1.2922838283828386,
+      "Historical seasonal": 1.1805741725561445,
+      "interval_90_coverage": 1.0
+    },
+    "ORO": {
+      "n": 88,
+      "ML": 3.833401767435814,
+      "Ridge": 3.4335294203448328,
+      "Persistence": 7.2100720574858705,
+      "30-day trend": 5.318370272383015,
+      "Historical seasonal": 3.234190018480388,
+      "interval_90_coverage": 0.9318181818181818
+    },
+    "SHA": {
+      "n": 101,
+      "ML": 3.4329111032419615,
+      "Ridge": 3.8369493093277733,
+      "Persistence": 6.599394891158711,
+      "30-day trend": 5.886006368650925,
+      "Historical seasonal": 3.302578172659995,
+      "interval_90_coverage": 0.9405940594059405
+    }
+  },
+  "bootstrap": {
+    "method": "moving-block bootstrap over weekly test origin dates (stations resampled jointly per date); percentile 95% CI",
+    "n_boot": 2000,
+    "block_weeks": 5,
+    "best_baseline": "Historical seasonal",
+    "best_baseline_selected_on": "validation",
+    "mae_ci95": {
+      "ML": {
+        "ci95_low": 2.2063344841019954,
+        "ci95_high": 3.411731088683038
+      },
+      "Ridge": {
+        "ci95_low": 2.8722234085615344,
+        "ci95_high": 3.9633785845181393
+      },
+      "Persistence": {
+        "ci95_low": 4.871654273940925,
+        "ci95_high": 6.837427187781041
+      },
+      "30-day trend": {
+        "ci95_low": 4.0427249827366545,
+        "ci95_high": 5.61489455415457
+      },
+      "Historical seasonal": {
+        "ci95_low": 2.625405609078449,
+        "ci95_high": 3.7000846313678895
+      }
+    },
+    "mae_diff_ml_minus_best_baseline": {
+      "estimate": -0.3436255438035296,
+      "ci95_low": -0.8038346824870946,
+      "ci95_high": 0.029624094448763984,
+      "share_boot_ml_better": 0.9675
+    }
+  }
+}

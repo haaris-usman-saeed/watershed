@@ -1,0 +1,41 @@
+# Lightweight offline CI. It never downloads the 25-year dataset, never runs the frozen held-out
+# evaluation (src.train_v2 --final) and never modifies the preregistered configuration.
+name: ci
+
+on:
+  push:
+    branches: [main, engineering, review-v2]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - name: Install pinned dependencies
+        run: pip install -r requirements-lock.txt
+      - name: Tests (all tests run without local raw or processed data)
+        run: python -m pytest -q tests
+      - name: Validate synthetic UI fixtures against the contract
+        run: python -m src.contract app/sample_data
+      - name: Frozen v2 configuration and code still match the run record (read-only)
+        run: |
+          python - <<'PY'
+          import json
+          from src.train_v2 import frozen_hashes
+          rec = json.load(open("results/v2/final/RUN_RECORD.json"))["frozen_hashes"]
+          cur = frozen_hashes()
+          assert cur == rec, {k: (cur[k], rec[k]) for k in cur if cur[k] != rec[k]}
+          print("frozen hashes OK")
+          PY
+      - name: No raw data committed
+        run: |
+          test -z "$(git ls-files data/raw | grep -v '^data/raw/.gitkeep$')"
+          test -z "$(git ls-files data/processed outputs dist | grep -v '.gitkeep$')"

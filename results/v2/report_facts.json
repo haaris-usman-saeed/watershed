@@ -1,0 +1,548 @@
+{
+  "title": "WatershedShift v2 report facts",
+  "generated_by": "python -m src.report_facts",
+  "kinds": {
+    "observed": "counted from processed observation files",
+    "computed": "read from frozen evaluation outputs",
+    "documented configuration": "read from frozen configuration, code constants or documentation"
+  },
+  "facts": [
+    {
+      "id": "1",
+      "name": "Start and end date per reservoir",
+      "value": {
+        "DNP": [
+          "2001-01-01",
+          "2025-12-31"
+        ],
+        "EXC": [
+          "2001-01-01",
+          "2025-12-31"
+        ],
+        "FOL": [
+          "2001-01-01",
+          "2025-12-31"
+        ],
+        "NML": [
+          "2001-01-01",
+          "2025-12-31"
+        ],
+        "ORO": [
+          "2001-01-01",
+          "2025-12-31"
+        ],
+        "SHA": [
+          "2001-01-01",
+          "2025-12-31"
+        ]
+      },
+      "units": "date",
+      "kind": "observed",
+      "sources": [
+        {
+          "path": "data/processed/daily_joined.csv",
+          "tracked_in_git": false
+        },
+        {
+          "path": "data/processed/coverage.csv",
+          "tracked_in_git": false
+        },
+        {
+          "path": "data/coverage_table.md",
+          "tracked_in_git": true
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "2",
+      "name": "Total reservoir-day observations (calendar station-days in the joined daily table)",
+      "value": {
+        "reservoirs": 6,
+        "station_days": 54786
+      },
+      "units": "reservoir-days",
+      "kind": "observed",
+      "sources": [
+        {
+          "path": "data/processed/daily_joined.csv",
+          "tracked_in_git": false
+        }
+      ],
+      "note": "One row per reservoir per calendar day 2001-01-01 to 2025-12-31; storage may be missing on a row."
+    },
+    {
+      "id": "3",
+      "name": "Valid and missing storage days per reservoir",
+      "value": {
+        "DNP": {
+          "valid": 9095,
+          "missing": 36
+        },
+        "EXC": {
+          "valid": 9092,
+          "missing": 39
+        },
+        "FOL": {
+          "valid": 9131,
+          "missing": 0
+        },
+        "NML": {
+          "valid": 9131,
+          "missing": 0
+        },
+        "ORO": {
+          "valid": 9130,
+          "missing": 1
+        },
+        "SHA": {
+          "valid": 9131,
+          "missing": 0
+        }
+      },
+      "units": "days",
+      "kind": "observed",
+      "sources": [
+        {
+          "path": "data/processed/daily_joined.csv",
+          "tracked_in_git": false
+        },
+        {
+          "path": "data/processed/coverage.csv",
+          "tracked_in_git": false
+        },
+        {
+          "path": "data/coverage_table.md",
+          "tracked_in_git": true
+        }
+      ],
+      "note": "Missing = no usable CDEC value or set to missing by the elevation-adjudicated spike review. Never interpolated."
+    },
+    {
+      "id": "4",
+      "name": "Weekly rows: total, final training, rolling development forecasts, held-out test",
+      "value": {
+        "weekly_rows_total": 7693,
+        "final_training_rows": 7076,
+        "rolling_development_forecasts_all_folds_WY2008_2023": 4988,
+        "rolling_development_tuning_folds_WY2008_2015": 2488,
+        "rolling_development_confirmation_folds_WY2016_2023": 2500,
+        "held_out_test_rows": 593,
+        "held_out_test_reservoirs": 6
+      },
+      "units": "rows",
+      "kind": "observed",
+      "sources": [
+        {
+          "path": "data/processed/weekly_features.csv",
+          "tracked_in_git": false
+        },
+        {
+          "path": "results/v2/development/oof_predictions.csv",
+          "tracked_in_git": true
+        },
+        {
+          "path": "results/v2/development/summary.json",
+          "tracked_in_git": true
+        },
+        {
+          "path": "results/v2/final/metrics.json",
+          "tracked_in_git": true
+        }
+      ],
+      "note": "Training = all weekly rows with target_date < 2024-01-01 (also the development pool). Test = origin >= 2024-01-01 and target_date <= 2025-12-31."
+    },
+    {
+      "id": "5",
+      "name": "Candidate and core SWE snow pillows per reservoir",
+      "value": {
+        "DNP": {
+          "candidate": 8,
+          "core": 3
+        },
+        "EXC": {
+          "candidate": 5,
+          "core": 3
+        },
+        "FOL": {
+          "candidate": 14,
+          "core": 11
+        },
+        "NML": {
+          "candidate": 6,
+          "core": 5
+        },
+        "ORO": {
+          "candidate": 10,
+          "core": 8
+        },
+        "SHA": {
+          "candidate": 8,
+          "core": 7
+        }
+      },
+      "units": "pillows",
+      "kind": "observed",
+      "sources": [
+        {
+          "path": "data/snow_stations.csv",
+          "tracked_in_git": true
+        },
+        {
+          "path": "data/processed/snow_basin_index.csv",
+          "tracked_in_git": false
+        },
+        {
+          "path": "src/features.py",
+          "tracked_in_git": true
+        }
+      ],
+      "note": "Candidates total 51. Core rule (src/features.py core_snow_stations): a pillow is core if at least 75% of Dec-May seasons in WY2002-2023 have at least 80% daily availability."
+    },
+    {
+      "id": "6",
+      "name": "SWE observation lag",
+      "value": 1,
+      "units": "days",
+      "kind": "documented configuration",
+      "sources": [
+        {
+          "path": "config/v2_frozen.json",
+          "tracked_in_git": true
+        },
+        {
+          "path": "src/features.py",
+          "tracked_in_git": true
+        },
+        {
+          "path": "results/v2/final/metrics.json",
+          "tracked_in_git": true
+        }
+      ],
+      "note": "SWE features at origin t use values from t-1 and earlier. Weather lag for secondary models: 7 days (src/features.py, config)."
+    },
+    {
+      "id": "7",
+      "name": "Exact primary model input columns (HGB SWE no weather)",
+      "value": [
+        "storage_pct",
+        "prev7_pct",
+        "prev30_pct",
+        "prev60_pct",
+        "swe_basin_in",
+        "swe_change_14d_in",
+        "swe_anom_in",
+        "season_sin",
+        "season_cos",
+        "station_DNP",
+        "station_EXC",
+        "station_FOL",
+        "station_NML",
+        "station_ORO",
+        "station_SHA"
+      ],
+      "units": "column names",
+      "kind": "documented configuration",
+      "sources": [
+        {
+          "path": "config/v2_frozen.json",
+          "tracked_in_git": true
+        },
+        {
+          "path": "src/models.py",
+          "tracked_in_git": true
+        },
+        {
+          "path": "src/train_v2.py",
+          "tracked_in_git": true
+        }
+      ],
+      "note": "FEATURE_SETS['storage_snow'] plus models.design() station one-hot columns in sorted order. No NASA POWER weather column is an input of the primary model."
+    },
+    {
+      "id": "8",
+      "name": "90% interval method and calibration period",
+      "value": {
+        "method": "sym_season",
+        "nominal": 0.9,
+        "calibration": "absolute out-of-fold residuals of the primary model from development folds WY2008-2023 (results/v2/development/oof_predictions.csv), 90th percentile (method=higher) per origin season DJF/MAM/JJA/SON, fallback global if a group has < 150 residuals",
+        "half_width_by_origin_season_pp": {
+          "DJF": 10.1894,
+          "JJA": 3.6942,
+          "MAM": 8.595,
+          "SON": 3.891
+        }
+      },
+      "units": "pp of capacity",
+      "kind": "documented configuration",
+      "sources": [
+        {
+          "path": "config/v2_frozen.json",
+          "tracked_in_git": true
+        },
+        {
+          "path": "results/v2/final/metrics.json",
+          "tracked_in_git": true
+        },
+        {
+          "path": "results/v2/development/oof_predictions.csv",
+          "tracked_in_git": true
+        }
+      ],
+      "note": "Symmetric interval = prediction +/- the 90th percentile of absolute out-of-fold residuals per season."
+    },
+    {
+      "id": "9",
+      "name": "Held-out 2024-2025 test MAE of the primary model, secondary models and baselines",
+      "value": {
+        "ML": 2.3323,
+        "HGB (v1 features)": 2.318,
+        "HGB + SWE": 2.3231,
+        "HGB no weather": 2.4495,
+        "Ridge": 3.3464,
+        "Smoothed DOY seasonal": 2.9694,
+        "Historical seasonal": 2.9765,
+        "30-day trend": 4.7934,
+        "Persistence": 5.7822
+      },
+      "units": "pp of capacity",
+      "kind": "computed",
+      "sources": [
+        {
+          "path": "results/v2/final/metrics.json",
+          "tracked_in_git": true
+        }
+      ],
+      "note": "ML = preregistered primary (HGB SWE no weather). Historical seasonal = monthly seasonal baseline. Strongest baseline fixed in advance: Smoothed DOY seasonal."
+    },
+    {
+      "id": "10",
+      "name": "Oroville capacity definitions and excluded reporting-break windows",
+      "value": {
+        "capacity_history": [
+          {
+            "valid_from": "1900-01-01",
+            "valid_to": "2024-07-01",
+            "capacity_af": 3537577
+          },
+          {
+            "valid_from": "2024-07-02",
+            "valid_to": "2100-01-01",
+            "capacity_af": 3424753
+          }
+        ],
+        "break_date": "2024-07-02",
+        "excluded_origin_rule": "origin t excluded if t - 60 days < break_date <= t + 30 days",
+        "excluded_origins_first": "2024-06-03",
+        "excluded_origins_last": "2024-08-26",
+        "excluded_origin_count": 13,
+        "excluded_in_test_period": 13,
+        "oro_test_rows": 88
+      },
+      "units": "acre-feet, dates, rows",
+      "kind": "observed",
+      "sources": [
+        {
+          "path": "data/capacity_history.csv",
+          "tracked_in_git": true
+        },
+        {
+          "path": "data/series_breaks.csv",
+          "tracked_in_git": true
+        },
+        {
+          "path": "data/processed/weekly_features.csv",
+          "tracked_in_git": false
+        },
+        {
+          "path": "results/v2/final/metrics.json",
+          "tracked_in_git": true
+        }
+      ],
+      "note": "Capacity in force is used on each date. The excluded origins are absent from the ORO weekly rows and present for SHA."
+    },
+    {
+      "id": "11",
+      "name": "Primary minus seasonal baselines, MAE difference with 95% moving-block bootstrap CI",
+      "value": {
+        "ML minus Smoothed DOY seasonal": {
+          "5_weeks": {
+            "estimate": -0.637,
+            "ci95_low": -1.0198,
+            "ci95_high": -0.3478
+          },
+          "9_weeks": {
+            "estimate": -0.637,
+            "ci95_low": -1.0685,
+            "ci95_high": -0.3414
+          },
+          "13_weeks": {
+            "estimate": -0.637,
+            "ci95_low": -1.1032,
+            "ci95_high": -0.3415
+          }
+        },
+        "ML minus Historical seasonal (monthly)": {
+          "5_weeks": {
+            "estimate": -0.6442,
+            "ci95_low": -1.0116,
+            "ci95_high": -0.3727
+          },
+          "9_weeks": {
+            "estimate": -0.6442,
+            "ci95_low": -1.0486,
+            "ci95_high": -0.3727
+          },
+          "13_weeks": {
+            "estimate": -0.6442,
+            "ci95_low": -1.0794,
+            "ci95_high": -0.3805
+          }
+        }
+      },
+      "units": "pp of capacity",
+      "kind": "computed",
+      "sources": [
+        {
+          "path": "results/v2/final/metrics.json",
+          "tracked_in_git": true
+        }
+      ],
+      "note": "n_boot 2000, seed 42 (config), blocks of weekly origin dates; negative = primary better."
+    },
+    {
+      "id": "12",
+      "name": "90% interval coverage and mean width per reservoir (held-out test)",
+      "value": {
+        "DNP": {
+          "coverage": 0.9901,
+          "mean_width_pp": 12.9711,
+          "n": 101
+        },
+        "EXC": {
+          "coverage": 0.9604,
+          "mean_width_pp": 12.9711,
+          "n": 101
+        },
+        "FOL": {
+          "coverage": 0.7525,
+          "mean_width_pp": 12.9711,
+          "n": 101
+        },
+        "NML": {
+          "coverage": 0.9802,
+          "mean_width_pp": 12.9711,
+          "n": 101
+        },
+        "ORO": {
+          "coverage": 0.9091,
+          "mean_width_pp": 13.7958,
+          "n": 88
+        },
+        "SHA": {
+          "coverage": 0.9307,
+          "mean_width_pp": 12.9711,
+          "n": 101
+        },
+        "all": {
+          "coverage": 0.9207,
+          "mean_width_pp": 13.0935,
+          "n": 593
+        }
+      },
+      "units": "fraction, pp of capacity, rows",
+      "kind": "computed",
+      "sources": [
+        {
+          "path": "results/v2/final/metrics.json",
+          "tracked_in_git": true
+        }
+      ],
+      "note": "The half-width depends only on origin season, so mean widths differ only through the seasonal mix of origins (ORO lacks the 13 break-window origins in June to August 2024)."
+    },
+    {
+      "id": "13",
+      "name": "Excluded stations cannot enter training",
+      "value": {
+        "station_status": {
+          "SHA": "included",
+          "ORO": "included",
+          "FOL": "included",
+          "NML": "included",
+          "DNP": "included",
+          "EXC": "included"
+        },
+        "excluded_count": 0,
+        "enforced_by": "src/features.py main: filter_eligible(..., eligible_stations()) before weekly_features.csv",
+        "regression_test": "tests/test_features.py::test_excluded_station_never_enters_features"
+      },
+      "units": "",
+      "kind": "documented configuration",
+      "sources": [
+        {
+          "path": "data/processed/coverage.csv",
+          "tracked_in_git": false
+        },
+        {
+          "path": "src/features.py",
+          "tracked_in_git": true
+        },
+        {
+          "path": "tests/test_features.py",
+          "tracked_in_git": true
+        }
+      ],
+      "note": "All six reservoirs pass the <= 10% missing rule, so no station is excluded in practice."
+    },
+    {
+      "id": "14",
+      "name": "v1 and v2 test-set reuse disclosure",
+      "value": "the v2 configuration was developed after observing v1 test performance on this same period, so the period is not completely independent of the revision process.",
+      "units": "",
+      "kind": "documented configuration",
+      "sources": [
+        {
+          "path": "docs/preregistration.md",
+          "tracked_in_git": true
+        },
+        {
+          "path": "results/v2/final/metrics.json",
+          "tracked_in_git": true
+        }
+      ],
+      "note": "Same 2024-2025 test period (593 rows) for v1 and v2."
+    },
+    {
+      "id": "15",
+      "name": "Identity and source commit of the frozen v2 configuration",
+      "value": {
+        "config_file": "config/v2_frozen.json",
+        "config_version": "v2",
+        "primary_model": "HGB SWE no weather",
+        "config_sha256": "02cfcfd007b0513a50d00b60354c31d102d4452f381dfcce329f692e866c230c",
+        "hashes_match_preregistration": true,
+        "hashes_match_run_record": true,
+        "preregistration_commit": "e47deabb647f0cd99d60103ea754a4b7e4b5cd00",
+        "final_run_commit": "e47deabb647f0cd99d60103ea754a4b7e4b5cd00",
+        "final_run_utc": "2026-11-21T10:46:10Z"
+      },
+      "units": "",
+      "kind": "documented configuration",
+      "sources": [
+        {
+          "path": "config/v2_frozen.json",
+          "tracked_in_git": true
+        },
+        {
+          "path": "docs/preregistration.md",
+          "tracked_in_git": true
+        },
+        {
+          "path": "results/v2/final/RUN_RECORD.json",
+          "tracked_in_git": true
+        }
+      ],
+      "note": "Hashes recomputed from the working tree when this file was generated."
+    }
+  ]
+}
