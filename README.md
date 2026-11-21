@@ -104,7 +104,7 @@ Key verification findings:
 
 - **v2 ML minus strongest baseline: -0.64 pp.** 95% CI [-1.02, -0.35] (5-week blocks), [-1.07, -0.34] (9), [-1.10, -0.34] (13).
 - **v1 ML minus its best baseline:** -0.34 pp, 95% CI [-0.80, +0.03] (5 weeks); [-0.90, +0.11] (9); [-0.93, +0.11] (13).
-- **Paired v2 vs v1 ML** on 571 rows with identical targets: -0.47 pp, CI [-0.69, -0.26] (5 weeks).
+- **Paired v2 vs v1 ML** on 571 rows with identical targets: -0.47 pp, CI [-0.68, -0.29] (5 weeks), [-0.69, -0.27] (9), [-0.67, -0.26] (13).
 - **Disclosure:** v2 was designed after the v1 test results on the same period were seen, so the period is not fully independent of the revision. See `docs/preregistration.md`.
 - **What drove the improvement:** a secondary HGB using the v1 feature set but the 2001+ training data scored 2.32 on the same test. Most of the improvement over v1 therefore comes from the longer, corrected training history, not from the snow features.
 

@@ -133,3 +133,44 @@ Weekly Monday origins, 30-day target in pp of capacity, weather lagged 7 d, no w
   - The preregistration discloses that the period is not fully independent, because v1 results on it were seen.
 - **Guards** (tested in `tests/test_v2_guards.py`): `--final` refuses unless the preregistration is committed and the hashes match, and refuses a different configuration after a first run.
 - **Rehearsal** on development data only (train before 2023, evaluate 2023): the identical code path runs end to end. ML 3.02 pp vs Smoothed DOY 4.83 pp; coverage 0.892; the UI files validate. Results are in `results/v2/rehearsal/`.
+
+### Checkpoint E: single v2 held-out evaluation, reproducibility, submission package (2026-11-21)
+- **One preregistered run.** `python -m src.train_v2 --final` was run once at commit e47deab. Its hashes match `docs/preregistration.md`, and `results/v2/final/RUN_RECORD.json` records it. Nothing was changed after the metrics were seen.
+
+| Held-out 2024-2025 (n=593), MAE pp | v1 (frozen) | v2 |
+|---|---|---|
+| Primary ML | 2.81 (GBM, storage + weather) | **2.33** (HGB, storage + SWE) |
+| HGB with v1 features (2001+ training) | n/a | 2.32 |
+| HGB + SWE (weather + SWE) | n/a | 2.32 |
+| HGB no weather | n/a | 2.45 |
+| Ridge | 3.41 | 3.35 |
+| Smoothed DOY seasonal | n/a | 2.97 (strongest baseline, fixed in advance) |
+| Monthly seasonal | 3.16 | 2.98 |
+| 30-day trend | 4.80 | 4.79 |
+| Persistence | 5.79 | 5.78 |
+| 90% interval coverage / mean width | 96.3% / 20.0 pp | 92.1% / 13.1 pp |
+
+- **v2 ML minus Smoothed DOY seasonal:** -0.64 pp. 95% CI [-1.02, -0.35] (5-week blocks), [-1.07, -0.34] (9), [-1.10, -0.34] (13). The CI excludes 0 at all three preregistered block lengths.
+- **v2 ML minus Monthly seasonal:** -0.64 pp. CI [-1.01, -0.37] / [-1.05, -0.37] / [-1.08, -0.38].
+- **Paired v2 vs v1 GBM** (571 rows with identical target definitions; ORO old-table rows excluded): 2.30 vs 2.76, difference -0.47 pp. CI [-0.68, -0.29] / [-0.69, -0.27] / [-0.67, -0.26].
+- **By reservoir** (v2 ML vs smoothed DOY): DNP 1.45 vs 2.21; EXC 1.85 vs 2.87; FOL 4.17 vs 5.39; NML 0.95 vs 1.06; ORO 3.21 vs 3.47; SHA 2.49 vs 2.87. ML is better at all six.
+- **By season:** DJF 3.46 vs 3.89; MAM 2.96 vs 3.15; JJA 1.41 vs 2.95; SON 1.55 vs 1.98.
+- **By water year:** WY2024 2.09 vs 2.62; WY2025 2.55 vs 3.33; WY2026 (partial, n=54) 2.09 vs 2.33.
+- **Interval coverage by reservoir:** DNP 0.99, EXC 0.96, FOL 0.75, NML 0.98, ORO 0.91, SHA 0.93. FOL under-covers, as the development folds predicted. Median half-width by season: DJF 10.2, MAM 8.6, JJA 3.7, SON 3.9 pp.
+- **Interpretation (descriptive):** HGB with the v1 feature set but 2001+ training (2.32) performs like the primary. Most of the improvement over v1 comes from the longer, corrected training history, not from snow. SWE helps when weather is absent (2.33 vs 2.45) but adds about nothing on top of weather. The primary was chosen by the preregistered rule and was not reselected.
+- **Disclosure:** v2 was designed after the v1 results on this test period were seen. The period is not fully independent of the revision.
+- **Submission bundle:** `python -m src.make_bundle` writes `dist/watershedshift_v2_bundle.tar.gz` (git-ignored). It is byte-deterministic, carries SHA256SUMS and a LIMITATIONS.txt, and is checked with `--verify`. Raw data is excluded unless `--include-raw` is passed.
+- **Frontend compatibility:** UI contract schema v1.0 is unchanged; v2 fields are additive (`docs/UI_CONTRACT.md` section 3.7). Streamlit AppTest of the unmodified `app.py` against the v2 outputs gives no exceptions; it shows ML 2.33 and coverage 92.1%.
+- **Dashes:** em and en dashes were removed from engineering docs, comments and STATUS.md. `PROMPTS.md` (owner), `app.py` and `app/` (frontend) and the archived `results/v1/provenance.md` (v1 preserved verbatim) were left unchanged.
+- **Clean-environment reproducibility (verified)**: a fresh `git clone -b review-v2` (commit cf7d4bc) into an empty directory, a new venv and `pip install -r requirements.txt`, then every step in the README, including **re-downloading all raw data**.
+  - Processed datasets: `daily_joined.csv`, `snow_daily.csv`, `snow_basin_index.csv` and `weekly_features.csv` are **byte-identical** to the original run.
+  - Development results: all files in `results/v2/development/` were regenerated with **no git diff**, so the rolling evaluation is deterministic.
+  - Frozen v2 rerun: the guard allowed it as an identical-configuration rerun, and the headline was **identical** (ML 2.332333455339604, coverage 0.9207419898819561). The only change in `results/v2/final/metrics.json` was the `generated_utc` timestamp.
+  - Tests and contract: **25/25 tests pass**; the outputs contract is OK; the bundle verifies (60 files).
+  - Raw files: 177 of 182 re-downloaded files were byte-identical. The 5 that differed are NASA POWER JSON responses whose only difference is the server's `times` (request processing time) field; every data value was identical.
+- **Not done or open**:
+  - The CDEC licence wording still needs owner sign-off.
+  - No value-level comparison against ResOpsUS yet.
+  - Per-reservoir interval calibration is uneven (FOL).
+  - A third held-out configuration needs owner approval.
+  - The UI should switch its "best baseline" card to `bootstrap.best_baseline`.
