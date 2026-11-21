@@ -210,3 +210,18 @@ Weekly Monday origins, 30-day target in pp of capacity, weather lagged 7 d, no w
 - `ASSESSORS.md` says plainly that the bundle is **not self-contained for the frozen rerun**: the preregistration guard needs a git checkout, so assessors check out the pinned commit and copy the bundle's data into it. Raw agency responses are excluded unless the owner builds with `--include-raw` after the CDEC terms are confirmed.
 - New read-only helper `src/compare_metrics.py` compares a reproduced `metrics.json` with the archived one number by number, ignoring `generated_utc`.
 - The bundle is rebuilt and verified in the final verification step, after the last commit, so that `SOURCE_COMMIT.txt` names the final commit.
+
+### Phase 4: final UI handoff (2026-11-21)
+- New `src/ui_export.py` adds three pieces of additive metadata to `outputs/metrics.json` and `outputs/feature_catalog.json`. They are derived from the frozen config and the frozen test results, with no rerun:
+  - `primary_model_features`: 15 exact columns, namely storage x4, SWE x3, season x2 and station one-hot x6; identical in both files.
+  - `backtest`: `is_live_forecast: false`, evaluation period 2024-01-01 to 2025-12-31.
+  - `per_station[s].interval_reliable` and an `interval_reliability` block: threshold 0.85 on the frozen test coverage, with a caveat. FOL is false; DNP, EXC, NML, ORO and SHA are true.
+- Before writing, the script checks that every existing value equals `results/v2/final/metrics.json`. It also recomputes ML MAE and per-reservoir coverage from `test_predictions.csv`.
+- The `features` array and the three CSV files are byte-unchanged, and the NASA POWER weather entries remain `used_by_primary_model: false`.
+- `src/contract.py` checks the new keys only when present. A new test confirms that the synthetic fixtures still validate and that a wrong flag or `is_live_forecast: true` is rejected. The real outputs and `app/sample_data` both validate. Contract schema v1.0 is unchanged; the fields are documented in `docs/UI_CONTRACT.md` section 3.8.
+- **UI package:** `dist/outputs_v2_ui.zip` (git-ignored, local only). It holds exactly the five files plus a README covering real backtest data, `WATERSHED_DATA_DIR`, the primary inputs, the strongest baseline and sign convention, the Folsom warning, and weather as context only. The ZIP is byte-deterministic, and `python -m src.ui_export --verify` checks its contents, the contract and the frozen numbers.
+- **Checked against the frontend package the owner supplied** (`app/check_contract.py`, run read-only from a scratch copy, not added to the repo): PASSED with `--require-real`. It raised three integration notes for Claude Web, which are now written into the ZIP README:
+  - it compares ML with the monthly baseline rather than `bootstrap.best_baseline`;
+  - it cannot parse our `bootstrap` block, so it says no uncertainty was reported;
+  - its "storage above 102% of capacity" note covers 239 ORO days before 2024-07-02, measured against the current capacity; the UI should use `storage_pct`.
+- No change to `app.py`, `app/` or any frozen modelling file.

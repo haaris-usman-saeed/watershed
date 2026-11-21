@@ -164,6 +164,27 @@ Frozen v1 results are in `results/v1/` (public, without raw storage columns).
 
 Display the v2 disclosure from `note` verbatim. It states that the v2 design came after the v1 test results on the same period were seen.
 
+### 3.8 Additive handoff metadata (written by `python -m src.ui_export`)
+
+These keys are optional. Schema v1.0 is unchanged, and files without them, such as the synthetic fixtures, remain valid. `src/contract.py` checks the keys only when they are present. They are derived from the frozen configuration and the frozen test results, with no retraining.
+
+| file | key | meaning |
+|---|---|---|
+| `metrics.json`, `feature_catalog.json` | `primary_model_features` | Exact input columns of the primary model, in order: `storage_pct`, `prev7_pct`, `prev30_pct`, `prev60_pct`, `swe_basin_in`, `swe_change_14d_in`, `swe_anom_in`, `season_sin`, `season_cos`, `station_DNP` ... `station_SHA`. It contains no NASA POWER weather column. Identical in both files. |
+| `metrics.json` | `primary_model_feature_groups` | The same columns grouped as `storage`, `snow_water_equivalent`, `seasonality` and `reservoir_identity` |
+| `metrics.json` | `backtest` | `is_live_forecast: false`, `evaluation_type: "historical backtest"`, `evaluation_period_start` and `evaluation_period_end` (2024-01-01, 2025-12-31), `first_origin_date`, `last_origin_date`, `description` |
+| `metrics.json` | `per_station[s].interval_reliable` | `true` if `per_station[s].interval_90_coverage >= 0.85` on the frozen 2024-2025 test, else `false`. FOL is `false` (coverage 0.75). |
+| `metrics.json` | `interval_reliability` | `threshold_min_coverage` (0.85), `rule`, `by_station`, `caveat` |
+
+What `interval_reliable` is, and what it is not:
+- It is a **retrospective UI warning threshold**, so the UI should show a visible warning wherever an unreliable reservoir's interval band appears.
+- It is not proof of future reliability, not a new calibration method and not a scientific certification.
+- The intervals themselves are unchanged.
+
+`feature_catalog.json` keeps its `features` array unchanged. The NASA POWER weather entries stay listed with `used_by_primary_model: false`.
+
+**UI export package.** `python -m src.ui_export` writes `dist/outputs_v2_ui.zip`. It holds exactly the five contract files plus a `README.md` with the display guidance: the strongest baseline, the sign convention, the Folsom warning and weather as context only. `--verify` re-checks the package. The ZIP is git-ignored and must stay local until the owner confirms the CDEC reuse terms.
+
 ## 4. Feature status
 
 | Status | Feature |
