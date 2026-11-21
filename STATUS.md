@@ -83,7 +83,7 @@ Weekly Monday origins, 30-day target in pp of capacity, weather lagged 7 d, no w
 - Raw manifest: 188 downloads with SHA-256. Provenance has been rewritten (`data/provenance.md`); v1 provenance and coverage are archived in `results/v1/`.
 
 ### Checkpoint C: environmental features, ablations, rolling water-year evaluation (2026-11-21)
-- Weekly table: 7,693 rows (2001-03 to 2025-12, 6 reservoirs). The development set has 7,224 rows with origin and target before 2024-01-01; the hold-out is never loaded by `src/experiments.py` (asserted).
+- Weekly table: 7,693 rows (2001-03 to 2025-12, 6 reservoirs). The development set has 7,076 rows with origin and target before 2024-01-01 (corrected; an earlier draft of this line said 7,224 without computing it); the hold-out is never loaded by `src/experiments.py` (asserted).
 - **SWE features** (CDEC snow pillows, t-1 and earlier):
   - `swe_basin_in`: mean of core pillows; missing when fewer than 2/3 of core pillows report.
   - `swe_change_14d_in`.
@@ -114,3 +114,22 @@ Weekly Monday origins, 30-day target in pp of capacity, weather lagged 7 d, no w
 - **By reservoir** (confirmation): HGB SWE no weather beats the strongest baseline at all six (DNP 2.25 vs 3.12; EXC 3.44 vs 4.60; FOL 4.99 vs 6.08; NML 1.67 vs 2.70; ORO 3.65 vs 4.59; SHA 2.96 vs 3.55).
 - **By water year class** (confirmation): wet 4.07 vs 5.40; below normal 3.15 vs 4.02; dry 2.38 vs 3.03.
 - **Primary model by the predetermined rule: "HGB SWE no weather"** (storage + SWE + season, no NASA POWER). It is effectively tied with HGB + SWE (3.160 vs 3.168).
+
+### Checkpoint D: uncertainty evaluation and frozen v2 configuration (2026-11-21)
+- **Interval methods** (primary model, folds WY2012-2023, each calibrated only on earlier folds):
+
+| method | coverage | mean width (pp) |
+|---|---|---|
+| sym_global | 0.885 | 13.04 |
+| sym_season | 0.888 | 12.22 |
+| sym_station | 0.887 | 12.89 |
+| asym_global | 0.886 | 13.27 |
+| asym_season | 0.883 | 12.64 |
+
+  - The predetermined rule (narrowest method with coverage in [0.87, 0.93]) picks `sym_season`. Its widths by season: about 17 pp in DJF, 16 in MAM and 8 in JJA and SON, compared with v1's constant 20 pp.
+  - Known weakness: per-reservoir coverage is uneven (FOL 0.75, NML 0.98). Reservoir x season groups would be too small for stable calibration in the early folds.
+- **v2 frozen** in `docs/preregistration.md`, together with `config/v2_frozen.json` and the SHA-256 hashes of the config and of the code in `src/train_v2.py`, `models.py`, `features.py`, `evaluation.py` and `build_dataset.py`.
+  - Primary model: HGB SWE no weather. Strongest baseline: Smoothed DOY seasonal. Test period: 2024-2025 (593 rows, the same as v1).
+  - The preregistration discloses that the period is not fully independent, because v1 results on it were seen.
+- **Guards** (tested in `tests/test_v2_guards.py`): `--final` refuses unless the preregistration is committed and the hashes match, and refuses a different configuration after a first run.
+- **Rehearsal** on development data only (train before 2023, evaluate 2023): the identical code path runs end to end. ML 3.02 pp vs Smoothed DOY 4.83 pp; coverage 0.892; the UI files validate. Results are in `results/v2/rehearsal/`.

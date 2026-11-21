@@ -19,3 +19,6 @@ __pycache__/
 # full-resolution local copies (contain CDEC-derived storage values; not for public repo)
 results/*/local_full/
 dist/
+
+# rehearsal UI copies contain CDEC-derived storage values
+results/v2/rehearsal/ui_outputs_rehearsal/
