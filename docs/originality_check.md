@@ -5,7 +5,7 @@
 **We do not claim that reservoir forecasting, reservoir machine learning, or the use of CDEC data is new.** All three have clear precedent (below).
 
 The contribution of WatershedShift is an **independently assembled and quality-audited reservoir-weather-snow dataset for six large California reservoirs, 2001 to 2025, with reproducible 30-day evaluation**. In particular:
-1. **Verification of historical measurements.** End-of-day semantics were checked against hourly records in 2003, 2010 and 2024. Spike candidates were adjudicated against the independent elevation sensor.
+1. **Verification of historical measurements.** End-of-day semantics were checked against hourly records in 2003, 2010 and 2024. Spike candidates were adjudicated against the independent elevation sensor. Storage was cross-checked value by value against ResOpsUS, including two non-CDEC sources (Bureau of Reclamation for FOL, USGS for DNP).
 2. **Correction of an inconsistent date convention.** CDEC `OBS DATE` differs by operator, so we use `DATE TIME`.
 3. **Historically appropriate capacity normalization.** This covers Oroville's July 2024 elevation-storage table change, located in both the hourly and daily raw records.
 4. **Environmental data integration.** NASA POWER point weather and CDEC snow-pillow SWE are mapped to the upstream basins, with a predetermined core-station rule.
@@ -20,7 +20,7 @@ On the evidence below, we found no public dataset or study that combines exactly
 
 | Work | What it provides | Relation to WatershedShift |
 |---|---|---|
-| **ResOpsUS** (Steyaert et al., *Scientific Data* 9, 34, 2022; doi:10.1038/s41597-022-01134-7) | Daily historical inflow, outflow and storage for 679 major US reservoirs, compiled from about 40 agencies with direct agency requests. Sources report differing earliest years, with best coverage in recent decades. | The most important precedent for an assembled, documented reservoir-operations dataset. It very likely covers some or all of our reservoirs; we did not verify this per reservoir. Our work is much narrower (6 reservoirs) and differs in focus: joined weather and snow covariates, 30-day forecasting labels, historical capacity normalization and evaluation protocol. **We did not compare our storage values against ResOpsUS. That comparison would be a useful independent check and is listed as future work.** |
+| **ResOpsUS** (Steyaert et al., *Scientific Data* 9, 34, 2022; doi:10.1038/s41597-022-01134-7) | Daily historical inflow, outflow and storage for 679 major US reservoirs, compiled from about 40 agencies with direct agency requests. Sources report differing earliest years, with best coverage in recent decades. | The most important precedent for an assembled, documented reservoir-operations dataset. It contains all six of our reservoirs (DAM_ID 132, 148, 182, 198, 210, 214). Its storage sources are CDEC for SHA, ORO, NML and EXC, the Bureau of Reclamation for FOL and USGS 11287500 for DNP. The record ends around 2020. Our work is much narrower (6 reservoirs) and differs in focus: it extends through 2025, joins weather and snow covariates, adds 30-day forecasting labels, historical capacity normalization and an evaluation protocol. **Value-level comparison (`results/v2/resopsus_check/report.md`):** FOL and DNP (independent sources) agree with our dates and values (FOL 99.6% identical). The CDEC-sourced ORO and part of EXC in ResOpsUS are one day off because they follow CDEC `OBS DATE`, the operator-dependent field we avoid. |
 | Fill-and-Spill (arXiv 2403.04195, 2024) | Deep reinforcement learning for reservoir operation at Folsom, using CDEC daily storage and release | Uses the same CDEC source for one of our reservoirs, for operations and control rather than forecasting |
 | Informal capstone on California reservoir levels (Medium, mlearning-ai) | Time-series ML on CDEC reservoir data, including Folsom | Shows CDEC plus ML forecasting of California reservoirs has been done informally. Results were mixed and attributed to human operations. |
 | Decision-tree and regression-tree models of California reservoir operations (eScholarship qt6vh7s39d) | Data-driven release-rule modelling, including Oroville | ML on California reservoir operations; models releases, not 30-day storage change |
@@ -49,7 +49,6 @@ The searches used a general web search tool on 2026-11-21. Results were screened
 - Google Scholar, Web of Science and Scopus keyword searches.
 - GitHub code search for `CSVDataServlet` together with `power.larc.nasa.gov` or sensor 82.
 - Kaggle and Zenodo dataset search for CDEC storage-plus-snow joins.
-- Value-level comparison of our storage series with ResOpsUS for the overlapping reservoirs and years.
 - CDEC Bulletin 120 forecast products, which are official seasonal runoff forecasts and relevant baselines.
 
 ## Sources

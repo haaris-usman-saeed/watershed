@@ -38,6 +38,7 @@ Internet access is needed for steps 1 to 3. The whole run takes about 10 minutes
 python -m src.fetch --start 2001-01-01 --end 2025-12-31        # 1. CDEC storage + NASA POWER -> data/raw/ (unmodified bytes)
 python -m src.fetch_snow --start 2001-01-01 --end 2025-12-31   # 2. CDEC snow pillows -> data/raw/snow/
 python -m src.fetch_wsihist                                    # 3. DWR water year types (descriptive grouping only)
+# optional verification: python -m src.fetch_resopsus && python -m src.compare_resopsus  (299 MB download)
 python -m src.build_dataset                                    # 4. offline raw -> data/processed/ + audit + outputs/stations.csv, history_daily.csv
 python -m src.features                                         # 5. weekly table + snow basin index
 python -m src.experiments                                      # 6. rolling water-year development evaluation (pre-2024 data only)
@@ -68,6 +69,7 @@ Key verification findings:
 - The CDEC `DATE TIME` field is end-of-day storage. `OBS DATE` is operator dependent and was the source of a one-day shift in the starter code.
 - Oroville's capacity changed from 3,537,577 to 3,424,753 AF when DWR adopted a new storage table on 2024-07-01. The daily CDEC series switches on 2024-07-02. v2 uses the capacity in force on each date, and no window spans the change.
 - Spike candidates were adjudicated against the independent elevation sensor. Two artifacts were removed; six flood-day extremes at Folsom were confirmed and kept.
+- An independent cross-check against ResOpsUS (Steyaert et al. 2022) finds that FOL (Bureau of Reclamation source) is 99.6% identical on the same dates, and DNP (USGS gauge) agrees within a median of 0.04 pp. ResOpsUS's CDEC-sourced ORO and parts of EXC are one day off because they follow `OBS DATE` (`results/v2/resopsus_check/report.md`).
 
 **Terms:** NASA POWER asks for this acknowledgement: "These data were obtained from the NASA Langley Research Center (LaRC) POWER Project funded through the NASA Earth Science/Applied Science Program." CDEC data are public and provisional. No explicit open licence was found, so cite CDEC/DWR, and do not redistribute raw records without confirming the terms.
 

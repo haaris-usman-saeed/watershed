@@ -174,3 +174,16 @@ Weekly Monday origins, 30-day target in pp of capacity, weather lagged 7 d, no w
   - Per-reservoir interval calibration is uneven (FOL).
   - A third held-out configuration needs owner approval.
   - The UI should switch its "best baseline" card to `bootstrap.best_baseline`.
+
+### Follow-up: independent cross-check against ResOpsUS (2026-11-21)
+- Downloaded ResOpsUS.zip (Zenodo 5893641, 298.6 MB, CC-BY 4.0) with owner approval. It was md5-verified against Zenodo, kept local and git-ignored, with its SHA-256 in the manifest. Only CSV members are read, in memory; nothing else in the archive is loaded or executed.
+- All six reservoirs are in ResOpsUS. Daily storage was compared for 2001 to 2020 (`python -m src.compare_resopsus`; report in `results/v2/resopsus_check/report.md`).
+- **Independent sources agree with us**:
+  - FOL (Bureau of Reclamation): 99.6% of 6,574 days identical on the same date.
+  - DNP (USGS 11287500): median difference 891 AF (0.04 pp). The best alignment is the same date (daily-change correlation 0.96, against 0.80 and 0.82 at plus or minus one day).
+- **CDEC-sourced records**:
+  - SHA and NML are identical on the same dates.
+  - ORO (99.5%) and EXC (98.9%) match ResOpsUS only when our raw CDEC rows are keyed by `OBS DATE`. ResOpsUS therefore inherits the operator- and time-dependent `OBS DATE` offset: ORO is one day off throughout, and EXC is one day off in 2001-2002 and from mid-2014.
+  - This independently confirms that keying on `DATE TIME` (end-of-day) was the right correction.
+- Also found: the `OBS DATE` offset for USBR stations starts changing in late 2025 (first D+1 on 2025-09-24). Our pipeline is unaffected. The provenance statement has been corrected.
+- No data, model or v2 result was changed. Tests: 27 pass (2 new for the comparison utilities).

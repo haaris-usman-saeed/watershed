@@ -27,7 +27,7 @@ Retrieval dates: 2026-11-21 (UTC timestamps in the manifest).
 | Endpoint | `https://cdec.water.ca.gov/dynamicapp/req/CSVDataServlet?Stations=<ID>&SensorNums=15&dur_code=D&Start=<YYYY-MM-DD>&End=<YYYY-MM-DD>`, one request per station-year |
 | Period | 2001-01-01 to 2025-12-31 for all six stations (CDEC metadata lists daily sensor 15 from at least 1985) |
 | Sensor | 15, RESERVOIR STORAGE, acre-feet. Every raw row is checked for station, `SENSOR_NUMBER=15`, `DURATION=D`, `UNITS=AF`. |
-| **Date convention** | `DATE TIME` = D carries the **end-of-day storage of day D**. This was verified against hourly sensor 15 (daily D equals hourly 00:00 of D+1) for SHA, ORO, FOL, NML and EXC in 2003, 2010 and 2024 (EXC 2010 differs by 0.06 pp). DNP has no hourly series in those years. `OBS DATE` equals D for USBR stations and D+1 for ORO, DNP and EXC, so it is not used. Regression test: `tests/test_build.py::test_date_comes_from_date_time_not_obs_date`. |
+| **Date convention** | `DATE TIME` = D carries the **end-of-day storage of day D**. This was verified against hourly sensor 15 (daily D equals hourly 00:00 of D+1) for SHA, ORO, FOL, NML and EXC in 2003, 2010 and 2024 (EXC 2010 differs by 0.06 pp). DNP has no hourly series in those years. `OBS DATE` is not used because its offset from `DATE TIME` changes by station and over time. ORO, DNP and EXC are mostly D+1, but EXC is D in 2003 to 2013 and ORO is D on 138 days in 2008. SHA, FOL and NML are D until late 2025, when D+1 values start to appear (first on 2025-09-24). Regression test: `tests/test_build.py::test_date_comes_from_date_time_not_obs_date`. |
 | Missing | `---` and blanks stay missing. **Storage is never interpolated.** |
 | Flags | `DATA_FLAG` counts per station are in `data/coverage_table.md` (e = estimated, r = revised, N at EXC, 23 days). Flagged values are kept. |
 | Publication lag | Observed 2026-11-21: 1 to 2 days |
@@ -72,6 +72,25 @@ Candidates are one-day jumps > 2 pp that immediately reverse. Each candidate was
 - **Physical, kept:** six FOL candidates in the New Year 2006, December 2016, January 2017 and February 2017 floods, where elevation moves with storage. Example: 2017-02-10, elevation 442.74 to 449.16 to 444.73 ft.
 
 Any future unreviewed candidate is set to missing by default (`tests/test_build.py::test_spike_review_removes_artifacts_and_unreviewed_keeps_physical`). The largest kept daily change is FOL 2022-12-31 (+20.1 pp, about 196,577 AF, during the New Year's Eve 2022 atmospheric river, with 78 mm of rain that day).
+
+### Independent cross-check against ResOpsUS (`results/v2/resopsus_check/report.md`)
+
+ResOpsUS (Steyaert et al. 2022, *Scientific Data*; Zenodo record 5893641, CC-BY 4.0, md5-verified, SHA-256 in the manifest) contains all six reservoirs. Daily storage was compared for 2001 to 2020 after converting million cubic meters to acre-feet. It is used only for verification and never to modify our data.
+
+| Reservoir | ResOpsUS storage source | Agreement with our cleaned series |
+|---|---|---|
+| FOL | Bureau of Reclamation (independent) | 99.6% of 6,574 days identical at the same date; largest gap 10,975 AF (1.1 pp) on 2017-06-19 |
+| DNP | USGS gauge 11287500 (independent) | best at the same date: median difference 891 AF (0.04 pp), 99th percentile 6,123 AF, daily-change correlation 0.96 (0.80 and 0.82 at one-day shifts) |
+| SHA | CDEC | 100% identical at the same date (differences of 5 to 7 AF come from a slightly different AF to m3 constant) |
+| NML | CDEC | 99.99% identical at the same date |
+| ORO | CDEC | 99.5% identical when ResOpsUS is matched to raw CDEC keyed by `OBS DATE`; only 3.4% at the same `DATE TIME` date |
+| EXC | CDEC | 98.9% identical keyed by `OBS DATE`; same-date match 55% (aligned 2003 to 2013, one day off in 2001, 2002 and from mid 2014) |
+
+**Interpretation:**
+- The two independent operator and gauge sources (FOL, DNP) agree with our end-of-day `DATE TIME` dates, with no one-day shift.
+- ResOpsUS keyed its CDEC-sourced records by `OBS DATE`. Because that offset changes by station and over time, ResOpsUS's ORO record and parts of its EXC record are one day off relative to its other records. WatershedShift's `DATE TIME` keying is consistent across stations and years.
+- **No WatershedShift value was changed as a result of this check.**
+- Our missing days (DNP 35, EXC 37 in the overlap) are reported in ResOpsUS on 35 and 13 of those days respectively. We keep them missing: they are raw CDEC gaps or reviewed artifacts, and filling them from another source would mix sources within one series.
 
 ## 2. Weather: NASA POWER daily point API
 
