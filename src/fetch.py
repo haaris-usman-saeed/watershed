@@ -1,75 +1,88 @@
-"""Download historical reservoir storage and NASA POWER weather.
+"""Download raw CDEC daily reservoir storage and NASA POWER daily weather.
 
-Run: python -m src.fetch --start 2018-01-01 --end 2025-12-31
-Requires internet. All CDEC response headers, station metadata and capacities
-MUST be verified against official source records before reporting study findings.
+Run: python -m src.fetch --start 2018-01-01 --end 2025-12-31 [--stations SHA ORO]
+
+Network step ONLY. Responses are saved byte-for-byte (unmodified) under
+data/raw/ together with a fetch log (URL, UTC time, HTTP status, size, SHA-256).
+Parsing/cleaning happens offline in `python -m src.build_dataset`, so the
+processed dataset can be rebuilt from raw files without re-downloading.
 """
 import argparse
-from io import StringIO
+from datetime import datetime, timezone
+import hashlib
+import json
 from pathlib import Path
 import time
+
 import pandas as pd
 import requests
 
 ROOT = Path(__file__).resolve().parents[1]
+RAW = ROOT / "data" / "raw"
 CDEC = "https://cdec.water.ca.gov/dynamicapp/req/CSVDataServlet"
 POWER = "https://power.larc.nasa.gov/api/temporal/daily/point"
+CDEC_HEADER = "STATION_ID,DURATION,SENSOR_NUMBER,SENSOR_TYPE,DATE TIME,OBS DATE,VALUE,DATA_FLAG,UNITS"
 SESSION = requests.Session()
-SESSION.headers.update({"User-Agent": "WatershedShiftAcademicResearch/0.1"})
+SESSION.headers.update({"User-Agent": "WatershedShift-research-script/0.2 (python-requests)"})
 
 
-def request(url, params):
-    for attempt in range(4):
+def _log(entry):
+    RAW.mkdir(parents=True, exist_ok=True)
+    with open(RAW / "fetch_log.jsonl", "a", encoding="utf-8") as fh:
+        fh.write(json.dumps(entry) + "\n")
+
+
+def get(url, params, valid, tries=5, timeout=180):
+    """GET with retries. `valid(response)` must be True to accept (CDEC sometimes
+    returns an empty or header-only body transiently)."""
+    last = None
+    for attempt in range(tries):
         try:
-            res = SESSION.get(url, params=params, timeout=90)
-            res.raise_for_status()
-            return res
-        except (requests.Timeout, requests.ConnectionError, requests.HTTPError):
-            if attempt == 3:
-                raise
-            time.sleep(2 ** attempt)
+            res = SESSION.get(url, params=params, timeout=timeout)
+            last = res
+            if res.ok and valid(res):
+                return res
+        except (requests.Timeout, requests.ConnectionError) as exc:
+            last = exc
+        time.sleep(min(60, 5 * 2 ** attempt))
+    raise RuntimeError(f"giving up on {url} {params}: {last!r}")
 
 
-def cdec_storage(station, start, end):
-    params = {"Stations": station, "SensorNums": 15, "dur_code": "D", "Start": start, "End": end}
-    r = request(CDEC, params)
-    if "<html" in r.text[:300].lower():
-        raise ValueError(f"CDEC returned HTML rather than CSV for {station}: {r.url}")
-    raw_dir = ROOT / "data" / "raw"
-    raw_dir.mkdir(parents=True, exist_ok=True)
-    (raw_dir / f"cdec_{station}.csv").write_text(r.text, encoding="utf-8")
-    df = pd.read_csv(StringIO(r.text), low_memory=False)
-    df.columns = [str(c).strip().upper() for c in df.columns]
-    date_col = next((c for c in ["OBS DATE", "DATE TIME", "DATE", "OBS_DATE"] if c in df), None)
-    val_col = next((c for c in ["VALUE", "OBS_VALUE", "STORAGE"] if c in df), None)
-    if not (date_col and val_col):
-        raise ValueError(f"Unexpected CDEC fields for {station}: {df.columns.tolist()}")
-    dt = pd.to_datetime(df[date_col], errors="coerce")
-    output = pd.DataFrame({"date": dt.dt.normalize(), "storage_af": pd.to_numeric(df[val_col], errors="coerce")})
-    output.loc[(output.storage_af < 0) | (~output.storage_af.notna()), "storage_af"] = float("nan")
-    output = output.dropna(subset=["date", "storage_af"])
-    return output.groupby("date", as_index=False)["storage_af"].last()
+def save(path, res):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(res.content)
+    _log({"file": str(path.relative_to(ROOT)), "url": res.url, "status": res.status_code,
+          "retrieved_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+          "bytes": len(res.content), "sha256": hashlib.sha256(res.content).hexdigest()})
 
 
-def nasa_weather(station, lat, lon, start, end):
-    params = {
-        "parameters": "T2M,PRECTOTCORR,RH2M",
-        "community": "AG", "longitude": lon, "latitude": lat,
-        "start": start.replace("-", ""), "end": end.replace("-", ""),
-        "format": "JSON", "time-standard": "LST"
-    }
-    result = request(POWER, params).json()
-    (ROOT / "data" / "raw" / f"nasa_{station}.json").write_text(__import__('json').dumps(result), encoding="utf-8")
-    data = result["properties"]["parameter"]
-    frame = pd.DataFrame({key: pd.Series(vals) for key, vals in data.items()})
-    frame.index = pd.to_datetime(frame.index, format="%Y%m%d", errors="coerce")
-    frame.index.name = "date"
-    frame = frame.rename(columns={"T2M": "temp_c", "PRECTOTCORR": "rain_mm", "RH2M": "humidity_pct"})
-    frame = frame.reset_index()
-    for c in ["temp_c", "rain_mm", "humidity_pct"]:
-        frame[c] = pd.to_numeric(frame[c], errors="coerce")
-        frame.loc[frame[c] <= -900, c] = float("nan")
-    return frame
+def fetch_cdec(station, start, end):
+    """One request per calendar year (smaller requests are far more reliable on CDEC)."""
+    for year in range(int(start[:4]), int(end[:4]) + 1):
+        s = max(start, f"{year}-01-01")
+        e = min(end, f"{year}-12-31")
+        path = RAW / "cdec" / f"{station}_sensor15_D_{year}.csv"
+        if path.exists() and path.stat().st_size > len(CDEC_HEADER) + 10:
+            print(f"  cdec {station} {year}: cached")
+            continue
+        params = {"Stations": station, "SensorNums": 15, "dur_code": "D", "Start": s, "End": e}
+        res = get(CDEC, params, lambda r: r.text.startswith("STATION_ID") and r.text.count("\n") > 1)
+        save(path, res)
+        print(f"  cdec {station} {year}: {res.text.count(chr(10)) - 1} rows")
+
+
+def fetch_power(station, lat, lon, start, end):
+    path = RAW / "power" / f"{station}_daily_{start}_{end}.json"
+    if path.exists():
+        print(f"  power {station}: cached")
+        return
+    params = {"parameters": "T2M,PRECTOTCORR,RH2M", "community": "AG",
+              "longitude": lon, "latitude": lat,
+              "start": start.replace("-", ""), "end": end.replace("-", ""),
+              "format": "JSON", "time-standard": "LST"}
+    res = get(POWER, params, lambda r: "properties" in r.json())
+    save(path, res)
+    print(f"  power {station}: {len(res.json()['properties']['parameter']['T2M'])} days")
 
 
 def main():
@@ -81,30 +94,17 @@ def main():
     stations = pd.read_csv(ROOT / "stations.csv")
     if args.stations:
         stations = stations.loc[stations.station_id.isin(args.stations)]
-    collected = []
-    for station in stations.itertuples():
-        print(f"Fetching {station.station_id} ...", flush=True)
+    failed = []
+    for st in stations.itertuples():
+        print(f"Fetching {st.station_id} ...", flush=True)
         try:
-            storage = cdec_storage(station.station_id, args.start, args.end)
-            weather = nasa_weather(station.station_id, station.lat, station.lon, args.start, args.end)
-            merged = storage.merge(weather, on="date", how="left", validate="one_to_one")
-            merged["station_id"] = station.station_id
-            merged["reservoir_name"] = station.reservoir_name
-            merged["capacity_af"] = station.capacity_af
-            merged["lat"] = station.lat
-            merged["lon"] = station.lon
-            collected.append(merged)
-            print(f"  {len(merged)} storage days; weather missing days={merged.temp_c.isna().sum()}")
-        except Exception as exc:
+            fetch_cdec(st.station_id, args.start, args.end)
+            fetch_power(st.station_id, st.lat, st.lon, args.start, args.end)
+        except Exception as exc:  # keep going; failures are reported, never filled in
             print(f"  FAILED: {exc}")
-        time.sleep(1)
-    if not collected:
-        raise RuntimeError("No stations downloaded. Check network, station IDs and sensor availability.")
-    result = pd.concat(collected, ignore_index=True).sort_values(["station_id", "date"])
-    destination = ROOT / "data" / "processed" / "daily_joined.csv"
-    destination.parent.mkdir(exist_ok=True, parents=True)
-    result.to_csv(destination, index=False)
-    print(f"Saved {len(result)} rows to {destination}")
+            failed.append(st.station_id)
+    print("Done." + (f" FAILED stations: {failed}" if failed else " All stations fetched."))
+
 
 if __name__ == "__main__":
     main()

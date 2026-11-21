@@ -1,0 +1,5 @@
+station_id,reservoir_name,lat,lon,capacity_af,capacity_source,status,first_date,last_date,n_storage_days,missing_storage_pct
+SYN1,Synthetic Reservoir A (NOT REAL),40.0,-122.0,4000000,SYNTHETIC,included,2022-01-01,2025-12-31,1436,1.711
+SYN2,Synthetic Reservoir B (NOT REAL),39.0,-121.0,3000000,SYNTHETIC,included,2022-01-01,2025-12-31,1436,1.711
+SYN3,Synthetic Reservoir C (NOT REAL),38.0,-120.5,1000000,SYNTHETIC,included,2022-01-01,2025-12-31,1436,1.711
+SYN4,"Synthetic Reservoir D (NOT REAL, excluded example)",37.5,-120.0,2000000,SYNTHETIC,excluded,2022-01-01,2025-12-31,0,100.0

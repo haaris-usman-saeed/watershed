@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "data_mode": "SYNTHETIC_SAMPLE",
+  "generated_utc": "2026-11-21T09:06:59Z",
+  "ML": 1.7189450171821306,
+  "Persistence": 6.4913436426116835,
+  "30-day trend": 3.2178934707903784,
+  "Historical seasonal": 3.1702061855670105,
+  "interval_90_coverage": 0.9140893470790378,
+  "interval_90_halfwidth_pp": 3.5,
+  "train_count": 600,
+  "val_count": 150,
+  "test_count": 291,
+  "test_station_count": 3,
+  "note": "SYNTHETIC SAMPLE DATA for UI development only. Not real observations, predictions or accuracy.",
+  "split": {
+    "train_target_end_exclusive": "2023-01-01",
+    "val_start": "2023-01-01",
+    "val_target_end_exclusive": "2024-01-01",
+    "test_start": "2024-01-01",
+    "test_target_end_inclusive": "2025-12-31",
+    "horizon_days": 30,
+    "weather_lag_days": 7,
+    "sampling": "weekly (Mondays)"
+  },
+  "per_station": {
+    "SYN1": {
+      "n": 97,
+      "ML": 1.6074329896907216,
+      "Persistence": 6.4420618556701035,
+      "30-day trend": 3.3196907216494846,
+      "Historical seasonal": 3.028257731958763,
+      "interval_90_coverage": 0.9484536082474226
+    },
+    "SYN2": {
+      "n": 98,
+      "ML": 1.7637040816326532,
+      "Persistence": 6.714255102040817,
+      "30-day trend": 3.292459183673469,
+      "Historical seasonal": 3.6490204081632656,
+      "interval_90_coverage": 0.8877551020408163
+    },
+    "SYN3": {
+      "n": 96,
+      "ML": 1.7859270833333334,
+      "Persistence": 6.313583333333334,
+      "30-day trend": 3.0389166666666667,
+      "Historical seasonal": 2.8248437500000008,
+      "interval_90_coverage": 0.90625
+    }
+  },
+  "bootstrap": {
+    "method": "SYNTHETIC placeholder: moving-block bootstrap over weekly test dates",
+    "n_boot": 0,
+    "block_weeks": 5,
+    "best_baseline": "Historical seasonal",
+    "mae_diff_ml_minus_best_baseline": {
+      "estimate": -1.45126116838488,
+      "ci95_low": -1.95126116838488,
+      "ci95_high": -0.95126116838488
+    }
+  }
+}

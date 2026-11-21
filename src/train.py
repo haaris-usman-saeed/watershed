@@ -1,88 +1,189 @@
-"""Evaluate honest baselines and ML on future, non-overlapping dates."""
+"""Chronological held-out evaluation of baselines, Ridge and gradient boosting.
+
+Run: python -m src.train   (reads data/processed/weekly_features.csv)
+
+Splits (by forecast origin AND target date, so every outcome is confined to its split):
+  train : target_date <  2023-01-01
+  valid : date >= 2023-01-01 and target_date < 2024-01-01
+  test  : date >= 2024-01-01 and target_date <= last data day
+Origins whose 30-day window straddles a boundary are dropped (outcome embargo).
+Model selection (hyper-parameters, interval width, "best baseline") uses the
+validation split only; test outcomes are touched once, for the final report.
+"""
+from datetime import datetime, timezone
 from pathlib import Path
 import json
+
 import joblib
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import HistGradientBoostingRegressor
-from sklearn.metrics import mean_absolute_error
-from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer
+from sklearn.linear_model import RidgeCV
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+from src.contract import SCHEMA_VERSION, validate_dir
+from src.features import FEATURES, HORIZON, WEATHER_LAG
+
 ROOT = Path(__file__).resolve().parents[1]
-NUMERIC = ["storage_pct", "prev7_pct", "prev30_pct", "prev60_pct",
-           "rain_7d_mm", "rain_30d_mm", "temp_30d_c", "humidity_30d_pct",
-           "season_sin", "season_cos"]
+VAL_START, TEST_START = "2023-01-01", "2024-01-01"
+GBM_GRID = [dict(learning_rate=lr, max_iter=n, min_samples_leaf=leaf, max_depth=d)
+            for lr, n, leaf, d in [(0.05, 100, 20, 3), (0.05, 200, 20, 3), (0.03, 300, 30, 3),
+                                   (0.05, 150, 40, None), (0.1, 60, 20, 2)]]
+N_BOOT, BLOCK_WEEKS, SEED = 2000, 5, 42
+BASELINES = {"Persistence": "baseline_persistence_pp", "30-day trend": "baseline_trend_pp",
+             "Historical seasonal": "baseline_seasonal_pp"}
 
 
-def to_features(frame, stations):
-    onehots = pd.get_dummies(frame.station_id, prefix="station", dtype=int)
-    onehots = onehots.reindex(columns=[f"station_{s}" for s in stations], fill_value=0)
-    return pd.concat([frame[NUMERIC].reset_index(drop=True), onehots.reset_index(drop=True)], axis=1)
+def design(frame, stations):
+    oh = pd.get_dummies(frame.station_id).reindex(columns=stations, fill_value=0).astype(float)
+    oh.columns = [f"station_{c}" for c in oh.columns]
+    return pd.concat([frame[FEATURES].reset_index(drop=True), oh.reset_index(drop=True)], axis=1)
+
+
+def gbm(params):
+    return HistGradientBoostingRegressor(l2_regularization=1.0, random_state=SEED, **params)
+
+
+def ridge():
+    return make_pipeline(StandardScaler(), RidgeCV(alphas=np.logspace(-2, 3, 20)))
+
+
+def baselines(fit, target):
+    out = pd.DataFrame(index=target.index)
+    out["baseline_persistence_pp"] = 0.0
+    out["baseline_trend_pp"] = target.prev30_pct
+    clim = fit.assign(m=fit.date.dt.month).groupby(["station_id", "m"]).target_delta_pp.mean()
+    out["baseline_seasonal_pp"] = [clim.get((s, d.month), np.nan) for s, d in zip(target.station_id, target.date)]
+    return out
+
+
+def mae(y, p):
+    return float(np.mean(np.abs(np.asarray(y) - np.asarray(p))))
+
+
+def block_bootstrap(df, cols, n_boot=N_BOOT, block=BLOCK_WEEKS, seed=SEED):
+    """Moving-block bootstrap over weekly origin dates; all stations on a date move together
+    (keeps cross-reservoir and overlapping-window dependence inside blocks)."""
+    rng = np.random.default_rng(seed)
+    dates = np.sort(df.date.unique())
+    by_date = {d: g for d, g in df.groupby("date")}
+    n = len(dates)
+    starts = np.arange(n - block + 1)
+    reps = {c: [] for c in cols}
+    for _ in range(n_boot):
+        chosen = []
+        while len(chosen) < n:
+            s = rng.choice(starts)
+            chosen.extend(dates[s:s + block])
+        sample = pd.concat([by_date[d] for d in chosen[:n]])
+        for c in cols:
+            reps[c].append(mae(sample.target_delta_pp, sample[c]))
+    return {c: np.array(v) for c, v in reps.items()}
+
+
+def ci(a):
+    return {"ci95_low": float(np.quantile(a, 0.025)), "ci95_high": float(np.quantile(a, 0.975))}
 
 
 def run():
-    data_file = ROOT / "data/processed/weekly_features.csv"
-    if not data_file.exists():
-        raise FileNotFoundError("Run python -m src.features first")
-    df = pd.read_csv(data_file, parse_dates=["date", "target_date"])
-    # Training target outcomes must be observable before validation starts.
-    train = df.loc[df.target_date < "2023-01-01"].copy()
-    valid = df.loc[(df.date >= "2023-01-01") & (df.target_date < "2024-01-01")].copy()
-    test = df.loc[(df.date >= "2024-01-01") & (df.target_date <= "2025-12-31")].copy()
-    if min(len(train), len(valid), len(test)) < 30:
-        raise RuntimeError(f"Not enough data: train={len(train)}, val={len(valid)}, test={len(test)}")
-    stations = sorted(df.station_id.unique().tolist())
-    def new_model(lr=0.05, n=180, leaf=20):
-        return Pipeline([("impute", SimpleImputer(strategy="median")),
-                         ("model", HistGradientBoostingRegressor(learning_rate=lr,
-                           max_iter=n, min_samples_leaf=leaf, l2_regularization=1,
-                           random_state=42))])
-    Xtr, Xva = to_features(train, stations), to_features(valid, stations)
-    Xte = to_features(test, stations)
+    df = pd.read_csv(ROOT / "data/processed/weekly_features.csv", parse_dates=["date", "target_date"])
+    last_day = df.target_date.max()
+    train = df[df.target_date < VAL_START].copy()
+    valid = df[(df.date >= VAL_START) & (df.target_date < TEST_START)].copy()
+    test = df[(df.date >= TEST_START) & (df.target_date <= last_day)].copy()
+    assert train.target_date.max() < valid.date.min() and valid.target_date.max() < test.date.min()
+    stations = sorted(df.station_id.unique())
+    Xtr, Xva, Xte = design(train, stations), design(valid, stations), design(test, stations)
     ytr, yva, yte = train.target_delta_pp, valid.target_delta_pp, test.target_delta_pp
-    settings = [(0.05, 100, 20), (0.05, 220, 20), (0.025, 250, 30)]
-    scored = []
-    for opts in settings:
-        model = new_model(*opts).fit(Xtr, ytr)
-        pred = model.predict(Xva)
-        scored.append((mean_absolute_error(yva, pred), opts))
-    best_opts = min(scored, key=lambda p: p[0])[1]
-    # Train on all observations with fully known labels before 2024.
-    fitting = df.loc[df.target_date < "2024-01-01"].copy()
-    final = new_model(*best_opts).fit(to_features(fitting, stations), fitting.target_delta_pp)
-    pred = final.predict(Xte)
-    # Caution: interval calibration is based only on the pre-test validation period,
-    # so we train a separate validation-era model for calibration.
-    cal_model = new_model(*best_opts).fit(Xtr, ytr)
-    val_errors = np.abs(yva.to_numpy() - cal_model.predict(Xva))
-    q = float(np.quantile(val_errors, 0.9, method="higher"))
-    test_pred = test[["station_id", "reservoir_name", "date", "target_date", "target_delta_pp", "storage_af", "capacity_af"]].copy()
-    test_pred["pred_delta_pp"] = pred
-    test_pred["lower_90_pp"] = pred - q
-    test_pred["upper_90_pp"] = pred + q
-    # Baseline 1: unchanged current level.
-    test_pred["baseline_persistence_pp"] = 0.0
-    # Baseline 2: extrapolate observed 30-day slope forward.
-    test_pred["baseline_trend_pp"] = test.prev30_pct.to_numpy()
-    # Baseline 3: average historical change for this station / month in fitting data.
-    fitting = fitting.assign(month=fitting.date.dt.month)
-    by_month = fitting.groupby(["station_id", "month"]).target_delta_pp.mean()
-    overall = fitting.groupby("station_id").target_delta_pp.mean()
-    test_pred["baseline_seasonal_pp"] = [by_month.get((s, d.month), overall.get(s, 0.0)) for s, d in zip(test.station_id, test.date)]
-    predictions = {"ML": "pred_delta_pp", "Persistence": "baseline_persistence_pp",
-                   "30-day trend": "baseline_trend_pp", "Historical seasonal": "baseline_seasonal_pp"}
-    metrics = {name: float(mean_absolute_error(yte, test_pred[col])) for name, col in predictions.items()}
-    metrics["interval_90_coverage"] = float(((test_pred.target_delta_pp >= test_pred.lower_90_pp) & (test_pred.target_delta_pp <= test_pred.upper_90_pp)).mean())
-    metrics["interval_90_halfwidth_pp"] = q
-    metrics["train_count"] = int(len(train)); metrics["val_count"] = int(len(valid)); metrics["test_count"] = int(len(test))
-    metrics["test_station_count"] = int(test.station_id.nunique())
-    metrics["note"] = "One temporal holdout; grouped uncertainty bootstrap not yet implemented. 90% interval is empirical and not guaranteed calibrated under distribution shift."
-    model_dir = ROOT / "models"; model_dir.mkdir(exist_ok=True)
-    joblib.dump({"pipeline": final, "stations": stations, "features": list(to_features(fitting, stations).columns), "halfwidth": q}, model_dir / "forecast.joblib")
-    (ROOT / "outputs").mkdir(exist_ok=True)
-    test_pred.to_csv(ROOT / "outputs/test_predictions.csv", index=False)
-    (ROOT / "outputs/metrics.json").write_text(json.dumps(metrics, indent=2))
-    print(json.dumps(metrics, indent=2))
+
+    # ---- model selection on validation only
+    grid = [(mae(yva, gbm(p).fit(Xtr, ytr).predict(Xva)), i) for i, p in enumerate(GBM_GRID)]
+    best = GBM_GRID[min(grid)[1]]
+    val_model = gbm(best).fit(Xtr, ytr)
+    val_pred = val_model.predict(Xva)
+    val_ridge = ridge().fit(Xtr, ytr).predict(Xva)
+    val_base = baselines(train, valid)
+    val_scores = {"ML": mae(yva, val_pred), "Ridge": mae(yva, val_ridge),
+                  **{k: mae(yva, val_base[c]) for k, c in BASELINES.items()}}
+    best_baseline = min(BASELINES, key=lambda k: val_scores[k])
+    q = float(np.quantile(np.abs(yva - val_pred), 0.9, method="higher"))  # split-conformal style
+
+    # ---- refit on all pre-test outcomes, predict test once
+    fit = df[df.target_date < TEST_START].copy()
+    Xfit = design(fit, stations)
+    final = gbm(best).fit(Xfit, fit.target_delta_pp)
+    final_ridge = ridge().fit(Xfit, fit.target_delta_pp)
+    out = test[["station_id", "reservoir_name", "date", "target_date", "target_delta_pp",
+                "storage_af", "capacity_af", "storage_pct"]].copy()
+    out["pred_delta_pp"] = final.predict(Xte)
+    out["lower_90_pp"], out["upper_90_pp"] = out.pred_delta_pp - q, out.pred_delta_pp + q
+    out = out.join(baselines(fit, test))
+    out["pred_ridge_pp"] = final_ridge.predict(Xte)
+    assert out[list(BASELINES.values())].notna().all().all()
+
+    cols = {"ML": "pred_delta_pp", "Ridge": "pred_ridge_pp", **BASELINES}
+    inside = (out.target_delta_pp >= out.lower_90_pp) & (out.target_delta_pp <= out.upper_90_pp)
+    boot = block_bootstrap(out, list(cols.values()))
+    diff = boot["pred_delta_pp"] - boot[BASELINES[best_baseline]]
+    point_diff = mae(yte, out.pred_delta_pp) - mae(yte, out[BASELINES[best_baseline]])
+
+    metrics = {"schema_version": SCHEMA_VERSION, "data_mode": "real",
+               "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
+    metrics.update({k: mae(yte, out[c]) for k, c in cols.items()})
+    metrics.update({
+        "interval_90_coverage": float(inside.mean()), "interval_90_halfwidth_pp": q,
+        "train_count": int(len(train)), "val_count": int(len(valid)), "test_count": int(len(test)),
+        "test_station_count": int(test.station_id.nunique()),
+        "note": ("Historical backtest on 2024-2025 held-out dates; not an operational forecast. "
+                 "Weekly origins have overlapping 30-day windows, so rows are not independent; CIs use a "
+                 "moving-block bootstrap over dates. 90% interval = 90th percentile of absolute 2023 validation "
+                 "errors (single wet year); coverage is not guaranteed under distribution shift. Weather is NASA "
+                 "POWER grid-cell data at the dam, not watershed rainfall, and is a retrospective (revised) series. "
+                 "ORO windows spanning the 2024-07-02 storage-table change are excluded."),
+        "split": {"train_target_end_exclusive": VAL_START, "val_start": VAL_START,
+                  "val_target_end_exclusive": TEST_START, "test_start": TEST_START,
+                  "test_target_end_inclusive": last_day.strftime("%Y-%m-%d"), "horizon_days": HORIZON,
+                  "weather_lag_days": WEATHER_LAG, "sampling": "weekly (Mondays)"},
+        "validation": {"scores_mae_pp": val_scores, "gbm_grid_mae_pp": [g for g, _ in grid],
+                       "gbm_selected_params": best, "best_baseline_on_validation": best_baseline},
+        "per_station": {},
+        "bootstrap": {"method": "moving-block bootstrap over weekly test origin dates (stations resampled "
+                                "jointly per date); percentile 95% CI",
+                      "n_boot": N_BOOT, "block_weeks": BLOCK_WEEKS, "best_baseline": best_baseline,
+                      "best_baseline_selected_on": "validation",
+                      "mae_ci95": {k: ci(boot[c]) for k, c in cols.items()},
+                      "mae_diff_ml_minus_best_baseline": {"estimate": point_diff, **ci(diff),
+                                                          "share_boot_ml_better": float((diff < 0).mean())}},
+    })
+    for s, g in out.groupby("station_id"):
+        gi = (g.target_delta_pp >= g.lower_90_pp) & (g.target_delta_pp <= g.upper_90_pp)
+        metrics["per_station"][s] = {"n": int(len(g)), **{k: mae(g.target_delta_pp, g[c]) for k, c in cols.items()},
+                                     "interval_90_coverage": float(gi.mean())}
+
+    (ROOT / "models").mkdir(exist_ok=True)
+    joblib.dump({"gbm": final, "ridge": final_ridge, "stations": stations, "features": list(Xfit.columns),
+                 "halfwidth_90_pp": q, "gbm_params": best}, ROOT / "models/forecast.joblib")
+    OUT = ROOT / "outputs"
+    OUT.mkdir(exist_ok=True)
+    out.to_csv(OUT / "test_predictions.csv", index=False, date_format="%Y-%m-%d")
+    (OUT / "metrics.json").write_text(json.dumps(metrics, indent=2))
+    write_feature_catalog(OUT)
+    errs = validate_dir(OUT)
+    print("contract:", errs or "OK")
+    show = {k: round(v, 3) for k, v in metrics.items() if isinstance(v, (int, float))}
+    print(json.dumps(show, indent=1))
+    print("validation:", json.dumps(metrics["validation"], indent=1))
+    print("bootstrap diff:", json.dumps(metrics["bootstrap"]["mae_diff_ml_minus_best_baseline"]))
+    print(pd.DataFrame(metrics["per_station"]).T.round(2).to_string())
+
+
+def write_feature_catalog(out_dir):
+    from src.make_sample_data import FEATURES as CATALOG
+    (out_dir / "feature_catalog.json").write_text(json.dumps({"schema_version": SCHEMA_VERSION, "features": [
+        {"name": n, "description": d, "units": u, "source": s, "min_lag_days": l} for n, d, u, s, l in CATALOG]},
+        indent=2))
+
 
 if __name__ == "__main__":
     run()
