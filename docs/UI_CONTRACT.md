@@ -123,6 +123,18 @@ Split dates are the current plan and may move after the data audit — always re
 `{"schema_version": "1.0", "features": [{"name", "description", "units", "source", "min_lag_days"}, ...]}` —
 `min_lag_days` = how many days before the forecast origin the feature’s latest input ends. Current features: `storage_pct, prev7_pct, prev30_pct, prev60_pct, rain_7d_mm, rain_30d_mm, temp_30d_c, humidity_30d_pct, season_sin, season_cos` (+ station one-hot, not listed).
 
+### 3.6 Additive extras present in real outputs (v1.0, optional for the UI)
+
+- `stations.csv`: `exclusion_reason`, `operator`.
+- `test_predictions.csv`: `pred_ridge_pp` (Ridge regression prediction).
+- `metrics.json`:
+  - `"Ridge"` (test MAE);
+  - `"validation"` (validation MAEs, GBM grid, selected params, `best_baseline_on_validation`);
+  - `bootstrap.mae_ci95` (95% CI for each model's MAE);
+  - `bootstrap.mae_diff_ml_minus_best_baseline.share_boot_ml_better`.
+
+Real-data caveat to surface in the UI: the ORO (Oroville) series has a reporting-basis break on 2024-07-02 (DWR storage-table change). ORO test windows spanning that date are excluded, so ORO has fewer test rows (88 vs 101). See `data/provenance.md`.
+
 ## 4. Feature status
 
 | Status | Feature |

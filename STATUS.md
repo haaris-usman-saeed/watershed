@@ -45,3 +45,17 @@ Weekly Monday origins, 30-day target in pp of capacity, weather lagged 7 d, no w
 - 90% interval: ±9.99 pp (90th percentile of absolute 2023 validation errors). Test coverage is **96.3%**, so it over-covers: 2023 was an extreme wet year, which makes the interval wide and of limited practical use. Per-station coverage ranges from 91% to 100%.
 - Leakage controls tested in `tests/test_features.py`: perturbing all data after the origin leaves features unchanged; the last 7 days of weather are unused; missing targets are dropped, never filled; no window spans a series break. The split ordering is asserted in `src/train.py`.
 - Outputs (`outputs/`, git-ignored, produced locally) pass `python -m src.contract outputs`. Extra columns/keys beyond contract v1.0: `pred_ridge_pp`, `storage_pct`, and `Ridge`, `validation`, `bootstrap.mae_ci95` in metrics. These are additive; the UI can ignore them.
+
+### C3 — reproducibility, provenance, README (2026-11-21)
+- **Clean reproduction passed:** a fresh `git clone -b engineering` into an empty directory, a new venv and `pip install -r requirements.txt`, then fetch → build_dataset → features → train → pytest → contract. Result: `daily_joined.csv` identical, every metric identical (ML 2.8144, seasonal 3.1580, coverage 0.9629, n_test 593), **7/7 tests pass**, contract OK. Exact package versions are in `requirements-lock.txt` (Python 3.14.5, macOS).
+- README rewritten with verified commands, sources, method, results and limitations. Provenance: `data/provenance.md`. Coverage: `data/coverage_table.md`. Originality search: `docs/originality_check.md` (CDEC + ML for California reservoirs has precedent; no identical CDEC + POWER benchmark found in a limited search, which does not prove novelty).
+- Final output schema = **UI contract v1.0, unchanged**. Real outputs add optional extras (see `docs/UI_CONTRACT.md` §3.6). **Muse / Claude Web:** run the pipeline locally, or use `app/sample_data` (synthetic), until real outputs are shared. `outputs/` is git-ignored by design.
+
+**Unresolved / open**
+- The ML gain over the seasonal baseline is not statistically clear (CI includes 0), and ML is worse at ORO and SHA.
+- The 90% interval is too wide (±10 pp) because it was calibrated on 2023. A per-station or seasonally scaled interval could help, but would need a fresh validation design, not test tuning.
+- No as-of-time weather archive; POWER is a retrospective MERRA-2 series.
+- Only a deprecation warning remains: NumPy "generic timedelta unit" on Python 3.14 in the tests. It is harmless.
+- The CDEC licence wording needs owner sign-off.
+- Stretch (satellite feature) **not started**: by the priority order, it comes only after review.
+- The UI's `app.py` has not been checked against the extended outputs by engineering (owned by the UI team).
