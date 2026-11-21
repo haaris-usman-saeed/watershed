@@ -114,7 +114,7 @@ ResOpsUS (Steyaert et al. 2022, *Scientific Data*; Zenodo record 5893641, CC-BY 
 | Sensor | 82 = SNOW, WATER CONTENT (adjusted/revised), inches. Units and sensor are asserted. The daily value is a morning reading (`OBS DATE` 04:00 to 07:00). |
 | Cleaning | Missing or text stays missing and is **never treated as zero**. Values below -0.5 in or above 250 in are set to missing (652 values). Values from -0.5 to 0 are set to 0 (47 values, pillow noise at bare ground). |
 | Flags | r (revised): 341,907; o: 5,327; e: 1,362; c: 14 |
-| Core stations | Predetermined rule using availability only (no outcomes) and only WY2002 to WY2023: a pillow is "core" if at least 75% of snow seasons (Dec to May) have at least 80% daily availability. Core counts: SHA 7, ORO 8, FOL 12, NML 5, DNP 3, EXC 3. |
+| Core stations | Predetermined rule using availability only (no outcomes) and only WY2002 to WY2023: a pillow is "core" if at least 75% of snow seasons (Dec to May) have at least 80% daily availability. Core counts: SHA 7, ORO 8, FOL 11, NML 5, DNP 3, EXC 3 (counted from `data/processed/snow_basin_index.csv`; an earlier version of this line said FOL 12, a transcription error). |
 | Basin index | For each reservoir, mean SWE (inches) over core pillows reporting that day, computed only when at least 2/3 of core pillows report; otherwise missing. This is a point index, not basin-volume SWE. |
 | Prediction-time rule | Snow features use SWE dated t-1 or earlier. |
 | Revision caveat | Sensor 82 is an **adjusted** product, revised after the fact (most values carry the r flag). Real-time users would have seen raw sensor 3, so the SWE features are retrospective, like the weather. |

@@ -60,7 +60,7 @@ Notes on these steps:
 | Source | What | Link |
 |---|---|---|
 | CDEC (CA Dept of Water Resources) | Daily reservoir storage, sensor 15, acre-feet, end-of-day | https://cdec.water.ca.gov/dynamicapp/req/CSVDataServlet |
-| CDEC snow pillows | Daily snow water content, sensor 82 (adjusted), inches; 51 candidate pillows in the upstream basins, 3 to 12 core pillows per reservoir | same endpoint; station lists from https://cdec.water.ca.gov/dynamicapp/staSearch |
+| CDEC snow pillows | Daily snow water content, sensor 82 (adjusted), inches; 51 candidate pillows in the upstream basins, 3 to 11 core pillows per reservoir | same endpoint; station lists from https://cdec.water.ca.gov/dynamicapp/staSearch |
 | CDEC metadata and capacities | Coordinates, operators, sensors; Daily Reservoir Storage Summary | https://cdec.water.ca.gov/dynamicapp/staMeta?station_id=SHA , https://cdec.water.ca.gov/reportapp/javareports?name=RES |
 | DWR water year types | Sacramento and San Joaquin Valley indices (descriptive only) | https://cdec.water.ca.gov/reportapp/javareports?name=WSIHIST |
 | NASA POWER daily point API v2.10.5 | T2M, PRECTOTCORR, RH2M (local solar time) | https://power.larc.nasa.gov/docs/services/api/temporal/daily/ |
