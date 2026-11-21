@@ -64,3 +64,53 @@ def test_no_window_spans_series_break():
     assert not spans_target.any()
     assert not spans_prev60.any()
     assert len(r) > 0
+
+
+def snow_for(df, value=10.0):
+    return pd.DataFrame({"station_id": "X", "date": df.date, "swe_basin_in": value})
+
+
+def test_snow_features_use_only_t_minus_1_and_earlier():
+    df = toy()
+    si = snow_for(df)
+    si["swe_basin_in"] = np.arange(len(si), dtype=float)
+    base = construct_features(df, breaks={}, snow_index=si).set_index("date")
+    t0 = base.index[2]
+    pert = si.copy()
+    pert.loc[pert.date >= t0, "swe_basin_in"] += 500       # change origin-day and later snow
+    new = construct_features(df, breaks={}, snow_index=pert).set_index("date")
+    assert base.loc[t0, "swe_basin_in"] == new.loc[t0, "swe_basin_in"]
+    assert base.loc[t0, "swe_change_14d_in"] == new.loc[t0, "swe_change_14d_in"]
+    assert base.loc[t0, "swe_change_14d_in"] == 14.0
+
+
+def test_missing_snow_stays_missing_not_zero():
+    df = toy()
+    si = snow_for(df)
+    si.loc[si.date < pd.Timestamp("2020-04-01"), "swe_basin_in"] = np.nan
+    r = construct_features(df, breaks={}, snow_index=si)
+    early = r[r.date < pd.Timestamp("2020-04-01")]
+    assert len(early) > 0 and early.swe_basin_in.isna().all()
+
+
+def test_excluded_station_never_enters_features(tmp_path):
+    from src.features import eligible_stations, filter_eligible
+    cov = pd.DataFrame({"station_id": ["X", "Y"], "status": ["included", "excluded"]})
+    cov.to_csv(tmp_path / "coverage.csv", index=False)
+    a, b = toy(), toy()
+    b["station_id"] = "Y"
+    data = filter_eligible(pd.concat([a, b]), eligible_stations(tmp_path / "coverage.csv"))
+    assert set(construct_features(data, breaks={}).station_id) == {"X"}
+
+
+def test_basin_index_requires_two_thirds_of_core_pillows():
+    from src.features import build_snow_index
+    days = pd.date_range("2001-10-01", "2023-09-30", freq="D")
+    snow = pd.concat([pd.DataFrame({"snow_station_id": s, "date": days, "swe_in": v})
+                      for s, v in [("A", 10.0), ("B", 20.0), ("C", 30.0)]])
+    meta = pd.DataFrame({"snow_station_id": ["A", "B", "C"], "reservoir_id": "X"})
+    d0 = pd.Timestamp("2010-01-01")
+    drop = (snow.date == d0) & snow.snow_station_id.isin(["B", "C"])   # only 1 of 3 reports
+    idx = build_snow_index(snow[~drop], meta).set_index("date")
+    assert np.isnan(idx.loc[d0, "swe_basin_in"])
+    assert idx.loc[pd.Timestamp("2010-01-02"), "swe_basin_in"] == 20.0

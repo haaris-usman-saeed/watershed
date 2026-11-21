@@ -81,3 +81,36 @@ Weekly Monday origins, 30-day target in pp of capacity, weather lagged 7 d, no w
 - DWR water year types (WSIHIST) were downloaded for descriptive grouping only.
 - Regression tests: `tests/test_build.py` (8 tests) covering the date convention, unit and sensor rejection, no interpolation, duplicate handling, spike adjudication, historical capacity, and capacity and break consistency.
 - Raw manifest: 188 downloads with SHA-256. Provenance has been rewritten (`data/provenance.md`); v1 provenance and coverage are archived in `results/v1/`.
+
+### Checkpoint C: environmental features, ablations, rolling water-year evaluation (2026-11-21)
+- Weekly table: 7,693 rows (2001-03 to 2025-12, 6 reservoirs). The development set has 7,224 rows with origin and target before 2024-01-01; the hold-out is never loaded by `src/experiments.py` (asserted).
+- **SWE features** (CDEC snow pillows, t-1 and earlier):
+  - `swe_basin_in`: mean of core pillows; missing when fewer than 2/3 of core pillows report.
+  - `swe_change_14d_in`.
+  - `swe_anom_in`: anomaly against a smoothed day-of-year climatology computed per fold from training years only.
+- Basin index availability is 94-100% of weekly rows. Leakage tests cover the snow lag, missing-not-zero, the 2/3 rule and station eligibility.
+- **Inflow and release not added**: CDEC "inflow" equals outflow plus storage change (mass balance; residual 0.2 to 0.3 cfs at DNP and EXC, correlation > 0.986 elsewhere), so it is not an independent measurement. Releases are operator decisions with no future information available at t. Both are documented, omitted and left as future work.
+- **Rolling evaluation**: 16 expanding-window water-year folds, WY2008-2023 (4,995 forecasts). HGB hyper-parameters were tuned on WY2008-2015 only. Models were compared on confirmation folds WY2016-2023 (2,500 forecasts). Full report: `results/v2/development/report.md`.
+
+| Pooled MAE, pp | tuning WY08-15 | confirmation WY16-23 |
+|---|---|---|
+| HGB SWE no weather | 2.60 | **3.16** |
+| HGB + SWE (weather + SWE) | 2.60 | 3.17 |
+| HGB (v1 features) | 2.68 | 3.23 |
+| HGB no weather | 2.85 | 3.30 |
+| Ridge | 3.31 | 3.90 |
+| Smoothed DOY seasonal (strongest baseline) | 3.24 | 4.11 |
+| Monthly seasonal | 3.35 | 4.21 |
+| 30-day trend | 3.99 | 5.17 |
+| Persistence | 4.89 | 5.76 |
+
+- **Primary vs strongest baseline** (confirmation): -0.95 pp. 95% CI [-1.23, -0.68] (5-week blocks), [-1.26, -0.64] (9), [-1.28, -0.63] (13).
+- **Wins**: HGB SWE variants beat the strongest baseline in 15 of 16 water years. The exception is WY2008, where the smoothed DOY baseline wins (1.98 vs 2.12/2.16). Ridge wins only 8 of 16. In WY2021 (critically dry) the 30-day trend baseline (1.88) beat every model.
+- **Ablations** (confirmation, MAE difference, 5/9/13-week CIs):
+  - Weather: -0.07 [-0.18, +0.03]. Small and not distinguishable from 0.
+  - SWE given weather: -0.06 [-0.16, +0.04]. Not distinguishable from 0.
+  - SWE instead of weather: -0.14 [-0.28, +0.01] (5 weeks), +0.03 at the upper end for 13 weeks. Suggestive only.
+- **By season** (confirmation): gains are largest in summer drawdown (JJA 1.52 vs 2.99) and smallest in winter storms (DJF 5.35 vs 6.45). SWE helps most in MAM and JJA (snowmelt).
+- **By reservoir** (confirmation): HGB SWE no weather beats the strongest baseline at all six (DNP 2.25 vs 3.12; EXC 3.44 vs 4.60; FOL 4.99 vs 6.08; NML 1.67 vs 2.70; ORO 3.65 vs 4.59; SHA 2.96 vs 3.55).
+- **By water year class** (confirmation): wet 4.07 vs 5.40; below normal 3.15 vs 4.02; dry 2.38 vs 3.03.
+- **Primary model by the predetermined rule: "HGB SWE no weather"** (storage + SWE + season, no NASA POWER). It is effectively tied with HGB + SWE (3.160 vs 3.168).
