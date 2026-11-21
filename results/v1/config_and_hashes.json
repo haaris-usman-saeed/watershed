@@ -1,0 +1,66 @@
+{
+  "git_commit": "01e43cb",
+  "git_tag": "v1-results",
+  "gbm_params": {
+    "learning_rate": 0.05,
+    "max_iter": 150,
+    "min_samples_leaf": 40,
+    "max_depth": null
+  },
+  "gbm_fixed": {
+    "l2_regularization": 1.0,
+    "random_state": 42
+  },
+  "halfwidth_90_pp": 9.991508685051516,
+  "features": [
+    "storage_pct",
+    "prev7_pct",
+    "prev30_pct",
+    "prev60_pct",
+    "rain_7d_mm",
+    "rain_30d_mm",
+    "temp_30d_c",
+    "humidity_30d_pct",
+    "season_sin",
+    "season_cos",
+    "station_DNP",
+    "station_EXC",
+    "station_FOL",
+    "station_NML",
+    "station_ORO",
+    "station_SHA"
+  ],
+  "ridge": "StandardScaler + RidgeCV(alphas=logspace(-2,3,20))",
+  "splits": {
+    "train_target_end_exclusive": "2023-01-01",
+    "val_start": "2023-01-01",
+    "val_target_end_exclusive": "2024-01-01",
+    "test_start": "2024-01-01",
+    "test_target_end_inclusive": "2025-12-31",
+    "horizon_days": 30,
+    "weather_lag_days": 7,
+    "sampling": "weekly (Mondays)"
+  },
+  "data_period": "2018-01-01..2025-12-31",
+  "stations": [
+    "DNP",
+    "EXC",
+    "FOL",
+    "NML",
+    "ORO",
+    "SHA"
+  ],
+  "capacity_denominator": "single current capacity per station (ORO 3,424,753 for all dates)",
+  "python": "3.14.5",
+  "lock_file": "requirements-lock.txt at 01e43cb",
+  "sha256_of_local_outputs": {
+    "outputs/metrics.json": "72dcba1cebdf16399000aad6194841c40351abeedba7169e639375b9fceda600",
+    "outputs/test_predictions.csv": "d48603ac86d0a7f4df232fe558addd447c08d31e026a4f4e6d015f1aca3338e3",
+    "outputs/stations.csv": "02202a1701fc79cabf2c5d35737b587439e0a3d17680319711a7692eeeae382b",
+    "outputs/history_daily.csv": "064304d732b321b2a03a66ec34c7c748fc152c92da17b89673634678225602d5",
+    "outputs/feature_catalog.json": "302e658c6e4572660a6311d46eeee0481bae568624fd77f78e47748a66571c60",
+    "data/processed/daily_joined.csv": "1dc76c1154f70ea0476fce6f006a339625ceebcb4efcec99dabe969f792684c5",
+    "data/processed/weekly_features.csv": "435ef5e6c303b922785fa8f5b808a9c174ea7e8017e4c341b1254b97ea313ac3",
+    "models/forecast.joblib": "4d85738917ff63a6ec2b0b974bf7b20be443238620871c6c1ed6b89f6d448830"
+  }
+}

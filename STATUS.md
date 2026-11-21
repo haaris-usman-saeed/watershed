@@ -59,3 +59,15 @@ Weekly Monday origins, 30-day target in pp of capacity, weather lagged 7 d, no w
 - The CDEC licence wording needs owner sign-off.
 - Stretch (satellite feature) **not started**: by the priority order, it comes only after review.
 - The UI's `app.py` has not been checked against the extended outputs by engineering (owned by the UI team).
+
+## Engineering v2 revision (Claude Code), branch `review-v2`
+
+### Checkpoint A: v1 preserved and audited (2026-11-21)
+- v1 is frozen as git tag `v1-results` (commit 01e43cb, pushed). Public artifacts are in `results/v1/`: `metrics.json`, `feature_catalog.json`, `stations.csv`, `config_and_hashes.json` (GBM params, interval half-width, splits, SHA-256 of every local v1 output), and `test_predictions_public.csv`. The public predictions file drops the raw storage columns because the repository is public and CDEC redistribution terms are unconfirmed. Full-resolution v1 outputs are kept locally in `results/v1/local_full/` (git-ignored).
+- v1 headline, unchanged: GBM 2.81 pp, monthly seasonal 3.16 pp, difference -0.34 pp, 95% CI [-0.80, +0.03] (5-week blocks), interval coverage 96.3%.
+- v1 difference CI at the predetermined block lengths: 5 weeks [-0.80, +0.03]; 9 weeks [-0.90, +0.11]; 13 weeks [-0.93, +0.11]. The shared bootstrap in `src/evaluation.py` reproduces the original 5-week CI exactly.
+- Diagnostics are in `results/v1/diagnostics.md` and are descriptive only, not used to tune v2:
+  - By season, v1 GBM's advantage comes from summer (JJA: 1.70 vs 3.08 seasonal) and autumn (SON: 1.82 vs 2.08). It is slightly worse than seasonal in winter (DJF: 4.20 vs 4.07) and spring (MAM: 3.61 vs 3.51).
+  - By fullness, errors are largest when storage is below 40% of capacity (n=13; GBM 8.16, seasonal 8.49, coverage 69%).
+  - ORO before the storage-table change (n=22): GBM 4.11 vs seasonal 2.15. After (n=66): 3.74 vs 3.60.
+- Data audit of the original 2018-2025 data: no duplicate dates, no unit mismatches (every row is AF, sensor 15, duration D), 2 isolated spikes, flags e/r counted. See `data/coverage_table.md`.

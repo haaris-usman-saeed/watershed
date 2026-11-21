@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "features": [
+    {
+      "name": "storage_pct",
+      "description": "Storage at forecast origin",
+      "units": "% of capacity",
+      "source": "CDEC sensor 15",
+      "min_lag_days": 0
+    },
+    {
+      "name": "prev7_pct",
+      "description": "Storage change over previous 7 days",
+      "units": "pp of capacity",
+      "source": "CDEC sensor 15",
+      "min_lag_days": 0
+    },
+    {
+      "name": "prev30_pct",
+      "description": "Storage change over previous 30 days",
+      "units": "pp of capacity",
+      "source": "CDEC sensor 15",
+      "min_lag_days": 0
+    },
+    {
+      "name": "prev60_pct",
+      "description": "Storage change over previous 60 days",
+      "units": "pp of capacity",
+      "source": "CDEC sensor 15",
+      "min_lag_days": 0
+    },
+    {
+      "name": "rain_7d_mm",
+      "description": "Precipitation sum, 7 days ending at origin-7d",
+      "units": "mm",
+      "source": "NASA POWER PRECTOTCORR",
+      "min_lag_days": 7
+    },
+    {
+      "name": "rain_30d_mm",
+      "description": "Precipitation sum, 30 days ending at origin-7d",
+      "units": "mm",
+      "source": "NASA POWER PRECTOTCORR",
+      "min_lag_days": 7
+    },
+    {
+      "name": "temp_30d_c",
+      "description": "Mean 2 m air temperature, 30 days ending at origin-7d",
+      "units": "degC",
+      "source": "NASA POWER T2M",
+      "min_lag_days": 7
+    },
+    {
+      "name": "humidity_30d_pct",
+      "description": "Mean 2 m relative humidity, 30 days ending at origin-7d",
+      "units": "%",
+      "source": "NASA POWER RH2M",
+      "min_lag_days": 7
+    },
+    {
+      "name": "season_sin",
+      "description": "sin(2*pi*day_of_year/365.25)",
+      "units": "unitless",
+      "source": "calendar",
+      "min_lag_days": 0
+    },
+    {
+      "name": "season_cos",
+      "description": "cos(2*pi*day_of_year/365.25)",
+      "units": "unitless",
+      "source": "calendar",
+      "min_lag_days": 0
+    }
+  ]
+}
