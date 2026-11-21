@@ -1,14 +1,14 @@
-# WatershedShift — STATUS
+# WatershedShift: STATUS
 
 Shared file. Append under your own heading only.
 
-## Engineering (Claude Code) — branch `engineering`
+## Engineering (Claude Code): branch `engineering`
 
-### 2026-11-21 — kickoff
+### 2026-11-21: kickoff
 **Findings from starter review**
 - Pipeline: `src/fetch.py` (CDEC CSVDataServlet sensor 15 + NASA POWER daily point) → `src/features.py` (weekly Monday rows, 30-day target, weather lagged 7 d) → `src/train.py` (3 baselines + HistGradientBoosting, constant-width 90% interval from 2023 validation errors).
 - Starter was never run against real data. `stations.csv` coordinates/capacities are unverified candidates.
-- ~~First live probe: SHA daily returned an empty CSV~~ → resolved: transient CDEC empty responses; SHA daily sensor 15 exists (1985–present). Fetch now retries.
+- ~~First live probe: SHA daily returned an empty CSV~~ → resolved: transient CDEC empty responses; SHA daily sensor 15 exists (1985-present). Fetch now retries.
 - Starter gaps to fix: no per-station metrics, no bootstrap CI, test split filter `target_date <= 2025-12-31` silently depends on fetch end date; raw NASA JSON overwritten without timestamp; no provenance/coverage outputs.
 
 **Plan**: (1) verify CDEC daily storage per station & capacities, NASA POWER params → C1 coverage table; (2) fix features/splits, add per-station metrics + block bootstrap → C2; (3) clean-env reproduction, README, provenance → C3.
@@ -17,19 +17,19 @@ Shared file. Append under your own heading only.
 - `docs/UI_CONTRACT.md` (schema v1.0), validator `src/contract.py`, synthetic fixtures in `app/sample_data/` (clearly labelled `SYNTHETIC_SAMPLE`, station IDs `SYN1..SYN4`).
 - UI owns `app.py` and `app/` (except `app/sample_data/`). Engineering will not edit `app.py`.
 
-### C1 — real data verified (2026-11-21)
+### C1: real data verified (2026-11-21)
 - **Live downloads succeeded for all 6 stations** (SHA, ORO, FOL, NML, DNP, EXC): CDEC sensor 15 daily, 2018-01-01 → 2025-12-31, plus NASA POWER T2M/PRECTOTCORR/RH2M. 48 CDEC + 6 POWER raw files, about 2 MB, kept **locally only** in `data/raw/` (git-ignored). URLs and SHA-256 hashes are in `data/raw_manifest.jsonl`.
 - Joined daily dataset: **17,532 station-days** (6 × 2,922). Storage missing: SHA 0, ORO 1, FOL 0, NML 0, DNP 2, EXC 2 days (max 0.068%). Weather missing: 0. Duplicates: 0. Full table: `data/coverage_table.md`.
 - **Corrections to the starter:**
   1. CDEC `OBS DATE` is inconsistent by operator (D vs D+1). The code now uses `DATE TIME`, which is end-of-day storage, verified against hourly data. The starter would have shifted ORO, DNP and EXC by one day.
   2. ORO capacity changed 3,537,577 → **3,424,753**; EXC 1,025,000 → **1,024,600**. FOL and NML coordinates were corrected from CDEC metadata.
   3. Fetching is now split into a network step (`src.fetch`, raw bytes saved unchanged, per-year requests with retries) and an offline step (`src.build_dataset`). CDEC sometimes returns empty bodies, which the retries handle.
-- **Data issue found:** ORO has a **reporting-basis break on 2024-07-02**. DWR adopted a new elevation–storage table, producing a −123k AF artificial step. Values are not adjusted. The break is logged in `data/series_breaks.csv`, and C2 will exclude any target or change-feature window that spans it.
-- Latency observed today: CDEC 1–2 days; POWER about 3 days (recent days come from GEOS-IT, the archive from MERRA-2, so retrospective ≠ real-time). Details are in `data/provenance.md`.
-- Usable for modelling: **all 6 reservoirs, full 2018–2025**, minus ORO windows that span the break.
+- **Data issue found:** ORO has a **reporting-basis break on 2024-07-02**. DWR adopted a new elevation-storage table, producing a −123k AF artificial step. Values are not adjusted. The break is logged in `data/series_breaks.csv`, and C2 will exclude any target or change-feature window that spans it.
+- Latency observed today: CDEC 1-2 days; POWER about 3 days (recent days come from GEOS-IT, the archive from MERRA-2, so retrospective ≠ real-time). Details are in `data/provenance.md`.
+- Usable for modelling: **all 6 reservoirs, full 2018-2025**, minus ORO windows that span the break.
 - Next (C2): weekly targets with series-break masking; baselines + GBM; per-station metrics; block-bootstrap CI.
 
-### C2 — baselines + ML on held-out 2024–2025 (2026-11-21)
+### C2: baselines + ML on held-out 2024-2025 (2026-11-21)
 Weekly Monday origins, 30-day target in pp of capacity, weather lagged 7 d, no window spans the ORO break. Splits: train = targets < 2023-01-01 (**1,486** rows); validation = 2023 (**288**); test = origins ≥ 2024-01-01 with targets ≤ 2025-12-31 (**593** rows, 6 reservoirs). Hyper-parameters, the interval width and the "best baseline" were all chosen on **validation only**. The final model was refit on all pre-2024 outcomes and scored once on test.
 
 | Test MAE (pp of capacity) | all | DNP | EXC | FOL | NML | ORO | SHA |
@@ -46,7 +46,7 @@ Weekly Monday origins, 30-day target in pp of capacity, weather lagged 7 d, no w
 - Leakage controls tested in `tests/test_features.py`: perturbing all data after the origin leaves features unchanged; the last 7 days of weather are unused; missing targets are dropped, never filled; no window spans a series break. The split ordering is asserted in `src/train.py`.
 - Outputs (`outputs/`, git-ignored, produced locally) pass `python -m src.contract outputs`. Extra columns/keys beyond contract v1.0: `pred_ridge_pp`, `storage_pct`, and `Ridge`, `validation`, `bootstrap.mae_ci95` in metrics. These are additive; the UI can ignore them.
 
-### C3 — reproducibility, provenance, README (2026-11-21)
+### C3: reproducibility, provenance, README (2026-11-21)
 - **Clean reproduction passed:** a fresh `git clone -b engineering` into an empty directory, a new venv and `pip install -r requirements.txt`, then fetch → build_dataset → features → train → pytest → contract. Result: `daily_joined.csv` identical, every metric identical (ML 2.8144, seasonal 3.1580, coverage 0.9629, n_test 593), **7/7 tests pass**, contract OK. Exact package versions are in `requirements-lock.txt` (Python 3.14.5, macOS).
 - README rewritten with verified commands, sources, method, results and limitations. Provenance: `data/provenance.md`. Coverage: `data/coverage_table.md`. Originality search: `docs/originality_check.md` (CDEC + ML for California reservoirs has precedent; no identical CDEC + POWER benchmark found in a limited search, which does not prove novelty).
 - Final output schema = **UI contract v1.0, unchanged**. Real outputs add optional extras (see `docs/UI_CONTRACT.md` §3.6). **Muse / Claude Web:** run the pipeline locally, or use `app/sample_data` (synthetic), until real outputs are shared. `outputs/` is git-ignored by design.
