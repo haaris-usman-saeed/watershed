@@ -8,7 +8,7 @@ Shared file. Append under your own heading only.
 **Findings from starter review**
 - Pipeline: `src/fetch.py` (CDEC CSVDataServlet sensor 15 + NASA POWER daily point) → `src/features.py` (weekly Monday rows, 30-day target, weather lagged 7 d) → `src/train.py` (3 baselines + HistGradientBoosting, constant-width 90% interval from 2023 validation errors).
 - Starter was never run against real data. `stations.csv` coordinates/capacities are unverified candidates.
-- First live probe: CDEC `SHA` sensor 15 returns **monthly** (`dur_code=M`) values, but `dur_code=D` returns an empty CSV (header only). Investigating station sensor listing before going further — do not assume daily storage exists for every station.
+- ~~First live probe: SHA daily returned an empty CSV~~ → resolved: transient CDEC empty responses; SHA daily sensor 15 exists (1985–present). Fetch now retries.
 - Starter gaps to fix: no per-station metrics, no bootstrap CI, test split filter `target_date <= 2025-12-31` silently depends on fetch end date; raw NASA JSON overwritten without timestamp; no provenance/coverage outputs.
 
 **Plan**: (1) verify CDEC daily storage per station & capacities, NASA POWER params → C1 coverage table; (2) fix features/splits, add per-station metrics + block bootstrap → C2; (3) clean-env reproduction, README, provenance → C3.
@@ -28,3 +28,20 @@ Shared file. Append under your own heading only.
 - Latency observed today: CDEC 1–2 days; POWER about 3 days (recent days come from GEOS-IT, the archive from MERRA-2, so retrospective ≠ real-time). Details are in `data/provenance.md`.
 - Usable for modelling: **all 6 reservoirs, full 2018–2025**, minus ORO windows that span the break.
 - Next (C2): weekly targets with series-break masking; baselines + GBM; per-station metrics; block-bootstrap CI.
+
+### C2 — baselines + ML on held-out 2024–2025 (2026-11-21)
+Weekly Monday origins, 30-day target in pp of capacity, weather lagged 7 d, no window spans the ORO break. Splits: train = targets < 2023-01-01 (**1,486** rows); validation = 2023 (**288**); test = origins ≥ 2024-01-01 with targets ≤ 2025-12-31 (**593** rows, 6 reservoirs). Hyper-parameters, the interval width and the "best baseline" were all chosen on **validation only**. The final model was refit on all pre-2024 outcomes and scored once on test.
+
+| Test MAE (pp of capacity) | all | DNP | EXC | FOL | NML | ORO | SHA |
+|---|---|---|---|---|---|---|---|
+| **GBM (ML)** | **2.81** | 1.76 | 2.31 | 4.53 | 1.15 | 3.83 | 3.43 |
+| Ridge | 3.41 | 2.12 | 2.98 | 6.17 | 1.91 | 3.43 | 3.84 |
+| Historical seasonal (best baseline on validation) | 3.16 | 2.56 | 3.21 | 5.47 | 1.18 | **3.23** | **3.30** |
+| 30-day trend | 4.80 | 2.79 | 4.33 | 9.24 | 1.29 | 5.32 | 5.89 |
+| Persistence (0 change) | 5.79 | 3.86 | 5.60 | 9.81 | 1.85 | 7.21 | 6.60 |
+| n test rows | 593 | 101 | 101 | 101 | 101 | 88 | 101 |
+
+- **ML − best baseline = −0.34 pp**, 95% moving-block bootstrap CI **[−0.80, +0.03]** (2,000 reps, 5-week blocks over dates, stations resampled together). ML is better in 97% of replicates, but the **CI includes 0**: the improvement is suggestive, not conclusive. **ML loses to the seasonal baseline at ORO and SHA** and ties at NML.
+- 90% interval: ±9.99 pp (90th percentile of absolute 2023 validation errors). Test coverage is **96.3%**, so it over-covers: 2023 was an extreme wet year, which makes the interval wide and of limited practical use. Per-station coverage ranges from 91% to 100%.
+- Leakage controls tested in `tests/test_features.py`: perturbing all data after the origin leaves features unchanged; the last 7 days of weather are unused; missing targets are dropped, never filled; no window spans a series break. The split ordering is asserted in `src/train.py`.
+- Outputs (`outputs/`, git-ignored, produced locally) pass `python -m src.contract outputs`. Extra columns/keys beyond contract v1.0: `pred_ridge_pp`, `storage_pct`, and `Ridge`, `validation`, `bootstrap.mae_ci95` in metrics. These are additive; the UI can ignore them.
