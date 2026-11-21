@@ -1,0 +1,6 @@
+# Frontend dependencies on top of the pipeline's requirements.txt.
+# streamlit 1.46 adds top navigation; older versions fall back to sidebar navigation.
+streamlit>=1.46
+plotly>=5.24
+pandas>=2.0
+numpy>=1.24

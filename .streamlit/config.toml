@@ -1,0 +1,14 @@
+# Frontend theme for WatershedShift. Fonts and finer styling are injected by app/ui_theme.py.
+[theme]
+base = "dark"
+primaryColor = "#48B6CE"
+backgroundColor = "#0C1A22"
+secondaryBackgroundColor = "#12242E"
+textColor = "#ECE5D6"
+font = "sans serif"
+
+[client]
+toolbarMode = "minimal"
+
+[browser]
+gatherUsageStats = false
