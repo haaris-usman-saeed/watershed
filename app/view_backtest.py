@@ -28,7 +28,7 @@ def _kpis(p, scope_label, preferred=None):
                     delta=f"{diff:+.2f} pp vs {C.MODEL_BY_KEY[bk].label.lower()}", delta_color="inverse",
                     help="Average size of the miss, in percentage points of capacity. Lower is better.")
         c[1].metric(f"Best baseline: {C.MODEL_BY_KEY[bk].label}", ui.fmt_pp(mae[bk], sign=False),
-                    help="Lowest-error simple rule over the same forecasts.")
+                    help="Reference baseline chosen on pre-2024 development folds, not reselected using test errors.")
     else:
         c[0].metric("ML mean absolute error", ui.fmt_pp(ml, sign=False) if ml is not None else "n/a")
         c[1].metric("Best baseline", "n/a", help="No baseline columns in test_predictions.csv.")
