@@ -243,3 +243,15 @@ Weekly Monday origins, 30-day target in pp of capacity, weather lagged 7 d, no w
   Provenance and the UI contract point to this section.
 - Another stale count was corrected: the provenance line on the raw manifest said 187 entries. The file has 189: 188 pipeline inputs, as at `e47deab` and in the preregistration, plus 1 ResOpsUS entry.
 - No v1 or v2 metric changed. The README results tables are untouched.
+
+### Phase 6: CI and merge preparation (2026-11-21)
+- Confirmed tracked in PR #2, not recreated: `results/v2/resopsus_check/report.md` and `src/compare_resopsus.py`.
+- **CI added** in `.github/workflows/ci.yml`: Ubuntu, Python 3.14, `pip install -r requirements-lock.txt`. It runs:
+  - all tests;
+  - the contract check on `app/sample_data`;
+  - a read-only check that the frozen config and code hashes equal `RUN_RECORD.json`;
+  - a check that no raw, processed, outputs or dist files are tracked.
+
+  It never downloads data, never runs `src.train_v2 --final` and never writes to the config. Every step was simulated locally in a data-free clone and passes; the first GitHub run is checked after the push.
+- **No test is excluded from CI.** All 30 tests pass without local raw or processed data. One test, `tests/test_contract.py::test_real_outputs_follow_contract_if_present`, validates `outputs/` only when it exists, so in CI it checks nothing. The real outputs are validated locally (`python -m src.contract outputs`, `python -m src.ui_export --verify`).
+- **Merge plan** in `docs/merge_plan.md` (owner actions, 7 steps): merge PR #1 with a merge commit; retarget PR #2 to `main`; resolve any conflicts without touching frozen files; run checks; merge PR #2; integrate the frontend; tag `submission-v2`. Branch ancestry was checked: `main` has nothing that `engineering` lacks, and `engineering` is an ancestor of `review-v2`. The PR #2 description has been updated with the plan. Neither PR was merged.
