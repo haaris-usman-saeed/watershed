@@ -15,6 +15,15 @@ Lag k means the ResOpsUS date is shifted by k days before matching (lag 0 = same
 
 The last two columns (CDEC-sourced ResOpsUS records only) compare ResOpsUS with our RAW CDEC rows keyed by `DATE TIME` (what WatershedShift uses) and by `OBS DATE`.
 
+## Interpretation
+
+- **Partly independent.** Four of the six ResOpsUS storage records (SHA, ORO, NML, EXC) come from CDEC, the same upstream source as WatershedShift, so for them this check tests our processing and date alignment, not the measurement. Only FOL (Bureau of Reclamation) and DNP (USGS 11287500) are independent sources; both agree with our end-of-day dates at lag 0.
+- **Oroville** is predominantly offset by one day relative to WatershedShift's end-of-day dating convention (ResOpsUS labels a value one day later than our date; lag -1 match share at least 0.91 in every year except 2008, 0.62).
+- **McClure (EXC)**: the offset changes across historical periods. The series is one day offset from 2001 through about March 2003, predominantly aligned at zero lag from about April 2003 through May 2014 (2004 to 2013 aligned), mixed during the June 2014 transition, and one day offset again from July 2014 to the end of the overlap (2020).
+- Both records match our raw CDEC rows when those are keyed by `OBS DATE` (last column above), whose offset varies by station and over time. This is consistent with ResOpsUS dating CDEC values by `OBS DATE`, but the exact date convention intended by the ResOpsUS authors is unknown, and this check does not show that their processing is in error.
+- The offsets matter mainly for daily-resolution analysis (daily changes, alignment with daily inflow, release or weather, event timing). They have much less effect on monthly or longer aggregates.
+- No WatershedShift value was changed as a result of this check.
+
 ## Largest differences at lag 0 (top 5 per reservoir)
 
 | station_id   | date       |   ours_af |   resopsus_af |   diff_af |   diff_pp |

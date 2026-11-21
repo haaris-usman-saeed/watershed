@@ -181,6 +181,8 @@ What `interval_reliable` is, and what it is not:
 - It is not proof of future reliability, not a new calibration method and not a scientific certification.
 - The intervals themselves are unchanged.
 
+**Attribution to display.** Use the README section "Attribution and terms". The CDEC wording there is pending owner approval.
+
 `feature_catalog.json` keeps its `features` array unchanged. The NASA POWER weather entries stay listed with `used_by_primary_model: false`.
 
 **UI export package.** `python -m src.ui_export` writes `dist/outputs_v2_ui.zip`. It holds exactly the five contract files plus a `README.md` with the display guidance: the strongest baseline, the sign convention, the Folsom warning and weather as context only. `--verify` re-checks the package. The ZIP is git-ignored and must stay local until the owner confirms the CDEC reuse terms.

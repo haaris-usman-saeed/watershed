@@ -9,7 +9,7 @@ It contains **no new physical measurements**. The contribution is the selection,
 
 The v1 dataset (2018 to 2025, storage and weather only) is preserved in `results/v1/provenance.md` and `results/v1/coverage_table.md`.
 
-Raw files stay on the project owner's machine in `data/raw/` and are never committed, because the repository is public and CDEC redistribution terms are unconfirmed. `data/raw_manifest.jsonl` (tracked) records every download: 187 files with URL, UTC retrieval time, HTTP status, byte size and SHA-256.
+Raw files stay on the project owner's machine in `data/raw/` and are never committed, because the repository is public and CDEC redistribution terms are unconfirmed. `data/raw_manifest.jsonl` (tracked) records every download with URL, UTC retrieval time, HTTP status, byte size and SHA-256. It has 189 entries: 188 for pipeline inputs, matching the count at the frozen commit `e47deab` and in the preregistration, plus 1 for the ResOpsUS archive, which is used only for verification. An earlier version of this line said 187, a stale count.
 
 ```bash
 python -m src.fetch --start 2001-01-01 --end 2025-12-31        # storage + weather (network)
@@ -73,9 +73,9 @@ Candidates are one-day jumps > 2 pp that immediately reverse. Each candidate was
 
 Any future unreviewed candidate is set to missing by default (`tests/test_build.py::test_spike_review_removes_artifacts_and_unreviewed_keeps_physical`). The largest kept daily change is FOL 2022-12-31 (+20.1 pp, about 196,577 AF, during the New Year's Eve 2022 atmospheric river, with 78 mm of rain that day).
 
-### Independent cross-check against ResOpsUS (`results/v2/resopsus_check/report.md`)
+### Cross-check against ResOpsUS, partly independent (`results/v2/resopsus_check/report.md`)
 
-ResOpsUS (Steyaert et al. 2022, *Scientific Data*; Zenodo record 5893641, CC-BY 4.0, md5-verified, SHA-256 in the manifest) contains all six reservoirs. Daily storage was compared for 2001 to 2020 after converting million cubic meters to acre-feet. It is used only for verification and never to modify our data.
+ResOpsUS (Steyaert et al. 2022, *Scientific Data*; Zenodo record 5893641, CC-BY 4.0, md5-verified, SHA-256 in the manifest) contains all six reservoirs. Daily storage was compared for 2001 to 2020 after converting million cubic meters to acre-feet. It is used only for verification and never to modify our data. The check is **not fully independent**: four of the six ResOpsUS storage records (SHA, ORO, NML, EXC) come from CDEC, our own upstream source, so for them it tests processing and date alignment rather than the measurement. Only FOL and DNP come from independent sources.
 
 | Reservoir | ResOpsUS storage source | Agreement with our cleaned series |
 |---|---|---|
@@ -83,12 +83,13 @@ ResOpsUS (Steyaert et al. 2022, *Scientific Data*; Zenodo record 5893641, CC-BY 
 | DNP | USGS gauge 11287500 (independent) | best at the same date: median difference 891 AF (0.04 pp), 99th percentile 6,123 AF, daily-change correlation 0.96 (0.80 and 0.82 at one-day shifts) |
 | SHA | CDEC | 100% identical at the same date (differences of 5 to 7 AF come from a slightly different AF to m3 constant) |
 | NML | CDEC | 99.99% identical at the same date |
-| ORO | CDEC | 99.5% identical when ResOpsUS is matched to raw CDEC keyed by `OBS DATE`; only 3.4% at the same `DATE TIME` date |
-| EXC | CDEC | 98.9% identical keyed by `OBS DATE`; same-date match 55% (aligned 2003 to 2013, one day off in 2001, 2002 and from mid 2014) |
+| ORO | CDEC | predominantly offset by one day relative to our end-of-day dates (ResOpsUS labels a value one day later; one-day match share at least 0.91 in every year except 2008, 0.62). 99.5% identical when matched to raw CDEC keyed by `OBS DATE`; 3.4% at the same date |
+| EXC | CDEC | the offset changes across periods: one day offset from 2001 through about March 2003; predominantly aligned at zero lag from about April 2003 through May 2014 (2004 to 2013 aligned); mixed during the June 2014 transition; one day offset from July 2014 to the end of the overlap. 98.9% identical keyed by `OBS DATE`; same-date match 55% overall |
 
 **Interpretation:**
 - The two independent operator and gauge sources (FOL, DNP) agree with our end-of-day `DATE TIME` dates, with no one-day shift.
-- ResOpsUS keyed its CDEC-sourced records by `OBS DATE`. Because that offset changes by station and over time, ResOpsUS's ORO record and parts of its EXC record are one day off relative to its other records. WatershedShift's `DATE TIME` keying is consistent across stations and years.
+- The ResOpsUS ORO record, and its EXC record outside April 2003 to May 2014, match our raw CDEC rows keyed by `OBS DATE`, whose offset varies by station and over time. This is consistent with ResOpsUS dating CDEC values by `OBS DATE`. The exact date convention intended by the ResOpsUS authors is unknown, and this check does not show that their processing is in error. WatershedShift's `DATE TIME` keying is consistent across stations and years.
+- The offsets matter mainly for daily-resolution analysis (daily changes, alignment with daily flows or weather, event timing). They have much less effect on monthly or longer aggregates.
 - **No WatershedShift value was changed as a result of this check.**
 - Our missing days (DNP 35, EXC 37 in the overlap) are reported in ResOpsUS on 35 and 13 of those days respectively. We keep them missing: they are raw CDEC gaps or reviewed artifacts, and filling them from another source would mix sources within one series.
 
@@ -103,7 +104,7 @@ ResOpsUS (Steyaert et al. 2022, *Scientific Data*; Zenodo record 5893641, CC-BY 
 | Quality flags | None per value. The archive source list is MERRA-2 and POWER. |
 | Spatial meaning | Reanalysis grid cell containing the dam coordinate (SHA cell elevation 463 m vs dam about 325 m). **This is not watershed-average rainfall.** |
 | Latency | About 3 days (observed 2026-11-21). Recent days come from GEOS-IT, while archive years come from MERRA-2, so retrospective values differ from what was available in real time. |
-| Terms | NASA data, free to use. Requested acknowledgement: "These data were obtained from the NASA Langley Research Center (LaRC) POWER Project funded through the NASA Earth Science/Applied Science Program." |
+| Terms | NASA data, free to use. Consolidated attribution for all sources: README section "Attribution and terms". Requested acknowledgement: "These data were obtained from the NASA Langley Research Center (LaRC) POWER Project funded through the NASA Earth Science/Applied Science Program." |
 
 ## 3. Snow water equivalent: CDEC snow pillows (sensor 82)
 

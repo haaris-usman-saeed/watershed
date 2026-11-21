@@ -21,6 +21,10 @@ The models forecast the **30-day change in storage, in percentage points (pp) of
 | v2 held-out results | `results/v2/final/metrics.json`, `results/v2/final/RUN_RECORD.json` |
 | UI and output schema | `docs/UI_CONTRACT.md` |
 | Relation to prior work | `docs/originality_check.md` |
+| Guide for assessors (bundle, checksums, frozen rerun) | `ASSESSORS.md` |
+| Source-linked report facts | `results/v2/report_facts.md`, `results/v2/report_facts.json` |
+| Reproducibility record | `docs/reproducibility.md` |
+| Merge plan for the owner | `docs/merge_plan.md` |
 
 ## 1. Install (verified on macOS, Python 3.14.5)
 
@@ -48,10 +52,13 @@ python -m pytest -q tests                                      # 9. tests
 python -m src.contract outputs                                 # 10. validate UI contract
 python -m src.make_bundle                                      # 11. deterministic private bundle -> dist/
 python -m src.make_bundle --verify dist/watershedshift_v2_bundle.tar.gz
+python -m src.ui_export                                        # 12. additive UI metadata + dist/outputs_v2_ui.zip (local only)
+python -m src.report_facts --check                             # 13. report facts match the evidence
 ```
 
 Notes on these steps:
 - **Step 8** refuses to run unless `docs/preregistration.md` is committed and the hashes of the config and code match it. Re-running it with the identical frozen configuration is allowed, to check reproducibility. A different configuration needs explicit owner approval.
+- **Step 12** must be re-run after any rerun of step 8, because step 8 rewrites `outputs/` without the additive handoff keys.
 - **Raw data stays on the local machine** (git-ignored) because the repository is public and CDEC redistribution terms are unconfirmed. `data/raw_manifest.jsonl` (tracked) lists every download with its URL, retrieval time and SHA-256.
 - **CDEC flakiness:** CDEC sometimes returns empty responses. The fetchers retry and cache completed requests, so they can be re-run safely.
 
@@ -69,9 +76,26 @@ Key verification findings:
 - The CDEC `DATE TIME` field is end-of-day storage. `OBS DATE` is operator dependent and was the source of a one-day shift in the starter code.
 - Oroville's capacity changed from 3,537,577 to 3,424,753 AF when DWR adopted a new storage table on 2024-07-01. The daily CDEC series switches on 2024-07-02. v2 uses the capacity in force on each date, and no window spans the change.
 - Spike candidates were adjudicated against the independent elevation sensor. Two artifacts were removed; six flood-day extremes at Folsom were confirmed and kept.
-- An independent cross-check against ResOpsUS (Steyaert et al. 2022) finds that FOL (Bureau of Reclamation source) is 99.6% identical on the same dates, and DNP (USGS gauge) agrees within a median of 0.04 pp. ResOpsUS's CDEC-sourced ORO and parts of EXC are one day off because they follow `OBS DATE` (`results/v2/resopsus_check/report.md`).
+- **ResOpsUS cross-check (Steyaert et al. 2022):** partly independent, because four of its six storage records (SHA, ORO, NML, EXC) come from CDEC. Details are in `results/v2/resopsus_check/report.md`.
+  - The two independent sources agree with our dates: FOL (Bureau of Reclamation) is 99.6% identical on the same dates, and DNP (USGS gauge) agrees within a median of 0.04 pp.
+  - ResOpsUS's Oroville record is predominantly offset by one day relative to our end-of-day dates.
+  - For McClure (EXC), the offset changes across periods: it is aligned at zero lag in about April 2003 to May 2014, and one day off in 2001 to early 2003 and from July 2014.
+  - Both match CDEC `OBS DATE` keying. The authors' intended date convention is unknown, so we do not claim an error.
+  - The offsets matter mainly for daily-resolution analysis.
 
-**Terms:** NASA POWER asks for this acknowledgement: "These data were obtained from the NASA Langley Research Center (LaRC) POWER Project funded through the NASA Earth Science/Applied Science Program." CDEC data are public and provisional. No explicit open licence was found, so cite CDEC/DWR, and do not redistribute raw records without confirming the terms.
+### Attribution and terms
+
+**CDEC (wording PENDING OWNER APPROVAL):**
+> Reservoir storage and snow observations were obtained from the California Department of Water Resources, California Data Exchange Center (CDEC), retrieved November 21, 2026. Observations may be provisional or revised. CDEC/DWR does not endorse this research prototype. Raw CDEC records are not redistributed in this public repository.
+
+No specific reuse licence for CDEC data has been verified. Do not redistribute raw or CDEC-derived records (including the private bundle and `outputs_v2_ui.zip`) until the owner confirms the terms.
+
+**NASA POWER** (requested acknowledgement):
+> These data were obtained from the NASA Langley Research Center (LaRC) POWER Project funded through the NASA Earth Science/Applied Science Program.
+
+**ResOpsUS** (used only to verify storage, never as a model input):
+- Citation: Steyaert, Condon, Turner and Voisin (2022), *Scientific Data*, DOI: 10.1038/s41597-022-01134-7.
+- The release used is Zenodo record 5893641, licensed CC BY 4.0. It is kept locally and not redistributed here.
 
 ## 4. Method (v2)
 
@@ -107,8 +131,16 @@ Key verification findings:
 - **v2 ML minus strongest baseline: -0.64 pp.** 95% CI [-1.02, -0.35] (5-week blocks), [-1.07, -0.34] (9), [-1.10, -0.34] (13).
 - **v1 ML minus its best baseline:** -0.34 pp, 95% CI [-0.80, +0.03] (5 weeks); [-0.90, +0.11] (9); [-0.93, +0.11] (13).
 - **Paired v2 vs v1 ML** on 571 rows with identical targets: -0.47 pp, CI [-0.68, -0.29] (5 weeks), [-0.69, -0.27] (9), [-0.67, -0.26] (13).
-- **Disclosure:** v2 was designed after the v1 test results on the same period were seen, so the period is not fully independent of the revision. See `docs/preregistration.md`.
-- **What drove the improvement:** a secondary HGB using the v1 feature set but the 2001+ training data scored 2.32 on the same test. Most of the improvement over v1 therefore comes from the longer, corrected training history, not from the snow features.
+- **Folsom interval under-coverage:** only about 75% of Folsom's 2024-2025 outcomes fell inside the nominal 90% interval (coverage 0.75). The other five reservoirs range from 0.91 to 0.99. The UI export marks FOL `interval_reliable: false`, which is a retrospective warning, not a recalibration.
+
+**Test-period disclosure.** The 2024-2025 period was evaluated for v1 and subsequently for a preregistered v2 configuration. The v2 model was selected using pre-2024 development data, but the original test results had already been examined when the scientific revisions were planned. The v2 evaluation therefore provides additional evidence rather than a fully independent replication. See `docs/preregistration.md`.
+
+**Primary model.**
+- The v2 primary model ("HGB SWE no weather", chosen by the preregistered rule) uses reservoir history, reservoir identity, seasonality and CDEC SWE. The exact columns are in `results/v2/report_facts.md`, fact 7.
+- NASA POWER weather is included in the assembled dataset and in the secondary model variants, but not in the selected primary model.
+- The longer, corrected historical training record accounts for most of the improvement relative to v1. A secondary HGB using the v1 feature set but the 2001+ training data scored 2.32 on the same test.
+- The independent predictive value of adding SWE or weather is not conclusively established. The development ablation CIs include 0.
+- That secondary HGB (2.32) and HGB + SWE (2.32) are marginally better than the primary (2.33). The primary model was not reselected after the test.
 
 ### Development, confirmation folds WY2016-2023 (n = 2,500)
 
