@@ -71,3 +71,13 @@ Weekly Monday origins, 30-day target in pp of capacity, weather lagged 7 d, no w
   - By fullness, errors are largest when storage is below 40% of capacity (n=13; GBM 8.16, seasonal 8.49, coverage 69%).
   - ORO before the storage-table change (n=22): GBM 4.11 vs seasonal 2.15. After (n=66): 3.74 vs 3.60.
 - Data audit of the original 2018-2025 data: no duplicate dates, no unit mismatches (every row is AF, sensor 15, duration D), 2 isolated spikes, flags e/r counted. See `data/coverage_table.md`.
+
+### Checkpoint B: historical expansion and reporting-basis corrections (2026-11-21)
+- **Period extended to 2001-01-01 through 2025-12-31 for all six reservoirs** (102 new CDEC station-years plus POWER 2001-2025). The joined daily table has 54,786 station-days. Missing storage: SHA 0, ORO 1, FOL 0, NML 0, DNP 36, EXC 39 days (max 0.43%; longest gap 6 days). No duplicates, no unit mismatches, no weather gaps. Details are in `data/coverage_table.md`.
+- **Date convention re-verified for 2003 and 2010**: daily D equals hourly 00:00 of D+1 for SHA, ORO, FOL, NML and EXC.
+- **Oroville capacity normalization**: `data/capacity_history.csv` gives 3,537,577 AF through 2024-07-01 and 3,424,753 AF from 2024-07-02. In the raw records, hourly sensor 15 steps by -110,466 AF at 2024-07-01 00:00, and the daily series switches on 2024-07-02. This matches DWR's July 1, 2024 effective date. `storage_pct` and targets now use the capacity in force; window exclusion across the break is unchanged.
+- **Extremes versus artifacts**: spike candidates are now adjudicated against the independent elevation sensor (`data/spike_review.csv`). DNP 2019-09-26 and EXC 2022-05-22 are artifacts and set to missing. Six FOL flood-day candidates (2005-12-30, 2016-12-15/16, 2017-01-07/11, 2017-02-10) are physical and **kept**; the v1 rule would have deleted them. A dry-day shift scan found only multi-day flood-release sequences (ORO February 2017 spillway emergency, FOL 2006 and 2016-17) and no other reporting breaks.
+- **Snow**: 51 CDEC daily snow pillows (sensor 82, adjusted SWE, inches) were downloaded for the upstream basins, 2001-2025, and QC'd (missing is never treated as zero). Core pillows were picked by a predetermined availability rule using WY2002-2023 only: SHA 7, ORO 8, FOL 12, NML 5, DNP 3, EXC 3.
+- DWR water year types (WSIHIST) were downloaded for descriptive grouping only.
+- Regression tests: `tests/test_build.py` (8 tests) covering the date convention, unit and sensor rejection, no interpolation, duplicate handling, spike adjudication, historical capacity, and capacity and break consistency.
+- Raw manifest: 188 downloads with SHA-256. Provenance has been rewritten (`data/provenance.md`); v1 provenance and coverage are archived in `results/v1/`.
