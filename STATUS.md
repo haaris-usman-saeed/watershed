@@ -203,3 +203,10 @@ Weekly Monday origins, 30-day target in pp of capacity, weather lagged 7 d, no w
 - Checked now: the config and the five frozen code files hash to the preregistered values and the RUN_RECORD values; `git diff e47deab HEAD` is empty for all of them; `results/v2/final/` has not changed since `f21bf25`; tag `v1-results` (`01e43cb`) is on the remote and `results/v1/` was only ever added to.
 - Since `cf7d4bc`, `src/` has only gained three separate scripts (ResOpsUS fetch and comparison, report facts) that no pipeline step imports.
 - Gaps flagged: the clean-clone terminal logs were not archived as files, and reproduction has only been tested on macOS with Python 3.14.5.
+
+### Phase 3: assessor guide and data package (2026-11-21)
+- `ASSESSORS.md` (about one page) covers: software, how to get the private bundle, safe extraction, a table of included and excluded files, checksum verification, offline reconstruction, a frozen rerun from the pinned commit, metric comparison, tests and the contract validator, metadata-only differences, and agency revisions.
+- **Gap found and fixed:** the earlier bundle contained only `src/contract.py`, not the pipeline. `src/make_bundle.py` (the existing generator, reused) now also includes `src/`, `tests/`, `app/sample_data/`, `ASSESSORS.md`, `docs/reproducibility.md` and `PROMPTS.md`, plus `SOURCE_COMMIT.txt` naming the commit and whether the working tree was clean.
+- `ASSESSORS.md` says plainly that the bundle is **not self-contained for the frozen rerun**: the preregistration guard needs a git checkout, so assessors check out the pinned commit and copy the bundle's data into it. Raw agency responses are excluded unless the owner builds with `--include-raw` after the CDEC terms are confirmed.
+- New read-only helper `src/compare_metrics.py` compares a reproduced `metrics.json` with the archived one number by number, ignoring `generated_utc`.
+- The bundle is rebuilt and verified in the final verification step, after the last commit, so that `SOURCE_COMMIT.txt` names the final commit.

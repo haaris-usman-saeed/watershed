@@ -16,6 +16,7 @@ import hashlib
 import io
 from pathlib import Path
 import sys
+import subprocess
 import tarfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,10 +31,12 @@ INCLUDE = [
     "data/processed/weekly_features.csv", "data/processed/coverage.csv", "data/processed/station_year_audit.csv",
     "data/processed/discontinuity_scan.csv",
     "outputs/stations.csv", "outputs/history_daily.csv", "outputs/test_predictions.csv", "outputs/metrics.json",
-    "outputs/feature_catalog.json", "src/contract.py",
+    "outputs/feature_catalog.json", "ASSESSORS.md", "docs/reproducibility.md", "PROMPTS.md",
 ]
-INCLUDE_DIRS = ["results/v1", "results/v2"]
+# results, the full engineering pipeline (src/), the tests and the synthetic UI fixtures they validate
+INCLUDE_DIRS = ["results/v1", "results/v2", "src", "tests", "app/sample_data"]
 EXCLUDE_PARTS = {"local_full", "ui_outputs_rehearsal", "__pycache__"}
+EXCLUDE_SUFFIXES = {".pyc"}
 LIMITATIONS = """WatershedShift v2 submission bundle: limitations
 
 - Retrospective data. CDEC storage (provisional, revisable; 'r' flags), CDEC snow sensor 82 (an adjusted
@@ -50,9 +53,20 @@ LIMITATIONS = """WatershedShift v2 submission bundle: limitations
 def collect(include_raw=False):
     files = [ROOT / f for f in INCLUDE if (ROOT / f).exists()]
     for d in INCLUDE_DIRS + (["data/raw"] if include_raw else []):
-        files += [p for p in (ROOT / d).rglob("*") if p.is_file() and not EXCLUDE_PARTS & set(p.parts)]
+        files += [p for p in (ROOT / d).rglob("*") if p.is_file() and not EXCLUDE_PARTS & set(p.parts)
+                  and p.suffix not in EXCLUDE_SUFFIXES]
     missing = [f for f in INCLUDE if not (ROOT / f).exists()]
     return sorted(set(files)), missing
+
+
+def source_commit():
+    """Commit the bundle was built from, and whether bundled tracked files differ from it."""
+    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+    dirty = subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"], cwd=ROOT,
+                           capture_output=True, text=True).stdout.strip()
+    return (f"source_commit: {head or 'not found'}\n"
+            f"working_tree_clean_at_build: {'yes' if not dirty else 'no (bundle may differ from the commit)'}\n"
+            "repository: https://github.com/haaris-usman-saeed/watershed\n")
 
 
 def _add(tar, arcname, data):
@@ -109,7 +123,8 @@ def main():
     files, missing = collect(a.include_raw)
     if missing:
         sys.exit(f"missing required files (run the pipeline first): {missing}")
-    entries = [(str(p.relative_to(ROOT)), p.read_bytes()) for p in files] + [("LIMITATIONS.txt", LIMITATIONS.encode())]
+    entries = [(str(p.relative_to(ROOT)), p.read_bytes()) for p in files] + [
+        ("LIMITATIONS.txt", LIMITATIONS.encode()), ("SOURCE_COMMIT.txt", source_commit().encode())]
     out = DIST / (NAME + ("_with_raw" if a.include_raw else "") + ".tar.gz")
     digest = build_archive(entries, out)
     print(f"{out} ({out.stat().st_size / 1e6:.1f} MB, {len(entries)} files) sha256={digest}")
