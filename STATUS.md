@@ -197,3 +197,9 @@ Weekly Monday origins, 30-day target in pp of capacity, weather lagged 7 d, no w
   - Core snow pillows for FOL are **11**, not 12. Recomputed with `core_snow_stations` and read from `snow_basin_index.csv`; the model always used 11. Corrected in README, `data/provenance.md` and Checkpoint B above.
   - Rolling development forecasts are **4,988** (2,488 tuning + 2,500 confirmation), not 4,995. `metrics.json` `val_count` and `results/v2/development/summary.json` already said 4,988. Corrected in Checkpoint C above.
 - ORO break windows: 13 weekly origins (2024-06-03 to 2024-08-26) are excluded because their window spans the 2024-07-02 break, which is why ORO has 88 test rows instead of 101.
+
+### Phase 2: reproducibility evidence verified (2026-11-21)
+- `docs/reproducibility.md` records the frozen configuration identity, the single held-out run and the earlier clean-clone reproduction (commit `cf7d4bc`), using existing evidence only. **No new fresh-clone run was performed for this handoff.**
+- Checked now: the config and the five frozen code files hash to the preregistered values and the RUN_RECORD values; `git diff e47deab HEAD` is empty for all of them; `results/v2/final/` has not changed since `f21bf25`; tag `v1-results` (`01e43cb`) is on the remote and `results/v1/` was only ever added to.
+- Since `cf7d4bc`, `src/` has only gained three separate scripts (ResOpsUS fetch and comparison, report facts) that no pipeline step imports.
+- Gaps flagged: the clean-clone terminal logs were not archived as files, and reproduction has only been tested on macOS with Python 3.14.5.
