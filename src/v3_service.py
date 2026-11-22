@@ -158,6 +158,15 @@ def check_display_allowed(sources, policy=None, mode=None):
                             "contain those values until the owner records written permission.")
 
 
+def cdec_display_block_reason(policy=None, mode=None):
+    """Message explaining why CDEC-derived values may not be shown on this deployment, or None if allowed."""
+    try:
+        check_display_allowed(["cdec_storage_sensor15", "cdec_snow_sensor82"], policy, mode)
+    except PolicyBlocked as exc:
+        return str(exc)
+    return None
+
+
 # ------------------------------------------------------------------ feature helpers (pure)
 
 def weather_features(daily, t, lag=WEATHER_LAG, suffix=""):

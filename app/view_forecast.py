@@ -271,6 +271,11 @@ def render_snapshot(b):
         _empty("Forecast snapshot could not be read", f"<p><code>{ui.esc(str(path))}</code>: {ui.esc(str(exc))}</p>")
         return
     today = datetime.now(timezone.utc).date()
+    from src.v3_service import cdec_display_block_reason
+    blocked = cdec_display_block_reason() if snap.get("data_mode") == "real" else None
+    if blocked:
+        _empty("Not available on this public deployment", f"<p>{ui.esc(blocked)}</p>")
+        return
     errs, warns = validate(snap, today=today)
     synthetic = snap.get("data_mode") != "real"
     if not synthetic and expired(snap, today):

@@ -47,5 +47,13 @@ except TypeError:  # Streamlit < 1.46 has no top navigation
 
 ui.masthead(bundle)
 ui.data_mode_warning(bundle)
-nav.run()
+from src.v3_service import cdec_display_block_reason  # noqa: E402
+
+_blocked = cdec_display_block_reason() if bundle.is_real else None
+if _blocked:   # public deployment with real (CDEC-derived) outputs: show nothing from them
+    ui.callout("Real data cannot be shown on this public deployment", ui.esc(_blocked) +
+               " Deploy with the synthetic fixtures (WATERSHED_DATA_DIR=app/sample_data) until rights are cleared.",
+               "caution")
+else:
+    nav.run()
 ui.footer(bundle)

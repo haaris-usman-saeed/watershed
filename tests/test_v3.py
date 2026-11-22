@@ -478,3 +478,52 @@ def test_service_with_real_model_a_artifact(tmp_path):
     a = r["models"]["A"]
     assert r["status"] == "ok" and a["available"] and a["version"] == "v2-frozen"
     assert a["training_cutoff_exclusive"] == "2024-01-01" and len(a["artifact_sha256"]) == 64
+
+
+# ---------------------------------------------------------------- artifact provisioning
+
+def _fake_artifacts(root):
+    from src.v3_artifacts import FILES
+    for f in FILES:
+        p = root / f
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(f"content of {f}".encode())
+
+
+def test_artifact_package_round_trip_is_hash_pinned(tmp_path):
+    from src.v3_artifacts import FILES, install, pack
+    src_root, dest = tmp_path / "src", tmp_path / "dest"
+    _fake_artifacts(src_root)
+    out, h = pack(tmp_path / "dist", root=src_root)
+    data = out.read_bytes()
+    man = install(data, h, dest=dest, mode="private")
+    assert set(man) == set(FILES) and all((dest / f).read_bytes() == (src_root / f).read_bytes() for f in FILES)
+    with pytest.raises(ValueError, match="does not match the pinned"):
+        install(data, "0" * 64, dest=tmp_path / "d2", mode="private")
+    assert not (tmp_path / "d2").exists()
+
+
+def test_artifact_install_rejects_unexpected_members_and_public_without_rights(tmp_path):
+    import hashlib
+    import io
+    import tarfile
+    from src.v3_artifacts import install
+    buf = io.BytesIO()
+    with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+        ti = tarfile.TarInfo("../../etc/evil")
+        ti.size = 1
+        tar.addfile(ti, io.BytesIO(b"x"))
+        ti = tarfile.TarInfo("data/processed/daily_joined.csv")     # private data never accepted
+        ti.size = 1
+        tar.addfile(ti, io.BytesIO(b"x"))
+    data = buf.getvalue()
+    with pytest.raises(ValueError, match="unexpected archive member"):
+        install(data, hashlib.sha256(data).hexdigest(), dest=tmp_path, mode="private")
+    with pytest.raises(PermissionError):
+        install(data, hashlib.sha256(data).hexdigest(), dest=tmp_path, mode="public")
+
+
+def test_ensure_artifacts_without_configuration_does_nothing(tmp_path, monkeypatch):
+    from src.v3_artifacts import ensure_artifacts
+    monkeypatch.delenv("WATERSHED_ARTIFACT_URL", raising=False)
+    assert ensure_artifacts(root=tmp_path).startswith("missing") and not any(tmp_path.iterdir())

@@ -389,3 +389,13 @@ This branch is based on `feature/30-day-forecast` (PR #4, open, CI passing). It 
 
 ### Remaining blockers
 - See `docs/v3/V3_REPORT.md`: CDEC public display rights, public hosting of the model artifacts, and persistent records on Streamlit Community Cloud.
+
+### PR #5 review fixes (2026-11-22)
+- **CI failure fixed:** `test_external_api_failure_gives_no_forecast` failed on the clean runner because the missing-artifact guard ran before the mocked CDEC timeout.
+  - The service tests now inject a controlled mock model, so the CDEC failure path really runs.
+  - A separate test drives the real loading path with no artifacts installed and checks that nothing is fetched.
+  - The service's safety checks are unchanged.
+- **Public gate widened:** with `WATERSHED_DEPLOYMENT=public`, `app.py` renders no page content from real (CDEC-derived) outputs, and the "Issued record" tab hides real snapshots. Both are tested.
+- **Comparison table:** now shows paired, same-row MAE against Model A, with the preregistered verdicts displayed on the page. README and report wording no longer imply any unsupported superiority.
+- **Artifact provisioning:** `src/v3_artifacts.py` packs and installs hash-pinned artifacts and installs them at app start when configured. Tested.
+- **Merge sequence:** simulated without conflicts. CI now re-runs when a PR is retargeted. Details in `docs/v3/LAUNCH_AND_MERGE.md`.

@@ -20,7 +20,7 @@ Current hosting: the repository has only `.streamlit/config.toml` (theme). The a
 |---|---|---|
 | Outbound requests to CDEC, NASA POWER, AWS (NOAA) | Allowed | Allowed |
 | GRIB2 decoding (`eccodes` + `eccodeslib` wheels) | Linux wheels exist; Python 3.14 availability on Cloud must be checked at deploy time | Works (`Dockerfile`) |
-| Model artifacts | **Not available:** they are git-ignored, and Cloud deploys from the repository | Mount `models/` read-only |
+| Model artifacts | Git-ignored. Installed at startup from a hash-pinned package (`src/v3_artifacts.py`) once rights allow | Mount `models/` read-only, or use the same package |
 | Shared cache | In-process plus local disk; the disk is ephemeral, so the cache rebuilds after a restart (acceptable) | Persistent volume `/data/cache` |
 | Concurrent visitors | One small shared container: coalescing and the upstream rate limit stop duplicate fetches | Size the VM as needed |
 | Request time | First request about 30 s, then cached | Same; add a scheduled `python -m src.v3_service --warm` |
@@ -32,7 +32,7 @@ Current hosting: the repository has only `.streamlit/config.toml` (theme). The a
 
 The public site will not generate forecasts until both of the following are done:
 1. DWR confirms CDEC redistribution and display terms, and the owner sets `public_display: true` in `config/data_release_policy.json` (a reviewed commit).
-2. Model artifacts are published, or fetched at startup from private storage with hash verification. That fetch is **not implemented**; it is the next engineering step after clearance.
+2. Model artifacts are provisioned through `src/v3_artifacts.py` (hash-pinned package, installed at app start from `WATERSHED_ARTIFACT_URL` and `WATERSHED_ARTIFACT_SHA256`). See `docs/v3/LAUNCH_AND_MERGE.md`.
 
 Until then, a deployment with `WATERSHED_DEPLOYMENT=public` shows an explanation in place of the button result. It never displays CDEC values.
 
@@ -57,6 +57,7 @@ docker run -p 8501:8501 -v "$PWD/models:/app/models:ro" -v "$PWD/forecasts:/app/
 | `WATERSHED_CACHE_DIR` | Shared source cache | `data/v3/cache` |
 | `WATERSHED_RECORD_DIR` | Write-once local forecast records | `forecasts/records_v3` |
 | `WATERSHED_RECORD_BUCKET` | S3-compatible bucket for records (needs `boto3`) | unset |
+| `WATERSHED_ARTIFACT_URL`, `WATERSHED_ARTIFACT_SHA256`, `WATERSHED_ARTIFACT_TOKEN` | Model package location, pinned hash, optional bearer token | unset |
 | `WATERSHED_DATA_DIR` | Backtest UI data (`outputs` or `app/sample_data`) | `outputs` |
 | `WATERSHED_FORECAST_FILE` | Issued Model A snapshot shown in the "Issued record" tab | `forecasts/latest.json` |
 

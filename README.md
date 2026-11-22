@@ -303,11 +303,12 @@ python -m src.v3_release --version YYYY-MM-DD   # public data release (NOAA and 
 | 2026 test, 90% interval coverage | 0.94 | 0.94 | 0.93 | 0.94 | | |
 
 - **Preregistered verdicts: all three "not established".**
-  - H1 (C beats A): -0.033 pp, 95% CI from -0.17 to +0.12 with 5-week blocks.
+  - H1 (C has lower MAE than A): difference -0.033 pp, 95% CI from -0.17 to +0.12 with 5-week blocks.
   - H2 (B beats A): -0.010 pp.
-  - H3 (B2 beats B): +0.025 pp, which points the other way.
+  - H3 (B2 has lower MAE than B): difference +0.025 pp, the opposite sign.
 - **Reading the development folds:**
-  - Forecast precipitation (C) was about 4% better than A in development (2.72 against 2.83 pp). The 2026 test points the same way, but it is too short (about 42 weekly origins) to confirm it.
+  - On the same development rows, Model C's MAE was 2.72 pp against 2.83 for A. Development folds are descriptive only: they include 2024-2025, which were seen earlier, and they have no uncertainty interval or preregistered test.
+  - The 2026 point estimate has the same sign, but its 95% interval includes zero. **Whether forecast precipitation improves accuracy is not established.**
   - Past observed weather (B) adds essentially nothing, and averaging it over the upstream box (B2) does not help.
 - **Interval coverage by reservoir:** the overall figures above hide Folsom, where the 90% ranges covered only 69-74% of 2026 outcomes (about 75% in v2).
 - **Context only:** the 2024-2025 v2 comparison of A and B reproduces exactly (2.3323 against 2.3231). It is not a v3 test.

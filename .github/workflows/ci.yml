@@ -6,6 +6,8 @@ on:
   push:
     branches: [main, engineering, review-v2]
   pull_request:
+    # edited: re-run when a PR is retargeted (for example PR #5 from feature/30-day-forecast to main)
+    types: [opened, synchronize, reopened, edited]
 
 permissions:
   contents: read

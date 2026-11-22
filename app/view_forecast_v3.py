@@ -29,7 +29,9 @@ MODEL_INPUTS = {
 
 @st.cache_resource(show_spinner=False)
 def service():
+    from src.v3_artifacts import ensure_artifacts
     from src.v3_service import ForecastService
+    ensure_artifacts()          # no-op when present; installs hash-pinned artifacts when configured
     return ForecastService()
 
 
@@ -124,9 +126,17 @@ def weather_figures(r):
 
 
 def comparison_table(r, perf):
+    """Paired comparisons only: each model against Model A (v3 refit) on the same rows."""
     rows = []
-    dev = perf.get("dev", {}).get("all_folds", {}).get("mae", {})
-    fin = perf.get("final", {}).get("mae", {})
+    dev = perf.get("dev", {}).get("all_folds", {}).get("paired", {})
+    fin = perf.get("final", {}).get("paired", {})
+
+    def pair(src, k):
+        p = src.get(f"{k} vs A")
+        if not p:
+            return "n/a" if k != "A" else "reference"
+        return f"{p[f'mae_{k}']:.2f} vs {p['mae_A']:.2f} ({p['n']:,} rows)"
+
     for k in ("A", "B", "B2", "C"):
         m = r["models"].get(k, {})
         rows.append({
@@ -135,10 +145,22 @@ def comparison_table(r, perf):
             "30-day change": ui.fmt_pp(m["change_pp"], digits=1) if m.get("available") else "",
             "90% range": f"{m['interval']['lower_change_pp']:+.1f} to {m['interval']['upper_change_pp']:+.1f} pp" if m.get("available") else "",
             "Trained on targets before": m.get("training_cutoff_exclusive", ""),
-            "Dev-fold MAE (WY2008-2025)": f"{dev[f'pred_{k}']['mae']:.2f} pp" if f"pred_{k}" in dev else "not run",
-            "2026 test MAE": f"{fin[f'pred_{k}']['mae']:.2f} pp" if f"pred_{k}" in fin else "not run",
+            "MAE vs Model A, development WY2008-2025": pair(dev, k) if dev else "not run",
+            "MAE vs Model A, 2026 test": pair(fin, k) if fin else "not run",
         })
     return pd.DataFrame(rows)
+
+
+def verdict_text(perf):
+    h = perf.get("final", {}).get("hypotheses")
+    if not h:
+        return "The preregistered 2026 comparison has not been run on this deployment."
+    names = {"H1": "C better than A", "H2": "B better than A", "H3": "B2 better than B"}
+    parts = [f"{names.get(k, k)}: {v['verdict']}" for k, v in h.items()]
+    sup = [k for k, v in h.items() if v["verdict"] == "supported"]
+    tail = ("No model is shown to be more accurate than another; the differences above are within sampling noise."
+            if not sup else "Only the supported comparisons above may be read as differences in accuracy.")
+    return "Preregistered 2026 test (95% block-bootstrap intervals, 5, 9 and 13 weeks): " + "; ".join(parts) + ". " + tail
 
 
 def render_interactive(b):
@@ -208,10 +230,13 @@ def render_interactive(b):
 
     st.markdown("## Model comparison")
     ui.show_table(comparison_table(r, _perf()))
-    st.caption("Models are compared only on rows where both are available, under the preregistered rules in "
-               "docs/v3/PREREGISTRATION_V3.md. Extra inputs do not make a model better; no model is declared the winner "
-               "unless the 2026 test supports it. Model A is the unchanged frozen v2 model (trained on targets before 2024); "
-               "B, B2 and C are v3 models trained on targets before 2026.")
+    perf = _perf()
+    ui.callout("What the comparison shows", ui.esc(verdict_text(perf)), "model")
+    st.caption("Mean absolute error in percentage points, each model against Model A (v3 refit, same features as the "
+               "frozen model) on exactly the same rows, under docs/v3/PREREGISTRATION_V3.md. Development folds include "
+               "2024-2025, which were seen earlier and are not an independent test. Extra inputs do not make a model "
+               "better. The Model A forecast shown above is the unchanged frozen v2 model (trained on targets before "
+               "2024); B, B2 and C are v3 models trained on targets before 2026.")
     cut = {k: m.get("information_cutoff") for k, m in avail.items()}
     if len({json.dumps(v, sort_keys=True) for v in cut.values()}) > 1:
         ui.callout("Different information cutoffs", "These models use different information. A uses storage to the origin "

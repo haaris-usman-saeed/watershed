@@ -19,9 +19,9 @@
 ## Results, stated carefully
 
 - **Verdicts:** H1 (C beats A), H2 (B beats A) and H3 (B2 beats B) are all **not established** on 2026. Every 95% CI includes zero.
-- **Development folds:** C was about 4% more accurate than A. B equalled A, and B2 was slightly worse than B.
-- **What this means:** forecast precipitation is the only input with a consistent sign of benefit, but its value is not established. No model is declared the winner.
-- **All models vs the seasonal baseline:** every model beat the smoothed seasonal baseline on 2026 by about 0.53-0.57 pp, but with 42 weekly origins the CIs include zero. v2 established that advantage on 2024-2025.
+- **Development folds (descriptive, not a test):** on the same rows, MAE was 2.72 pp for C against 2.83 for A. B and A were equal, and B2 was slightly higher than B. These folds include 2024-2025, which were seen earlier, and they have no uncertainty interval.
+- **What this means:** forecast precipitation is the only added input whose point estimates favour it in both periods, but its value is **not established**. No model is declared the winner, and the website says so.
+- **All models vs the seasonal baseline:** on 2026, every model's MAE was 0.53-0.57 pp lower than the smoothed seasonal baseline's. With 42 weekly origins the CIs include zero, so this is not established on 2026 alone. The advantage of the v2 model over that baseline was established on 2024-2025, where every CI was below zero.
 
 ## Unvalidated
 
@@ -33,7 +33,7 @@
 ## Blocked
 
 1. **Public display of CDEC-derived values** (storage, snow index, forecasts, model artifacts). Legal status is unresolved, and the owner needs to send the drafted request to DWR. Until then, `WATERSHED_DEPLOYMENT=public` refuses before any fetch.
-2. **Public hosting of the models.** The artifacts are git-ignored. After clearance, they need to be published, or fetched from private storage with hash checks. That fetch is not implemented.
+2. **Public hosting of the models.** The artifacts are git-ignored. A hash-pinned package and installer exist (`src/v3_artifacts.py`); the owner must upload the package once rights allow (`docs/v3/LAUNCH_AND_MERGE.md`).
 3. **Persistent records on Streamlit Community Cloud.** These need an S3 bucket and credentials. The `RecordStore` S3 backend is tested only with a fake client.
 
 **The public site is therefore not operational for forecasting.** A visitor on a private deployment can select a reservoir and generate a genuine forecast without a terminal.

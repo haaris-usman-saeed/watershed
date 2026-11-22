@@ -167,3 +167,39 @@ def test_public_mode_shows_policy_block(monkeypatch, tmp_path):
     at.button(key="v3_go").click().run()
     t = text(at)
     assert "Not available on this public deployment" in t and len(at.metric) == 0
+
+
+def test_public_mode_hides_real_issued_snapshot(monkeypatch, tmp_path):
+    import json
+    snap = json.loads((ROOT / "app/sample_data/forecast_snapshot.json").read_text())
+    snap["data_mode"] = "real"
+    p = tmp_path / "real_like.json"
+    p.write_text(json.dumps(snap))
+    monkeypatch.setenv("WATERSHED_DEPLOYMENT", "public")
+    at = run_page(monkeypatch, p)
+    t = text(at)
+    assert "Not available on this public deployment" in t and "Forecast interpretation" not in t
+
+
+def test_public_mode_blocks_whole_app_on_real_outputs(monkeypatch, tmp_path):
+    """A public deployment pointed at real (CDEC-derived) outputs renders no page content."""
+    import json
+    import shutil
+    d = tmp_path / "real_like"
+    shutil.copytree(ROOT / "app/sample_data", d)
+    m = json.loads((d / "metrics.json").read_text())
+    m["data_mode"] = "real"
+    (d / "metrics.json").write_text(json.dumps(m))
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setenv("WATERSHED_DATA_DIR", str(d))
+    monkeypatch.setenv("WATERSHED_DEPLOYMENT", "public")
+    at = AppTest.from_file(str(ROOT / "app.py"), default_timeout=60)
+    at.run()
+    assert not at.exception, at.exception
+    t = text(at)
+    assert "Real data cannot be shown on this public deployment" in t
+    assert "How to read this site" not in t and len(at.metric) == 0
+    monkeypatch.setenv("WATERSHED_DEPLOYMENT", "private")
+    at = AppTest.from_file(str(ROOT / "app.py"), default_timeout=60)
+    at.run()
+    assert "Real data cannot be shown" not in text(at)
