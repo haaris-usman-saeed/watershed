@@ -255,3 +255,88 @@ Weekly Monday origins, 30-day target in pp of capacity, weather lagged 7 d, no w
   It never downloads data, never runs `src.train_v2 --final` and never writes to the config. Every step was simulated locally in a data-free clone and passes; the first GitHub run is checked after the push.
 - **No test is excluded from CI.** All 30 tests pass without local raw or processed data. One test, `tests/test_contract.py::test_real_outputs_follow_contract_if_present`, validates `outputs/` only when it exists, so in CI it checks nothing. The real outputs are validated locally (`python -m src.contract outputs`, `python -m src.ui_export --verify`).
 - **Merge plan** in `docs/merge_plan.md` (owner actions, 7 steps): merge PR #1 with a merge commit; retarget PR #2 to `main`; resolve any conflicts without touching frozen files; run checks; merge PR #2; integrate the frontend; tag `submission-v2`. Branch ancestry was checked: `main` has nothing that `engineering` lacks, and `engineering` is an ancestor of `review-v2`. The PR #2 description has been updated with the plan. Neither PR was merged.
+
+## 30-day research forecast feature (branch `feature/30-day-forecast`, 2026-11-22)
+
+The frozen v2 evaluation is untouched. The frozen code and config are byte-identical to `e47deab`, `results/v2/final` and `results/v1` are identical to `f21bf25`, and the frozen hashes still equal `RUN_RECORD.json`. Nothing was rerun under `src.train_v2`.
+
+### Phase 1: audit and feasibility
+- **Done:** wrote `docs/FORECAST_IMPLEMENTATION.md`.
+- **Findings:**
+  - No v2 model weights existed; `models/forecast.joblib` is a v1 artifact.
+  - The primary model can be refit exactly from the private processed data.
+  - CDEC serves storage through 2026-11-20 and sensor 82 through 2026-11-21.
+- **Problem found:** recent sensor 82 values are only partly flagged as revised, so the live SWE is not identical in kind to the mostly revised training values. This is disclosed in every forecast.
+
+### Phase 2: prediction-time features
+- **Done:** `src/forecast_live.inference_features` reads storage on dates up to t and SWE up to t-1 only. It never needs t+30.
+- **Tests:**
+  - On all 593 frozen test origins, its 9 non-station inputs equal `weekly_features.csv` plus `add_snow_anomaly` within 1e-9.
+  - The model-input order equals `models.design()`.
+
+### Phase 3: model reconstruction
+- **Done:** `src/forecast_model.py --build` refits with the frozen code path and refuses to write unless every archived prediction is reproduced.
+- **Result:**
+  - 593/593 reproduced, max difference 1.8e-15 pp.
+  - Artifact SHA-256 `00eec470...`.
+  - The interval offsets in the card equal the archived interval widths for every season.
+  - The artifact is git-ignored. Loading refuses a tampered file.
+
+### Phase 4: data refresh
+- **Done:** downloads go to `data/live/<issue date>/` with their own fetch log. They never touch `data/raw/` or `data/raw_manifest.jsonl`. Cleaning reuses `build_dataset.load_cdec` and `load_snow` unchanged.
+- **Real run on 2026-11-22:**
+  - 14 files, all hashes verified.
+  - The 2025 storage overlap equals the archived data on all 2,190 station-days.
+
+### Phase 5: forecasts
+- **Done:** real forecasts were issued 2026-11-22.
+  - SHA, ORO, FOL, NML and EXC: origin 2026-11-16, target 2026-12-16.
+  - DNP: origin 2026-11-09, flagged stale. Its basin index lacked 2 of 3 core pillows after 2026-11-12.
+- No projection fell outside 0-100%. FOL carries the interval caution.
+- Records are written to `forecasts/records/` and are never overwritten.
+
+### Phase 6: Streamlit page
+- **Done:** added `app/view_forecast.py` and registered it as the fifth page in `app.py`. That is a UI-team file, edited at the owner's explicit request.
+- The page is read-only and validated. It shows dedicated states for:
+  - no snapshot;
+  - an invalid snapshot;
+  - an expired forecast;
+  - a reservoir that is unavailable;
+  - stale data;
+  - a synthetic fixture.
+- **Checked:** in a browser against the real snapshot.
+
+### Phase 7: deployment
+- **Done:** documented in README section 10.
+- **Blocker:** the snapshot, the downloads and the model artifact are CDEC-derived, so a public deployment cannot show real forecasts until the owner confirms CDEC terms. A private snapshot source is also needed and is not implemented.
+
+### Phase 8: tests
+- **Added:**
+  - `tests/test_forecast.py`: 29 tests. 5 need private data or the artifact and are skipped in CI.
+  - `tests/test_forecast_page.py`: 4 headless page tests with Streamlit AppTest.
+- **Full suite:** 63 passed locally.
+- **Other checks:**
+  - `src.contract` passes on `outputs` and `app/sample_data`.
+  - `app/check_v2_integration.py outputs` passes.
+  - `report_facts --check` and `ui_export --verify` pass.
+- **CI:** now installs plotly for the page tests, checks that no live, forecast or model files are tracked, and checks that the synthetic fixture is reproducible.
+
+### Phase 9: documentation
+- **Done:** README section 10, `docs/FORECAST_IMPLEMENTATION.md` (log and checklist), this entry.
+
+### Remaining blockers
+- CDEC redistribution terms, which block public deployment of real forecasts.
+- No prospective validation yet. The first targets fall on 2026-12-09 (DNP) and 2026-12-16 (the rest).
+- Sensor 82 revision status at forecast time.
+
+### Follow-up: plainer site guidance (2026-11-22)
+- **Overview:**
+  - Added "How to read this site", a plain description of the five pages.
+  - The storage heading now names the last day of the historical dataset (Dec 31, 2025) instead of "end of the record".
+  - Added "Latest observed storage" from the CDEC refresh, shown only when a valid, unexpired snapshot exists. Otherwise a caution says the gauges are not today's levels.
+- **Forecast page:** added "Who this forecast helps". It covers:
+  - what the model accounts for;
+  - what it cannot see (future storms, planned releases);
+  - that it is not a tool for operators;
+  - where it is useful: research, a benchmark, public understanding.
+- **Tests:** 3 new page tests; 66 passed locally.

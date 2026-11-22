@@ -25,6 +25,7 @@ The models forecast the **30-day change in storage, in percentage points (pp) of
 | Source-linked report facts | `results/v2/report_facts.md`, `results/v2/report_facts.json` |
 | Reproducibility record | `docs/reproducibility.md` |
 | Merge plan for the owner | `docs/merge_plan.md` |
+| 30-day research forecasts (experimental) | section 10 below, `docs/FORECAST_IMPLEMENTATION.md` |
 
 ## 1. Install (verified on macOS, Python 3.14.5)
 
@@ -171,11 +172,11 @@ No specific reuse licence for CDEC data has been verified. Do not redistribute r
 
 ## 7. Scope
 
-The project covers tabular multisource forecasting only. **There is no satellite-image, CNN, operational-forecast or reservoir-siting capability.** Satellite features remain future research.
+The project covers tabular multisource forecasting only. **There is no satellite-image, CNN, operational-forecast or reservoir-siting capability.** The 30-day research forecast in section 10 is experimental and is not an operational forecast. Satellite features remain future research.
 
 ## Demo app
 
-Run `streamlit run app.py` (owned by the UI team; see `docs/UI_CONTRACT.md`). Use `WATERSHED_DATA_DIR=app/sample_data` for the **synthetic** UI fixtures.
+Run `streamlit run app.py` (owned by the UI team; see `docs/UI_CONTRACT.md`). Use `WATERSHED_DATA_DIR=app/sample_data` for the **synthetic** UI fixtures. The fifth page, **30-Day Forecast**, is described in section 10.
 
 ## 8. Suggested handoff
 
@@ -184,3 +185,83 @@ Send the repository or app link, together with the limitations above, to an appr
 ## 9. Agent workflow
 
 See `PROMPTS.md`. Engineering (Claude Code) owns `src/`, `tests/`, `data/`, `results/`, `config/`, `outputs/` and the engineering docs. The UI team (Claude Web / Muse) owns `app.py` and `app/`.
+
+## 10. Generating 30-Day Research Forecasts
+
+This adds new forecasts for future dates to the historical backtest. It uses the **frozen v2 primary model, unchanged**, and the latest eligible CDEC observations. It is an **experimental research forecast**, not operational water-management advice. Design notes and the feasibility audit are in `docs/FORECAST_IMPLEMENTATION.md`.
+
+**What is predicted.** The change in reservoir **storage** over the next 30 days, in percentage points of the capacity in force on the origin date. It is converted to acre-feet and to projected storage. It is not a water-surface elevation: +5 pp means storage rises by 5% of documented capacity, not 5 feet.
+
+**Observations required** (all from CDEC, no weather):
+- daily storage (sensor 15) on the origin date t and on t-7, t-30 and t-60;
+- the basin snow index (sensor 82, mean of the frozen core pillows, at least 2/3 reporting) on t-1 and t-15.
+
+If any of these are missing, the forecast for that reservoir is refused. An older forecast is never substituted.
+
+**How the model is obtained.** `python -m src.forecast_model --build` refits the frozen primary model:
+- the same code path as `src.train_v2`;
+- the same 7,076 training rows, with targets before 2024-01-01;
+- the same hyperparameters, feature order and snow climatology.
+
+It writes the artifact only if the refit reproduces all 593 archived 2024-2025 test predictions within 1e-9 pp. The measured difference is 1.8e-15 pp. No 2024-2025 outcome is used for fitting. The artifact goes to `models/v2_forecast/` (git-ignored), with a model card recording:
+- training cutoff and feature order;
+- config hash and source commit;
+- SHA-256 of every training input;
+- creation time and artifact SHA-256.
+
+Loading checks the artifact hash against the card before anything is unpickled.
+
+**How to generate a forecast** (needs the private processed data for the build step, and network access to cdec.water.ca.gov):
+
+```bash
+python -m src.forecast_model --build     # once; --verify re-checks it later
+python -m src.forecast_live              # refresh CDEC, build features, score, write the snapshot
+```
+
+`src.forecast_live` does the following:
+- downloads about two calendar years of storage and SWE into `data/live/<issue date>/`, with a fetch log (URL, time, SHA-256);
+- cleans the data with the unchanged historical rules in `src.build_dataset`;
+- builds the 15 inputs with a prediction-time feature builder that never needs storage at t+30;
+- scores each reservoir;
+- writes the record to `forecasts/records/<forecast id>.json`, which is never overwritten, and copies it to `forecasts/latest.json`.
+
+Options:
+- `--offline <dir>` rebuilds from cached downloads without network access;
+- `--as-of` sets an earlier issue date, but never a future one.
+
+**How the forecast date is chosen.** The origin is the latest Monday on or before the issue date minus one day that has all inputs. Mondays up to 14 days old are considered. An origin more than 7 days old is flagged stale. The target is exactly origin + 30 calendar days, and it must be after the issue date.
+
+**How often it can be updated.**
+- A new origin becomes available each week, once CDEC reports Monday's end-of-day storage, usually by Tuesday or Wednesday.
+- Rerunning later in the same week keeps the origin but may pick up revised values; each run is a new record.
+
+**What the interval means.**
+- It uses the frozen `sym_season` 90% offsets: the 90th percentile of absolute out-of-fold errors from the development folds (WY2008-2023), for the origin's season.
+- It is **retrospectively calibrated, and its future coverage is not established.**
+- In the 2024-2025 backtest, Folsom intervals covered only about 75% of outcomes, and the Folsom forecast carries that warning.
+
+**Why this is not an operational tool.**
+- The model knows only recent storage, snowpack and season. It does not represent planned releases, flood-control rules, demands or precipitation forecasts.
+- It has not been prospectively validated.
+- Recent sensor 82 SWE values may still be revised, while training used mostly revised values.
+- The capacity denominator is assumed unchanged through the target date.
+- Projections outside 0-100% of capacity are shown unclipped and flagged.
+
+**Viewing it.** `streamlit run app.py` and open **30-Day Forecast**. The page is read-only: it validates the snapshot with `src.forecast_schema` and displays only a valid, unexpired one. It never fits a model, loads weights or downloads data. It looks for the snapshot in this order:
+1. `WATERSHED_FORECAST_FILE`;
+2. `forecasts/latest.json`;
+3. `forecast_snapshot.json` in the UI data directory.
+
+The synthetic fixture in `app/sample_data/` (`python -m src.make_forecast_fixture`) is shown only under a synthetic-data banner.
+
+**Deploying privately.**
+- *Local or private host:* run the two commands above on an authorised machine and start Streamlit there. Point `WATERSHED_FORECAST_FILE` at the snapshot if it lives elsewhere. Re-run `src.forecast_live` weekly, for example from cron on Tuesday.
+- *Public deployment (blocker):* the snapshot, the live downloads and the model artifact all contain CDEC-derived values and are git-ignored. While CDEC redistribution terms are unresolved, they must not be committed or uploaded to a public host. A public deployment built from this repository therefore shows the page's explained "No forecast snapshot" state, or the synthetic fixture under its banner. Enabling real forecasts publicly needs the owner to confirm CDEC terms first. It then needs a private snapshot source, such as a private bucket read through Streamlit secrets, which is **not implemented**.
+
+**Real-world test (2026-11-22): succeeded.** `python -m src.forecast_live` was run against live CDEC data on 2026-11-22:
+- Five reservoirs (SHA, ORO, FOL, NML, EXC) received forecasts from origin Monday 2026-11-16 to target 2026-12-16.
+- Don Pedro (DNP) received a forecast from origin 2026-11-09, flagged stale, because fewer than 2 of its 3 core pillows reported after 2026-11-12.
+- All 14 downloaded files matched their logged SHA-256.
+- The re-downloaded 2025 storage was identical to the archived 2025 data on every station-day.
+
+These numbers are private and are not reproduced here. They are new forecasts, not held-out test results, and they do not change any v2 result.

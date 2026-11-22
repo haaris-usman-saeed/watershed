@@ -2,6 +2,7 @@
 
     WATERSHED_DATA_DIR=app/sample_data streamlit run app.py   # synthetic fixtures
     streamlit run app.py                                       # pipeline outputs in outputs/
+    The 30-Day Forecast page reads forecasts/latest.json (python -m src.forecast_live) or WATERSHED_FORECAST_FILE.
 
 Frontend modules live in app/ (deliberately not a package: app/__init__.py would collide
 with this file's module name), so that directory is put on sys.path below.
@@ -20,6 +21,7 @@ import ui_components as ui  # noqa: E402
 import ui_nav  # noqa: E402
 import view_backtest  # noqa: E402
 import view_explorer  # noqa: E402
+import view_forecast  # noqa: E402
 import view_overview  # noqa: E402
 import view_research  # noqa: E402
 
@@ -33,6 +35,7 @@ pages = {
     "explorer": st.Page(view_explorer.render, title="Reservoir explorer", url_path="explorer"),
     "backtest": st.Page(view_backtest.render, title="Backtesting", url_path="backtest"),
     "research": st.Page(view_research.render, title="Model and research", url_path="research"),
+    "forecast": st.Page(view_forecast.render, title="30-Day Forecast", url_path="forecast"),
 }
 for name, page in pages.items():
     ui_nav.register(name, page)

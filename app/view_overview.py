@@ -1,4 +1,5 @@
-"""A. Overview: where every reservoir stood at the end of the record, on a map."""
+"""A. Overview: a guide to the site, the latest observed storage (when a forecast refresh exists) and
+where each reservoir stood on the last day of the historical dataset, on a map."""
 from __future__ import annotations
 
 import numpy as np
@@ -10,7 +11,72 @@ import ui_components as ui
 import ui_contract as C
 import ui_nav
 
+from datetime import datetime, timezone
+
 PICKER = "ov"
+
+
+GUIDE = [
+    ("Overview", "this page: the six reservoirs, how full they are, and how much data we have."),
+    ("Reservoir explorer", "the measured daily storage history of one reservoir, 2001 to 2025, with snowpack and weather "
+                           "context. Data only, no predictions."),
+    ("Backtesting", "the exam: forecasts made for 2024 and 2025 using only what was known at the time, compared with "
+                    "what actually happened."),
+    ("Model and research", "the evidence and the fine print: scores, whether the advantage could be luck, whether "
+                           "the uncertainty ranges hold, and the limitations."),
+    ("30-Day Forecast", "a new forecast from the latest CDEC observations, made with the same frozen model."),
+]
+
+
+def _guide():
+    items = "".join(f"<li><strong>{ui.esc(n)}</strong>: {ui.esc(d)}</li>" for n, d in GUIDE)
+    ui.callout("How to read this site",
+               "WatershedShift predicts how much water each reservoir will gain or lose over the next 30 days, as a "
+               "share of its capacity. It was trained on 2001 to 2023 and tested on 2024 to 2025."
+               f"</p><ul style='margin:0.4rem 0 0;color:inherit'>{items}</ul><p>", "note")
+
+
+def _latest_live(b):
+    """Most recent observed storage from a valid, unexpired forecast refresh, or None."""
+    try:
+        import view_forecast
+        from src.forecast_schema import expired, validate
+        path, _ = view_forecast.resolve_snapshot(b)
+        if path is None or not path.exists():
+            return None
+        snap = view_forecast.load_snapshot(path)
+    except Exception:  # noqa: BLE001  the overview never fails because of the forecast snapshot
+        return None
+    today = datetime.now(timezone.utc).date()
+    errs, _ = validate(snap, today=today)
+    if errs or snap.get("data_mode") != ("real" if b.is_real else "synthetic") or expired(snap, today):
+        return None
+    rows = []
+    for r in snap["stations"]:
+        obs = [h for h in r.get("recent_history", []) if h.get("storage_af") is not None]
+        if obs:
+            rows.append((r["reservoir_name"], obs[-1]["storage_pct"], obs[-1]["date"]))
+    return (snap, rows) if rows else None
+
+
+def _live_strip(b):
+    live = _latest_live(b)
+    if live is None:
+        ui.callout("The gauges below are not today's levels",
+                   "They show the last day of the historical dataset. No recent CDEC refresh is available on this "
+                   "deployment; see the 30-Day Forecast page for how one is produced.", "caution")
+        return
+    snap, rows = live
+    st.markdown("## Latest observed storage")
+    cols = st.columns(len(rows))
+    for c, (name, pct, d) in zip(cols, rows):
+        c.metric(name, ui.fmt_pct(pct, 1), help=f"CDEC daily storage on {d}")
+        c.caption(f"on {ui.fmt_date(d, long=True)}")
+    st.caption(f"From the CDEC refresh behind the 30-Day Forecast, issued {ui.fmt_date(snap['issue_date'], long=True)}. "
+               "Percent of the capacity in force on that date. These recent values are not part of the historical "
+               "dataset used for training and testing.")
+    if ui.wide_button("Open the 30-Day Forecast", key="ov_go_forecast", kind="primary"):
+        ui_nav.go("forecast")
 
 
 def _map_pick(event, ids):
@@ -33,7 +99,7 @@ def _panel(b, sid):
                 f'<div class="ws-id">Station {ui.esc(str(sid))}</div>', unsafe_allow_html=True)
     rows = [("Documented capacity", ui.fmt_af(r.capacity_af))]
     if pd.notna(r.latest_af):
-        rows += [("Latest storage in dataset", f"{ui.fmt_af(r.latest_af)} ({ui.fmt_pct(r.latest_pct)} of capacity)"),
+        rows += [("Storage on last day of dataset", f"{ui.fmt_af(r.latest_af)} ({ui.fmt_pct(r.latest_pct)} of capacity)"),
                  ("Observed on", ui.fmt_date(r.last_date, long=True))]
         band = r.band
         if band:
@@ -62,7 +128,7 @@ def _table(b):
         "Reservoir": s["reservoir_name"].astype(str),
         "ID": s["station_id"].astype(str),
         "Capacity (AF)": s["capacity_af"],
-        "Latest storage (AF)": s["latest_af"],
+        "Storage, last day of dataset (AF)": s["latest_af"],
         "% of capacity": s["latest_pct"],
         "Observed on": s["last_date"].apply(lambda d: ui.fmt_date(d)),
         "Record starts": s["first_date"].apply(lambda d: ui.fmt_date(d)),
@@ -73,7 +139,7 @@ def _table(b):
         t["Test forecasts"] = s["n_forecasts"]
     cfg = {
         "Capacity (AF)": st.column_config.NumberColumn(format="localized"),
-        "Latest storage (AF)": st.column_config.NumberColumn(format="localized"),
+        "Storage, last day of dataset (AF)": st.column_config.NumberColumn(format="localized"),
         "% of capacity": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.0f%%"),
         "Days observed": st.column_config.NumberColumn(format="%.1f%%"),
     }
@@ -92,18 +158,22 @@ def render():
     ui.page_intro(f"{n} California reservoirs{span}",
                   "Daily California reservoir storage joined with CDEC snowpack and NASA POWER weather. "
                   "The selected v2 model uses storage history and snowpack to predict 30-day change.")
+    _guide()
+    _live_strip(b)
 
     sid = ui.station_picker(b, PICKER, label="Reservoir")
 
-    st.markdown("## Where each reservoir stood at the end of the record")
+    last_all = s["last_date"].max()
+    end_txt = f" ({ui.fmt_date(last_all, long=True)})" if pd.notna(last_all) else ""
+    st.markdown(f"## Storage on the last day of the historical dataset{end_txt}")
     if b.history is None:
         ui.require(b, C.HISTORY_FILE, purpose="Storage levels")
     else:
         ui.gauge_row(b, sid)
         last = s["last_date"].max()
-        st.caption(f"Latest values in the dataset, not live conditions. The most recent observation is "
-                   f"{ui.fmt_date(last, long=True)}. The same-season range uses only the years in this dataset, "
-                   f"so it is a short record, not a long-term historical average.")
+        st.caption(f"Values in the historical dataset used to train and test the model, not today's conditions. "
+                   f"Its last day is {ui.fmt_date(last, long=True)}. The pale bar is the range on the same dates in "
+                   f"other years of the dataset, a short record rather than a long-term average.")
 
     left, right = st.columns([3, 2], gap="large")
     with left:
@@ -112,8 +182,8 @@ def render():
         if picked and picked != sid:
             ui.set_station(picked, picker_keys=[f"{PICKER}_station"])
             st.rerun()
-        st.caption("Marker area scales with documented capacity; color shows the latest storage as a share of "
-                   "capacity. Select a reservoir on the map or with the control above.")
+        st.caption("Marker area scales with documented capacity; color shows storage on the last day of the "
+                   "historical dataset as a share of capacity. Select a reservoir on the map or with the control above.")
     with right:
         _panel(b, sid)
 
