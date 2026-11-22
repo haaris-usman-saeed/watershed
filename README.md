@@ -265,3 +265,31 @@ The synthetic fixture in `app/sample_data/` (`python -m src.make_forecast_fixtur
 - The re-downloaded 2025 storage was identical to the archived 2025 data on every station-day.
 
 These numbers are private and are not reproduced here. They are new forecasts, not held-out test results, and they do not change any v2 result.
+
+## 11. v3: weather-aware models and interactive forecasting
+
+v3 adds three models alongside the unchanged frozen Model A. It also adds a **Generate Forecast** button that fetches fresh data and runs all four models. Everything in v3 is new work; the frozen v2 results are untouched.
+
+| Model | Adds to A | Data |
+|---|---|---|
+| A | (frozen v2: storage history, snowpack, season, reservoir) | CDEC |
+| B | Recent weather at the dam (7-day lag) | NASA POWER point |
+| B2 | Recent weather averaged over the upstream area (7-day lag) | NASA POWER grid cells in the upstream box |
+| C | Forecast precipitation for days 1-7 and 8-16 over the upstream area | NOAA GEFSv12 control member, 00Z on the origin Monday (reforecast 2001-2019, operational from 2020-09-24) |
+
+**Key documents**
+- `docs/v3/MODEL_C_FEASIBILITY.md`: which forecast archives exist and what Model C may use.
+- `docs/v3/PREREGISTRATION_V3.md` and `config/v3_plan.json`: the fixed comparison plan.
+- `docs/DATA_PUBLICATION_AUDIT.md`: who may publish what.
+- `docs/v3/DEPLOYMENT.md`: how to run the interactive site.
+
+**Rebuilding the models and results**
+
+```bash
+python -m src.v3_gefs --history          # GEFS basin precipitation, about 20 GB streamed, small CSV kept
+python -m src.v3_power --end YYYY-MM-DD  # NASA POWER dam points and upstream-box cells
+python -m src.v3_dataset                 # private weekly table (CDEC-derived)
+python -m src.v3_experiment --dev        # development folds WY2008-2025, model-specific intervals
+python -m src.v3_experiment --final      # the one preregistered 2026 test; writes models/v3/
+python -m src.v3_release --version YYYY-MM-DD   # public data release (NOAA and NASA-derived only)
+```

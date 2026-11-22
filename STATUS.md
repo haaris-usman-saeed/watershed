@@ -340,3 +340,27 @@ The frozen v2 evaluation is untouched. The frozen code and config are byte-ident
   - that it is not a tool for operators;
   - where it is useful: research, a benchmark, public understanding.
 - **Tests:** 3 new page tests; 66 passed locally.
+
+## v3: weather-aware models and interactive forecasting (branch `feature/v3-forecast-platform`, 2026-11-22)
+
+This branch is based on `feature/30-day-forecast` (PR #4, open, CI passing). It must be merged after PR #4, or retargeted to `main` once PR #4 is merged. The frozen v2 files are unchanged, and the frozen hashes equal `RUN_RECORD.json`.
+
+### Phase 0: protection
+- The 2026-11-22 Model A record is read-only on disk. Its SHA-256 is in the tracked ledger `docs/v3/issued_forecast_ledger.jsonl`, and a test checks it.
+- Model A is the unchanged v2 artifact.
+
+### Phase 3 (done first): data rights and forecast-archive audits
+- **Data rights:** `docs/DATA_PUBLICATION_AUDIT.md` and `config/data_release_policy.json`.
+  - NOAA GEFS (operational and reforecast) and NASA POWER: confirmed redistributable.
+  - CDEC: unresolved. DWR's Conditions of Use contain only a disclaimer, and CDEC pages carry "Copyright © State of California". A permission request is drafted.
+- **Weather-forecast archives:** `docs/v3/MODEL_C_FEASIBILITY.md`.
+  - Verified directly on AWS: GEFSv12 reforecast 2000-2019 (00Z daily, 5 members, to day 16) and operational GEFSv12 from 2020-09-23.
+  - The two use the same APCP encoding. Operational S3 publication times are recorded.
+
+### Phase 1: models and data
+- **Model B** reproduces the v2 HGB + SWE comparison exactly: 2.3231 against Model A's 2.3323 on 2024-2025, a marginal difference already published.
+- **Model B2:** upstream-box NASA POWER means. The 2001-2025 POWER re-download is identical to the v2 weather on all 54,786 overlapping days.
+- **Model C:** basin-box GEFS precipitation for days 1-7 and 8-16, from the control member.
+  - 1,313 Monday cycles from 2001 to 2026 were downloaded in byte ranges.
+  - One reforecast cycle (2007-06-04) has a malformed index and is recorded as incomplete.
+- **v3 weekly table:** identical to the v2 table on all 7,693 shared rows. It adds 24 December 2025 rows and 251 rows with 2026 origins.

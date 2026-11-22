@@ -1,0 +1,14 @@
+.venv
+.git
+data/raw
+data/processed
+data/live
+data/v3/private
+data/v3/cache
+data/v3/power
+forecasts
+models
+outputs
+dist
+**/__pycache__
+.claude

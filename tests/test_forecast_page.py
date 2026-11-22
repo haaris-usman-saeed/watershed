@@ -115,3 +115,56 @@ def test_overview_guide_and_dated_heading_without_live_data(monkeypatch):
 def test_overview_shows_latest_live_storage_when_refresh_exists(monkeypatch):
     t = text(run_overview(monkeypatch, ROOT / "forecasts/latest.json", "outputs"))
     assert "Latest observed storage" in t and "not today's levels" not in t
+
+
+def _interactive():
+    import sys
+    from pathlib import Path as _P
+    root = _P.cwd()
+    for p in (str(root), str(root / "app")):
+        if p not in sys.path:
+            sys.path.insert(0, p)
+    import ui_components as ui
+    import view_forecast_v3
+    ui.inject_css()
+    view_forecast_v3.render_interactive(ui.load_bundle())
+
+
+@pytest.mark.skipif(not (ROOT / "models/v2_forecast/model_card.json").exists(), reason="Model A artifact not present")
+def test_generate_forecast_button_runs_service_offline(monkeypatch, tmp_path):
+    import sys
+    sys.path.insert(0, str(ROOT / "app"))
+    import view_forecast_v3
+    from tests.test_v3 import NOW, service as synthetic_service
+    svc = synthetic_service(tmp_path, NOW)
+    monkeypatch.setattr(view_forecast_v3, "service", lambda: svc)
+    from src.v3_service import RecordStore
+    monkeypatch.setattr(view_forecast_v3, "record_store", lambda: RecordStore(root=tmp_path / "rec"))
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setenv("WATERSHED_DATA_DIR", str(ROOT / "app/sample_data"))
+    at = AppTest.from_function(_interactive, default_timeout=60)
+    at.run()
+    assert "press Generate Forecast" in text(at)
+    at.segmented_control(key="v3_station").set_value("FOL").run() if hasattr(at, "segmented_control") else None
+    at.button(key="v3_go").click().run()
+    assert not at.exception, at.exception
+    t = text(at)
+    assert "Model comparison" in t and "Data freshness" in t and "Interval caution: Folsom" in t
+    assert any("Model A" in m.label for m in at.metric)
+    assert len(list((tmp_path / "rec").glob("*.json"))) == 1
+
+
+def test_public_mode_shows_policy_block(monkeypatch, tmp_path):
+    import sys
+    sys.path.insert(0, str(ROOT / "app"))
+    import view_forecast_v3
+    from tests.test_v3 import NOW, service as synthetic_service
+    monkeypatch.setenv("WATERSHED_DEPLOYMENT", "public")
+    monkeypatch.setattr(view_forecast_v3, "service", lambda: synthetic_service(tmp_path, NOW))
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setenv("WATERSHED_DATA_DIR", str(ROOT / "app/sample_data"))
+    at = AppTest.from_function(_interactive, default_timeout=60)
+    at.run()
+    at.button(key="v3_go").click().run()
+    t = text(at)
+    assert "Not available on this public deployment" in t and len(at.metric) == 0

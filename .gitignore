@@ -26,3 +26,7 @@ results/v2/rehearsal/ui_outputs_rehearsal/
 # 30-day research forecasts: live CDEC downloads and forecast snapshots are private (CDEC terms unresolved)
 data/live/
 forecasts/
+
+# v3: private CDEC-derived tables, caches, raw weather downloads and logs. Publishable derived data is
+# released through src/v3_release.py into public_data/ (write-once, policy-checked).
+data/v3/
