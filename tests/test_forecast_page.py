@@ -220,3 +220,33 @@ def test_fresh_deployment_uses_latest_public_release(monkeypatch, tmp_path):
     assert ui_io.resolve_data_dir()[1] == "public release"          # an empty outputs/ (as in a clone) is not data
     (tmp_path / "outputs/metrics.json").write_text("{}")
     assert ui_io.resolve_data_dir()[1] == "default"                 # private outputs win when present
+
+
+@pytest.mark.parametrize("page", ["overview", "explorer", "backtest", "research", "forecast"])
+def test_every_page_renders_on_the_published_release_in_public_mode(monkeypatch, page):
+    """The public deployment's data (newest public release) must render every page without an exception."""
+    rel = sorted(ROOT.glob("public_data/watershedshift-public-data-*/ui_outputs"))
+    if not rel:
+        pytest.skip("no public release with UI outputs")
+    import sys
+    sys.path.insert(0, str(ROOT / "app"))
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setenv("WATERSHED_DATA_DIR", str(rel[-1]))
+    monkeypatch.setenv("WATERSHED_DEPLOYMENT", "public")
+    monkeypatch.setenv("WATERSHED_FORECAST_FILE", str(rel[-1] / "forecast_snapshot.json"))
+
+    def _render(name):
+        import sys as _s
+        from pathlib import Path as _P
+        for p in (str(_P.cwd()), str(_P.cwd() / "app")):
+            if p not in _s.path:
+                _s.path.insert(0, p)
+        import importlib
+        import ui_components as ui
+        ui.inject_css()
+        importlib.import_module({"overview": "view_overview", "explorer": "view_explorer", "backtest": "view_backtest",
+                                 "research": "view_research", "forecast": "view_forecast"}[name]).render()
+
+    at = AppTest.from_function(_render, default_timeout=60, args=(page,))
+    at.run()
+    assert not at.exception, at.exception

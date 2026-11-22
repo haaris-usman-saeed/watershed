@@ -265,7 +265,8 @@ def inspector_figure(daily, row, lag_days, synthetic, baselines, height=380):
 
 # ---------------------------------------------------------------- research
 
-SYMBOLS = {"ml": "diamond", "persistence": "circle-open", "trend": "square-open", "seasonal": "triangle-up-open"}
+SYMBOLS = {"ml": "diamond", "persistence": "circle-open", "trend": "square-open", "seasonal": "triangle-up-open",
+           "doy": "triangle-down-open"}
 
 
 def per_station_dots(long, synthetic):
@@ -278,7 +279,7 @@ def per_station_dots(long, synthetic):
             continue
         fig.add_trace(go.Scatter(
             x=d["mae"], y=d["reservoir_name"], mode="markers", name=spec.label,
-            marker=dict(symbol=SYMBOLS[spec.key], size=13 if spec.key == "ml" else 10, color=P[spec.color],
+            marker=dict(symbol=SYMBOLS.get(spec.key, "circle-open"), size=13 if spec.key == "ml" else 10, color=P[spec.color],
                         line=dict(width=2, color=P[spec.color])),
             customdata=d["n"], hovertemplate=f"{spec.label}: %{{x:.2f}} pp, n = %{{customdata}}<extra>%{{y}}</extra>"))
     fig = finish(fig, synthetic, 110 + 44 * len(order), margin=dict(l=150, r=18, t=40, b=46))
