@@ -73,7 +73,7 @@ def endpoint_figure(r, synthetic=False, height=430):
     avail = [k for k, m in r["models"].items() if m.get("available")]
     for i, k in enumerate(avail):
         m = r["models"][k]
-        x = t + pd.Timedelta(hours=(i - (len(avail) - 1) / 2) * 20)
+        x = t + pd.Timedelta(hours=(i - (len(avail) - 1) / 2) * 40)
         iv = m["interval"]
         fig.add_trace(go.Scatter(
             x=[x], y=[m["projected_pct"]], mode="markers", name=f"Model {k}: day-30 estimate and 90% range",
@@ -87,7 +87,7 @@ def endpoint_figure(r, synthetic=False, height=430):
                        xshift=4, font=dict(size=11, color=P["model"]))
     fig = finish(fig, synthetic, height, hovermode="closest", margin=dict(l=70, r=18, t=70, b=40))
     fig.update_yaxes(**axis(title=dict(text="% of capacity"), ticksuffix="%"))
-    fig.update_xaxes(**axis(), range=[o - pd.Timedelta(days=75), t + pd.Timedelta(days=5)])
+    fig.update_xaxes(**axis(), range=[o - pd.Timedelta(days=60), t + pd.Timedelta(days=7)])
     return fig
 
 

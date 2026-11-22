@@ -352,3 +352,33 @@ def test_record_store_is_write_once(tmp_path):
     assert out["location"].startswith("s3://b/")
     with pytest.raises(FileExistsError):
         s3.save(rec)
+
+
+@pytest.mark.skipif(not (ROOT / "models/v3/model_cards.json").exists() or not HAVE_V3, reason="v3 artifacts not built")
+def test_v3_artifacts_reproduce_recorded_test_predictions():
+    import hashlib
+    import joblib
+    from src.models import add_snow_anomaly, design
+    cards = json.loads((ROOT / "models/v3/model_cards.json").read_text())["models"]
+    pred = pd.read_csv(ROOT / "data/v3/private/test_predictions_v3.csv", parse_dates=["date"])
+    rows = pd.read_csv(ROOT / "data/v3/private/weekly_v3.csv", parse_dates=["date", "target_date"])
+    test = rows.merge(pred[["station_id", "date"]], on=["station_id", "date"])
+    for k, c in cards.items():
+        p = ROOT / f"models/v3/model_{k}.joblib"
+        assert hashlib.sha256(p.read_bytes()).hexdigest() == c["artifact_sha256"]
+        clim = {s: pd.Series(v, index=range(1, 367)) for s, v in c["snow_climatology_in"].items()}
+        t = add_snow_anomaly(test, clim)
+        got = joblib.load(p).predict(design(t, [f for f in c["feature_order"] if not f.startswith("station_")], STATIONS))
+        ref = test[["station_id", "date"]].merge(pred, on=["station_id", "date"])[f"pred_{k}"].to_numpy()
+        assert np.allclose(got, ref, atol=1e-9), k
+
+
+@pytest.mark.skipif(not (ROOT / "results/v3/final/RUN_RECORD.json").exists(), reason="v3 final not run")
+def test_v3_final_ran_once_against_the_committed_plan():
+    rec = json.loads((ROOT / "results/v3/final/RUN_RECORD.json").read_text())
+    plan = json.loads((ROOT / "config/v3_plan.json").read_text())
+    assert rec["code_sha256"] == plan["code_sha256"]
+    m = json.loads((ROOT / "results/v3/final/metrics.json").read_text())
+    for h, v in m["hypotheses"].items():
+        sup = all(b["ci95_high"] < 0 for b in v["bootstrap"].values())
+        assert v["verdict"] == ("supported" if sup else "not established") == rec["verdicts"][h]

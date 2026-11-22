@@ -364,3 +364,28 @@ This branch is based on `feature/30-day-forecast` (PR #4, open, CI passing). It 
   - 1,313 Monday cycles from 2001 to 2026 were downloaded in byte ranges.
   - One reforecast cycle (2007-06-04) has a malformed index and is recorded as incomplete.
 - **v3 weekly table:** identical to the v2 table on all 7,693 shared rows. It adds 24 December 2025 rows and 251 rows with 2026 origins.
+
+### Phase 2: scientific comparison (run once, 2026-11-22)
+- **Development folds (WY2008-2025):**
+  - C vs A on paired rows: 2.717 vs 2.832.
+  - B vs A: 2.802 vs 2.803.
+  - B2 vs B: 2.809 vs 2.802.
+- **2026 test (251 rows):** A 2.349, B 2.339, B2 2.364, C 2.316, frozen A 2.355, seasonal baseline 2.882.
+  - H1, H2 and H3 are all "not established": every 95% CI includes zero.
+  - Interval coverage is 0.93-0.94 overall, but only 0.69-0.74 at Folsom.
+
+### Phases 4-6: interactive forecasting
+- `src/v3_service.py`:
+  - a shared cache in 6-hour (CDEC), 12-hour (POWER) and per-cycle (GEFS) buckets;
+  - coalescing of identical requests, upstream rate limiting and a cooldown on forced refreshes;
+  - cache entries hash-checked, and records written once;
+  - a policy gate for public deployments.
+- **Forecast page:** a "Generate a forecast" tab with cards for Models A, B, B2 and C. The chart shows only the day-30 endpoint with error bars; no straight-line path is drawn. It also has the model comparison, weather charts (observed for B, forecast for C), data freshness, provenance and a download. The issued v2 record is in a second tab.
+- **Live demo:** Oroville on 2026-11-22 in the local app, with all four models available.
+
+### Phase 7: tests
+- 96 tests passing locally before the final run.
+- The CI simulation in a clean clone is recorded in the PR.
+
+### Remaining blockers
+- See `docs/v3/V3_REPORT.md`: CDEC public display rights, public hosting of the model artifacts, and persistent records on Streamlit Community Cloud.

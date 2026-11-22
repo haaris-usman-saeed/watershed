@@ -1,0 +1,47 @@
+{
+ "rule": "bounding box of the reservoir and every CDEC candidate snow station of its river basin(s), padded 0.25 degrees",
+ "boxes": {
+  "DNP": {
+   "lat_min": 37.452,
+   "lat_max": 38.408,
+   "lon_min": -120.671,
+   "lon_max": -119.0085,
+   "n_points_defining": 9
+  },
+  "EXC": {
+   "lat_min": 37.335,
+   "lat_max": 38.0872,
+   "lon_min": -120.52,
+   "lon_max": -119.0974,
+   "n_points_defining": 6
+  },
+  "FOL": {
+   "lat_min": 38.4296,
+   "lat_max": 39.5314,
+   "lon_min": -121.433,
+   "lon_max": -119.7521,
+   "n_points_defining": 15
+  },
+  "NML": {
+   "lat_min": 37.6981,
+   "lat_max": 38.7555,
+   "lon_min": -120.775,
+   "lon_max": -119.4041,
+   "n_points_defining": 7
+  },
+  "ORO": {
+   "lat_min": 39.29,
+   "lat_max": 40.7166,
+   "lon_min": -121.7581,
+   "lon_max": -120.3672,
+   "n_points_defining": 11
+  },
+  "SHA": {
+   "lat_min": 40.468,
+   "lat_max": 41.8414,
+   "lon_min": -122.7299,
+   "lon_max": -120.053,
+   "n_points_defining": 9
+  }
+ }
+}

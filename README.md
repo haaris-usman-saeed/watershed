@@ -293,3 +293,30 @@ python -m src.v3_experiment --dev        # development folds WY2008-2025, model-
 python -m src.v3_experiment --final      # the one preregistered 2026 test; writes models/v3/
 python -m src.v3_release --version YYYY-MM-DD   # public data release (NOAA and NASA-derived only)
 ```
+
+**Results.** Run once on 2026-11-22; the full numbers are in `results/v3/final/metrics.json` and `results/v3/development/summary.json`.
+
+| | A (v3 refit) | B | B2 | C | A (frozen) | Smoothed seasonal baseline |
+|---|---|---|---|---|---|---|
+| Development folds WY2008-2025, MAE pp (paired rows) | 2.803 | 2.802 | 2.809 | 2.717 vs A 2.832 on C rows | | |
+| 2026 test, MAE pp (251 rows, all models available) | 2.349 | 2.339 | 2.364 | 2.316 | 2.355 | 2.882 |
+| 2026 test, 90% interval coverage | 0.94 | 0.94 | 0.93 | 0.94 | | |
+
+- **Preregistered verdicts: all three "not established".**
+  - H1 (C beats A): -0.033 pp, 95% CI from -0.17 to +0.12 with 5-week blocks.
+  - H2 (B beats A): -0.010 pp.
+  - H3 (B2 beats B): +0.025 pp, which points the other way.
+- **Reading the development folds:**
+  - Forecast precipitation (C) was about 4% better than A in development (2.72 against 2.83 pp). The 2026 test points the same way, but it is too short (about 42 weekly origins) to confirm it.
+  - Past observed weather (B) adds essentially nothing, and averaging it over the upstream box (B2) does not help.
+- **Interval coverage by reservoir:** the overall figures above hide Folsom, where the 90% ranges covered only 69-74% of 2026 outcomes (about 75% in v2).
+- **Context only:** the 2024-2025 v2 comparison of A and B reproduces exactly (2.3323 against 2.3231). It is not a v3 test.
+
+**Interactive site.** The **30-Day Forecast** page has a **Generate Forecast** button. It fetches current CDEC, NASA POWER and GEFS data, which are shared and cached between visitors, then runs all four models with model-specific 90% ranges and shows:
+- each model's information cutoff and the forecast cycle used;
+- data freshness;
+- a JSON download of the forecast.
+
+It works on a private deployment today. **It is not publicly operational:** CDEC display rights are unresolved, and the model artifacts are not on the public host (`docs/v3/DEPLOYMENT.md`).
+
+**Public data.** `public_data/watershedshift-public-data-2026-11-22/` contains the GEFS basin precipitation and NASA POWER series, with a manifest, checksums and attribution. CDEC-derived data are withheld until DWR confirms the terms; the request is drafted in `docs/DATA_PUBLICATION_AUDIT.md`.

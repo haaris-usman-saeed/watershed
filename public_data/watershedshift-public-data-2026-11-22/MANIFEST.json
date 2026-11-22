@@ -1,0 +1,88 @@
+{
+ "name": "WatershedShift public data",
+ "version": "2026-11-22",
+ "created_utc": "2026-11-22T06:43:42Z",
+ "policy_version": "2026-11-22",
+ "rights_evidence": "docs/DATA_PUBLICATION_AUDIT.md",
+ "files": [
+  {
+   "path": "gefs_basin_precip.csv",
+   "sha256": "3700c3cae99d52973d94c0d016905f5ad5e8825c1f7152199660add778b752f4",
+   "rows": 7878,
+   "missing_share_by_column": {
+    "init_date": 0.0,
+    "source": 0.0,
+    "station_id": 0.0,
+    "gefs_p_d1_7_mm": 0.0008,
+    "gefs_p_d8_16_mm": 0.0008,
+    "complete": 0.0,
+    "n_messages": 0.0008,
+    "bytes_sha256": 0.0008,
+    "published_utc_max": 0.7555,
+    "retrieved_utc": 0.0,
+    "note": 0.0
+   },
+   "description": "GEFSv12 control-member precipitation forecast, 00Z Monday cycles, averaged over each reservoir's upstream box: lead hours (0,168] and (168,384]. source = reforecast (retrospective, not issued in real time) or operational (published_utc_max = latest S3 Last-Modified of the 64 files used).",
+   "fields": {
+    "init_date": "cycle date (00 UTC)",
+    "source": "reforecast | operational",
+    "station_id": "reservoir",
+    "gefs_p_d1_7_mm": "mm, lead hours 0-168",
+    "gefs_p_d8_16_mm": "mm, lead hours 168-384",
+    "complete": "all 64 six-hour messages present",
+    "n_messages": "messages used",
+    "bytes_sha256": "SHA-256 of the concatenated GRIB2 messages",
+    "published_utc_max": "operational only",
+    "retrieved_utc": "download time",
+    "note": "provenance note"
+   },
+   "sources": [
+    "noaa_gefs_reforecast",
+    "noaa_gefs_operational"
+   ],
+   "attribution": [
+    "NOAA GEFSv12 reforecast (Guan et al. 2022, Monthly Weather Review, doi:10.1175/MWR-D-21-0245.1), via the NOAA Open Data Dissemination program on AWS. Retrospective forecasts, not issued in real time. Derived by WatershedShift; no NOAA endorsement is implied.",
+    "NOAA NCEP Global Ensemble Forecast System version 12 (GEFSv12), via the NOAA Open Data Dissemination program on AWS. Basin aggregates are derived by WatershedShift and are not unaltered NOAA data; no NOAA endorsement is implied."
+   ]
+  },
+  {
+   "path": "power_daily.csv",
+   "sha256": "eff5f464fbc42ac19676aa532f09974687932680b82b7a8cdd5e74a75be831cf",
+   "rows": 113472,
+   "missing_share_by_column": {
+    "station_id": 0.0,
+    "source": 0.0,
+    "date": 0.0,
+    "rain_mm": 0.0002,
+    "temp_c": 0.0002,
+    "humidity_pct": 0.0002
+   },
+   "description": "NASA POWER daily weather (PRECTOTCORR, T2M, RH2M; LST) at each dam location (dam_point) and averaged over POWER grid-cell centres inside the upstream box (upstream_box_mean). Implausible values set to missing.",
+   "fields": {
+    "station_id": "reservoir",
+    "source": "dam_point | upstream_box_mean",
+    "date": "local standard time day",
+    "rain_mm": "mm/day",
+    "temp_c": "degC",
+    "humidity_pct": "%"
+   },
+   "sources": [
+    "nasa_power"
+   ],
+   "attribution": [
+    "The data was obtained from the National Aeronautics and Space Administration (NASA) Langley Research Center (LaRC) Prediction of Worldwide Energy Resources (POWER) Project funded through the NASA Earth Science Directorate Applied Science Program."
+   ]
+  },
+  {
+   "path": "upstream_boxes.json",
+   "sha256": "183e02391a09b28c02420822af85cad76eb30a2d405f0dd1a4a8cb72cd73e337",
+   "description": "box definitions"
+  }
+ ],
+ "excluded_pending_clearance": [
+  "CDEC daily storage (sensor 15) and any table containing it",
+  "CDEC snow water content (sensor 82) and the basin snow index",
+  "weekly feature tables, forecasts, residuals and model artifacts (fitted to CDEC values)"
+ ],
+ "citation": "WatershedShift (2026). Public weather-input data for 30-day reservoir storage research forecasts, version 2026-11-22. https://github.com/haaris-usman-saeed/watershed"
+}
