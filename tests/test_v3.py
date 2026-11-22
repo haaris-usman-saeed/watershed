@@ -226,16 +226,40 @@ def synthetic_gefs(cycle, published="2026-11-16T06:00:00Z", complete=True):
              "values": {s: {"gefs_p_d1_7_mm": 20.0, "gefs_p_d8_16_mm": 30.0} for s in APPROVED_STATIONS}}, {})
 
 
-def service(tmp_path, now, **fetchers):
+class MockModel:
+    """Controlled stand-in for a fitted model: change = 0.1 * prev30_pct + 0.5; records what it was given."""
+    def __init__(self):
+        self.seen = []
+
+    def predict(self, x):
+        self.seen.append(x.copy())
+        return (0.1 * x["prev30_pct"] + 0.5).to_numpy()
+
+
+def mock_models(model=None):
+    """Model A as a mock with the frozen feature order; B, B2, C reported as not built (as on a fresh deployment)."""
+    from src.forecast_schema import FEATURE_ORDER
+    a = {"model": model or MockModel(), "features": FEATURE_ORDER, "cutoff": "2024-01-01",
+         "offsets": {s: [-4.0, 4.0] for s in ("DJF", "MAM", "JJA", "SON")},
+         "clim": {s: [1.0] * 366 for s in APPROVED_STATIONS}, "coverage": {s: 0.9 for s in APPROVED_STATIONS},
+         "sha256": "mock", "version": "mock"}
+    return {"A": a, **{k: {"error": f"v3 artifact for Model {k} not built (python -m src.v3_experiment --final)"}
+                       for k in ("B", "B2", "C")}}
+
+
+def service(tmp_path, now, models="mock", **fetchers):
+    """models="mock": controlled mock models (no private artifacts needed); None: load real artifacts; dict: as given."""
     base = {"cdec": lambda n: synthetic_cdec(n), "power": synthetic_power, "gefs": synthetic_gefs}
     base.update(fetchers)
-    return ForecastService(cache_dir=tmp_path / "cache", art_v3=tmp_path / "no_v3", fetchers=base, clock=lambda: now)
+    svc = ForecastService(cache_dir=tmp_path / "cache", art_v3=tmp_path / "no_v3", fetchers=base, clock=lambda: now)
+    if models is not None:
+        svc._models = mock_models() if models == "mock" else models
+    return svc
 
 
 NOW = datetime(2026, 11, 22, 18, 0, tzinfo=timezone.utc)
 
 
-@pytest.mark.skipif(not HAVE_ART, reason="Model A artifact not present")
 def test_service_forecast_dates_days_remaining_and_unbuilt_models(tmp_path):
     r = service(tmp_path, NOW).forecast("FOL")
     assert r["status"] == "ok" and r["origin_date"] == "2026-11-16" and r["target_date"] == "2026-12-16"
@@ -249,14 +273,12 @@ def test_service_forecast_dates_days_remaining_and_unbuilt_models(tmp_path):
     assert all(h["used_by_forecast"] == (h["date"] <= "2026-11-16") for h in r["recent_history"])
 
 
-@pytest.mark.skipif(not HAVE_ART, reason="Model A artifact not present")
 def test_missing_cdec_records_block_forecast(tmp_path):
     miss = {"2026-11-16", "2026-11-09"}
     r = service(tmp_path, NOW, cdec=lambda n: synthetic_cdec(n, missing=miss)).forecast("FOL")
     assert r["status"] == "unavailable" and not r["models"]
 
 
-@pytest.mark.skipif(not HAVE_ART, reason="Model A artifact not present")
 def test_missing_snowpack_blocks_forecast(tmp_path):
     def no_snow(n):
         p, m = synthetic_cdec(n)
@@ -266,7 +288,6 @@ def test_missing_snowpack_blocks_forecast(tmp_path):
     assert r["status"] == "unavailable"
 
 
-@pytest.mark.skipif(not HAVE_ART, reason="Model A artifact not present")
 def test_stale_observations_flagged(tmp_path):
     r = service(tmp_path, NOW, cdec=lambda n: synthetic_cdec(n, end="2026-11-12")).forecast("FOL")
     assert r["status"] == "ok" and r["origin_date"] == "2026-11-09"
@@ -274,10 +295,46 @@ def test_stale_observations_flagged(tmp_path):
 
 
 def test_external_api_failure_gives_no_forecast(tmp_path):
+    calls = []
+
     def boom(n):
+        calls.append(n)
         raise SourceError("CDEC timed out")
-    r = service(tmp_path, NOW, cdec=boom).forecast("FOL")
-    assert r["status"] == "unavailable" and "CDEC refresh failed" in r["reasons"][0] and r["models"] == {}
+    mock = MockModel()
+    r = service(tmp_path, NOW, models=mock_models(mock), cdec=boom).forecast("FOL")
+    assert calls == [NOW]                                      # the CDEC fetch was really attempted
+    assert r["status"] == "unavailable" and "CDEC refresh failed: CDEC timed out" in r["reasons"][0]
+    assert r["models"] == {} and mock.seen == []               # no model was run on missing data
+
+
+def test_power_and_gefs_failures_disable_only_dependent_models(tmp_path):
+    def no_power(n):
+        raise SourceError("POWER timed out")
+
+    def no_gefs(c):
+        raise SourceError("S3 503")
+    models = mock_models()
+    for k in ("B", "C"):
+        models[k] = dict(models["A"], features=models["A"]["features"][:9] +
+                         (["rain_7d_mm", "rain_30d_mm", "temp_30d_c", "humidity_30d_pct"] if k == "B" else
+                          ["gefs_p_d1_7_mm", "gefs_p_d8_16_mm"]) + models["A"]["features"][9:])
+    r = service(tmp_path, NOW, models=models, power=no_power, gefs=no_gefs).forecast("FOL")
+    assert r["status"] == "ok" and r["models"]["A"]["available"]
+    assert not r["models"]["B"]["available"] and "NASA POWER" in r["models"]["B"]["reasons"][0]
+    assert not r["models"]["C"]["available"] and "GEFS" in r["models"]["C"]["reasons"][0]
+    assert r["source_status"]["power"]["ok"] is False and r["source_status"]["gefs"]["ok"] is False
+
+
+def test_gefs_cycle_published_after_issue_is_rejected(tmp_path):
+    models = mock_models()
+    models["C"] = dict(models["A"], features=models["A"]["features"][:9] + ["gefs_p_d1_7_mm", "gefs_p_d8_16_mm"] +
+                       models["A"]["features"][9:])
+    late = lambda c: synthetic_gefs(c, published="2026-11-23T00:00:00Z")  # noqa: E731  after NOW
+    r = service(tmp_path, NOW, models=models, gefs=late).forecast("FOL")
+    assert not r["models"]["C"]["available"] and "not published before the issue time" in r["models"]["C"]["reasons"][0]
+    incomplete = lambda c: synthetic_gefs(c, complete=False)  # noqa: E731
+    r = service(tmp_path / "b", NOW, models=models, gefs=incomplete).forecast("FOL")
+    assert not r["models"]["C"]["available"] and "incomplete" in r["models"]["C"]["reasons"][0]
 
 
 def test_unknown_station_rejected(tmp_path):
@@ -384,8 +441,37 @@ def test_v3_final_ran_once_against_the_committed_plan():
         assert v["verdict"] == ("supported" if sup else "not established") == rec["verdicts"][h]
 
 
-def test_missing_artifacts_reported_as_such(tmp_path, monkeypatch):
-    svc = service(tmp_path, NOW)
-    monkeypatch.setattr(svc, "_models", {"A": {"error": "model artifact missing"}})
+def test_missing_model_artifacts_refuse_before_any_fetch(tmp_path, monkeypatch):
+    """Real loading path (ForecastService._load_models) with no artifacts installed, as on a clean deployment."""
+    import src.forecast_model as fm
+
+    def missing():
+        raise FileNotFoundError(f"model artifact missing in {tmp_path / 'models'}: run python -m src.forecast_model --build")
+    monkeypatch.setattr(fm, "load_artifact", missing)
+    calls = []
+    counting = {k: (lambda *a, k=k: calls.append(k)) for k in ("cdec", "power", "gefs")}
+    svc = service(tmp_path, NOW, models=None, **counting)
     r = svc.forecast("FOL")
     assert r["status"] == "unavailable" and "artifacts are not installed" in r["reasons"][0]
+    assert calls == [] and r["models"] == {}
+    loaded = svc.models()
+    assert all("error" in loaded[k] for k in ("A", "B", "B2", "C"))
+
+
+def test_tampered_v3_artifact_is_not_loaded(tmp_path, monkeypatch):
+    import src.forecast_model as fm
+    monkeypatch.setattr(fm, "load_artifact", lambda: (_ for _ in ()).throw(FileNotFoundError("absent")))
+    art = tmp_path / "v3"
+    art.mkdir()
+    (art / "model_B.joblib").write_bytes(b"not the model")
+    (art / "model_cards.json").write_text(json.dumps({"models": {"B": {"artifact_sha256": "0" * 64}}}))
+    svc = ForecastService(cache_dir=tmp_path / "c", art_v3=art)
+    assert "does not match its card" in svc.models()["B"]["error"]
+
+
+@pytest.mark.skipif(not HAVE_ART, reason="Model A artifact not present")
+def test_service_with_real_model_a_artifact(tmp_path):
+    r = service(tmp_path, NOW, models=None).forecast("FOL")
+    a = r["models"]["A"]
+    assert r["status"] == "ok" and a["available"] and a["version"] == "v2-frozen"
+    assert a["training_cutoff_exclusive"] == "2024-01-01" and len(a["artifact_sha256"]) == 64

@@ -130,7 +130,6 @@ def _interactive():
     view_forecast_v3.render_interactive(ui.load_bundle())
 
 
-@pytest.mark.skipif(not (ROOT / "models/v2_forecast/model_card.json").exists(), reason="Model A artifact not present")
 def test_generate_forecast_button_runs_service_offline(monkeypatch, tmp_path):
     import sys
     sys.path.insert(0, str(ROOT / "app"))
