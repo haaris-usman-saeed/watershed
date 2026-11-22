@@ -123,12 +123,15 @@ def install(data, expected_sha256, dest=ROOT, mode=None):
         raise ValueError("REFUSED: archive larger than expected")
     if sha(data) != expected_sha256.lower():
         raise ValueError("REFUSED: archive SHA-256 does not match the pinned value")
-    with tarfile.open(fileobj=io.BytesIO(data), mode="r:gz") as tar:
-        members = tar.getmembers()
-        for m in members:
-            if not m.isfile() or m.name not in ALLOWED:
-                raise ValueError(f"REFUSED: unexpected archive member {m.name!r}")
-        blobs = {m.name: tar.extractfile(m).read() for m in members}
+    try:
+        with tarfile.open(fileobj=io.BytesIO(data), mode="r:gz") as tar:
+            members = tar.getmembers()
+            for m in members:
+                if not m.isfile() or m.name not in ALLOWED:
+                    raise ValueError(f"REFUSED: unexpected archive member {m.name!r}")
+            blobs = {m.name: tar.extractfile(m).read() for m in members}
+    except (tarfile.TarError, EOFError, OSError) as exc:      # truncated or corrupted archive
+        raise ValueError(f"REFUSED: archive cannot be read ({type(exc).__name__}: {exc})")
     man = json.loads(blobs["MANIFEST.json"])["files"]
     if "MANIFEST.json" not in blobs:
         raise ValueError("REFUSED: archive has no MANIFEST.json")
@@ -158,7 +161,7 @@ def ensure_artifacts(root=ROOT):
         r.raise_for_status()
         install(r.content, pin, dest=root)
         return "installed"
-    except (requests.RequestException, ValueError, PermissionError) as exc:
+    except Exception as exc:  # noqa: BLE001  any failure leaves models absent; the app then refuses to forecast
         return f"install refused or failed: {exc}"
 
 

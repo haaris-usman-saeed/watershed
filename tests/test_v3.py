@@ -572,3 +572,26 @@ def test_selfcheck_refuses_models_that_do_not_reproduce(tmp_path):
     (dest / INSTALLED_MANIFEST).write_text(json.dumps(m))
     bad = verify_selfcheck(dest)
     assert list(bad) == ["models/v3/model_C.joblib"] and "differ" in bad["models/v3/model_C.joblib"]
+
+
+def test_truncated_archive_is_refused_not_crashing(tmp_path, monkeypatch):
+    import hashlib
+    from src import v3_artifacts as va
+    src_root = tmp_path / "src"
+    _fake_artifacts(src_root)
+    out, _ = va.pack(tmp_path / "dist", root=src_root, selfcheck=False)
+    cut = out.read_bytes()[:200]
+    with pytest.raises(ValueError, match="cannot be read"):
+        va.install(cut, hashlib.sha256(cut).hexdigest(), dest=tmp_path / "d", mode="private")
+
+    class R:
+        content = cut
+
+        def raise_for_status(self):
+            pass
+    import requests
+    monkeypatch.setattr(requests, "get", lambda *a, **k: R())
+    monkeypatch.setenv("WATERSHED_ARTIFACT_URL", "https://example.invalid/bundle.tar.gz")
+    monkeypatch.setenv("WATERSHED_ARTIFACT_SHA256", hashlib.sha256(cut).hexdigest())
+    status = va.ensure_artifacts(root=tmp_path / "site")
+    assert status.startswith("install refused or failed") and not (tmp_path / "site/models").exists()

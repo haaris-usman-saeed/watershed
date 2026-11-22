@@ -128,9 +128,11 @@ def callout(title, body, kind="note"):
 
 def footer(b: Bundle):
     st.markdown(
-        '<div class="ws-foot">Storage: California Data Exchange Center (CDEC), daily reservoir storage. '
-        'Snow: CDEC adjusted snow-water equivalent. Weather context: NASA POWER. WatershedShift evaluates '
-        'historical held-out forecasts. It is not an operational forecast, a water-supply outlook or a '
+        '<div class="ws-foot">Storage and snow: California Data Exchange Center (CDEC), California Department of '
+        'Water Resources, with reservoir records from their operators; values are provisional. Weather: NASA '
+        'Langley POWER project. Weather forecasts: NOAA GEFS v12 via the NOAA Open Data Dissemination program. '
+        'No data provider endorses this project. WatershedShift is a research prototype: its forecasts are '
+        'experimental estimates, not an operational forecast, a water-supply outlook, a dam-operation or a '
         'water-safety tool.</div>', unsafe_allow_html=True)
 
 
