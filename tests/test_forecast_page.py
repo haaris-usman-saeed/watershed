@@ -71,3 +71,47 @@ def test_real_snapshot_renders(monkeypatch):
     t = text(at)
     assert ("Forecast interpretation" in t) or ("Forecast expired" in t)
     assert "Synthetic forecast fixture" not in t
+
+
+def _overview():
+    import sys
+    from pathlib import Path as _P
+    root = _P.cwd()
+    for p in (str(root), str(root / "app")):
+        if p not in sys.path:
+            sys.path.insert(0, p)
+    import ui_components as ui
+    import view_overview
+    ui.inject_css()
+    view_overview.render()
+
+
+def run_overview(monkeypatch, forecast_file, data_dir):
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setenv("WATERSHED_DATA_DIR", str(ROOT / data_dir))
+    monkeypatch.setenv("WATERSHED_FORECAST_FILE", str(forecast_file))
+    at = AppTest.from_function(_overview, default_timeout=60)
+    at.run()
+    assert not at.exception, at.exception
+    return at
+
+
+def test_forecast_page_explains_who_it_helps(monkeypatch):
+    t = text(run_page(monkeypatch, ROOT / "app/sample_data/forecast_snapshot.json"))
+    assert "Who this forecast helps" in t and "not</strong> a tool for reservoir operators" in t
+    assert "What it cannot see" in t
+
+
+def test_overview_guide_and_dated_heading_without_live_data(monkeypatch):
+    at = run_overview(monkeypatch, ROOT / "does-not-exist.json", "app/sample_data")
+    t = text(at)
+    assert "How to read this site" in t and "30-Day Forecast" in t
+    assert "Storage on the last day of the historical dataset" in t
+    assert "not today's levels" in t and "Latest observed storage" not in t
+
+
+@pytest.mark.skipif(not (ROOT / "forecasts/latest.json").exists() or not (ROOT / "outputs/metrics.json").exists(),
+                    reason="no private real snapshot or outputs")
+def test_overview_shows_latest_live_storage_when_refresh_exists(monkeypatch):
+    t = text(run_overview(monkeypatch, ROOT / "forecasts/latest.json", "outputs"))
+    assert "Latest observed storage" in t and "not today's levels" not in t

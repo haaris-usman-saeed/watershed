@@ -328,3 +328,15 @@ The frozen v2 evaluation is untouched. The frozen code and config are byte-ident
 - CDEC redistribution terms, which block public deployment of real forecasts.
 - No prospective validation yet. The first targets fall on 2026-12-09 (DNP) and 2026-12-16 (the rest).
 - Sensor 82 revision status at forecast time.
+
+### Follow-up: plainer site guidance (2026-11-22)
+- **Overview:**
+  - Added "How to read this site", a plain description of the five pages.
+  - The storage heading now names the last day of the historical dataset (Dec 31, 2025) instead of "end of the record".
+  - Added "Latest observed storage" from the CDEC refresh, shown only when a valid, unexpired snapshot exists. Otherwise a caution says the gauges are not today's levels.
+- **Forecast page:** added "Who this forecast helps". It covers:
+  - what the model accounts for;
+  - what it cannot see (future storms, planned releases);
+  - that it is not a tool for operators;
+  - where it is useful: research, a benchmark, public understanding.
+- **Tests:** 3 new page tests; 66 passed locally.

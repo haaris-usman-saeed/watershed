@@ -163,6 +163,35 @@ def interpretation(r):
             f"{f['lower_change_pp']:+.1f} to {f['upper_change_pp']:+.1f} pp.")
 
 
+
+def who():
+    left, right = st.columns(2, gap="large")
+    with left:
+        ui.callout("What the model takes into account",
+                   "How full the reservoir is now and how fast it has been filling or emptying over the last 7, 30 "
+                   "and 60 days; the mountain snowpack upstream and how it compares with normal; and the time of year. "
+                   "From 2001 to 2023 it learned how storage typically moves at each reservoir in each season, which "
+                   "includes the usual timing of winter rain, spring snowmelt and summer releases.", "good")
+    with right:
+        ui.callout("What it cannot see",
+                   "Storms that have not happened yet (it uses no precipitation forecast), planned releases, "
+                   "flood-control decisions, water allocations or demands. A large winter storm can therefore move "
+                   "storage far outside the forecast, which is why winter ranges are the widest (about plus or minus "
+                   "10 points).", "caution")
+    ui.callout("Who it is for, and who it is not for",
+               "It is <strong>not</strong> a tool for reservoir operators. They rely on official forecasts that include "
+               "precipitation and on their own release plans, for example DWR's Bulletin 120 water supply forecasts "
+               "and the National Weather Service California Nevada River Forecast Center."
+               "</p><p style='margin-top:0.5rem'>Where it is useful:</p><ul style='margin:0.3rem 0 0;color:inherit'>"
+               "<li><strong>Research:</strong> it shows that a transparent model built only from free public data "
+               "predicts 30-day storage change with about 21% less error than the best seasonal-average rule "
+               "(2.33 against 2.97 points in the 2024 to 2025 test), with a published, reproducible method.</li>"
+               "<li><strong>A benchmark:</strong> a clear standard that any better model, such as one adding "
+               "precipitation forecasts, has to beat.</li>"
+               "<li><strong>Public understanding:</strong> students, journalists and local communities get a quick, "
+               "honest view of where a reservoir is heading in the next month, with its uncertainty shown.</li></ul><p>",
+               "model")
+
 def unavailable(r, snap):
     reasons = "".join(f"<li>{ui.esc(x)}</li>" for x in r.get("reasons", []))
     tried = "".join(f"<li>{ui.esc(o['origin_date'])}: {ui.esc('; '.join(o['missing']) or 'eligible')}</li>"
@@ -314,6 +343,9 @@ def render():
     freshness(r, snap, path, source)
     with st.expander("All 15 model inputs for this forecast"):
         ui.show_table(pd.DataFrame({"input": list(r["features"]), "value": [round(v, 4) for v in r["features"].values()]}))
+
+    st.markdown("## Who this forecast helps")
+    who()
 
     st.markdown("## What this forecast is and is not")
     iv = r["interval"]
