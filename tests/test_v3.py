@@ -382,3 +382,10 @@ def test_v3_final_ran_once_against_the_committed_plan():
     for h, v in m["hypotheses"].items():
         sup = all(b["ci95_high"] < 0 for b in v["bootstrap"].values())
         assert v["verdict"] == ("supported" if sup else "not established") == rec["verdicts"][h]
+
+
+def test_missing_artifacts_reported_as_such(tmp_path, monkeypatch):
+    svc = service(tmp_path, NOW)
+    monkeypatch.setattr(svc, "_models", {"A": {"error": "model artifact missing"}})
+    r = svc.forecast("FOL")
+    assert r["status"] == "unavailable" and "artifacts are not installed" in r["reasons"][0]

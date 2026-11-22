@@ -265,6 +265,10 @@ class ForecastService:
         check_display_allowed(["cdec_storage_sensor15", "cdec_snow_sensor82"])
         issued = self.clock()
         status, warnings = {}, []
+        loaded = self.models()
+        if "error" in loaded.get("A", {"error": ""}):
+            return self._failed(station, issued, "Model artifacts are not installed on this deployment, so no forecast can "
+                                                 "be made: " + loaded["A"]["error"])
         try:
             cdec_entry, cdec_cached = self.cdec(issued, force_refresh)
             status["cdec"] = {"ok": True, "cached": cdec_cached, "retrieved_utc": cdec_entry["written_utc"]}
