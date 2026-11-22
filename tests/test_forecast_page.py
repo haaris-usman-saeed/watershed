@@ -153,7 +153,7 @@ def test_generate_forecast_button_runs_service_offline(monkeypatch, tmp_path):
     assert len(list((tmp_path / "rec").glob("*.json"))) == 1
 
 
-def test_public_mode_shows_policy_block(monkeypatch, tmp_path):
+def test_public_mode_shows_policy_block(monkeypatch, tmp_path, restricted_policy):
     import sys
     sys.path.insert(0, str(ROOT / "app"))
     import view_forecast_v3
@@ -169,7 +169,7 @@ def test_public_mode_shows_policy_block(monkeypatch, tmp_path):
     assert "Not available on this public deployment" in t and len(at.metric) == 0
 
 
-def test_public_mode_hides_real_issued_snapshot(monkeypatch, tmp_path):
+def test_public_mode_hides_real_issued_snapshot(monkeypatch, tmp_path, restricted_policy):
     import json
     snap = json.loads((ROOT / "app/sample_data/forecast_snapshot.json").read_text())
     snap["data_mode"] = "real"
@@ -181,7 +181,7 @@ def test_public_mode_hides_real_issued_snapshot(monkeypatch, tmp_path):
     assert "Not available on this public deployment" in t and "Forecast interpretation" not in t
 
 
-def test_public_mode_blocks_whole_app_on_real_outputs(monkeypatch, tmp_path):
+def test_public_mode_blocks_whole_app_on_real_outputs(monkeypatch, tmp_path, restricted_policy):
     """A public deployment pointed at real (CDEC-derived) outputs renders no page content."""
     import json
     import shutil
@@ -203,3 +203,50 @@ def test_public_mode_blocks_whole_app_on_real_outputs(monkeypatch, tmp_path):
     at = AppTest.from_file(str(ROOT / "app.py"), default_timeout=60)
     at.run()
     assert "Real data cannot be shown" not in text(at)
+
+
+def test_fresh_deployment_uses_latest_public_release(monkeypatch, tmp_path):
+    import sys
+    sys.path.insert(0, str(ROOT / "app"))
+    import ui_io
+    monkeypatch.delenv("WATERSHED_DATA_DIR", raising=False)
+    monkeypatch.setattr(ui_io, "REPO_ROOT", tmp_path)
+    assert ui_io.resolve_data_dir() == ((tmp_path / "outputs").resolve(), "default")
+    rel = tmp_path / "public_data/watershedshift-public-data-2026-11-22.2/ui_outputs"
+    rel.mkdir(parents=True)
+    assert ui_io.resolve_data_dir() == (rel.resolve(), "public release")
+    (tmp_path / "outputs").mkdir()
+    (tmp_path / "outputs/.gitkeep").write_text("")
+    assert ui_io.resolve_data_dir()[1] == "public release"          # an empty outputs/ (as in a clone) is not data
+    (tmp_path / "outputs/metrics.json").write_text("{}")
+    assert ui_io.resolve_data_dir()[1] == "default"                 # private outputs win when present
+
+
+@pytest.mark.parametrize("page", ["overview", "explorer", "backtest", "research", "forecast"])
+def test_every_page_renders_on_the_published_release_in_public_mode(monkeypatch, page):
+    """The public deployment's data (newest public release) must render every page without an exception."""
+    rel = sorted(ROOT.glob("public_data/watershedshift-public-data-*/ui_outputs"))
+    if not rel:
+        pytest.skip("no public release with UI outputs")
+    import sys
+    sys.path.insert(0, str(ROOT / "app"))
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setenv("WATERSHED_DATA_DIR", str(rel[-1]))
+    monkeypatch.setenv("WATERSHED_DEPLOYMENT", "public")
+    monkeypatch.setenv("WATERSHED_FORECAST_FILE", str(rel[-1] / "forecast_snapshot.json"))
+
+    def _render(name):
+        import sys as _s
+        from pathlib import Path as _P
+        for p in (str(_P.cwd()), str(_P.cwd() / "app")):
+            if p not in _s.path:
+                _s.path.insert(0, p)
+        import importlib
+        import ui_components as ui
+        ui.inject_css()
+        importlib.import_module({"overview": "view_overview", "explorer": "view_explorer", "backtest": "view_backtest",
+                                 "research": "view_research", "forecast": "view_forecast"}[name]).render()
+
+    at = AppTest.from_function(_render, default_timeout=60, args=(page,))
+    at.run()
+    assert not at.exception, at.exception

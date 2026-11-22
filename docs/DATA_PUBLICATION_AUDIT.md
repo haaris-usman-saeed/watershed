@@ -109,4 +109,25 @@ The machine-readable policy that the release pipeline enforces is `config/data_r
 >
 > Please let us know of any required attribution wording or conditions. We will not imply DWR endorsement.
 
-Until a written answer is received, `config/data_release_policy.json` keeps every CDEC-derived item private, and the public website does not display CDEC values.
+Until a written answer is received, `config/data_release_policy.json` keeps every CDEC-derived item private, and the public website does not display CDEC values. (Superseded by section 7.)
+
+## 7. Authorization record (2026-11-22)
+
+- **Statement.** On 2026-11-22 the project owner stated in writing to the engineering agent that "DWR CDEC and everyone involved has given me permission go public". "Everyone involved" is understood to include the operators whose records CDEC relays.
+- **Policy change.** On that basis, the owner authorized setting the following flags to `true` for both CDEC sources (policy version `2026-11-22.2`):
+  - `publish_raw`;
+  - `publish_derived`;
+  - `public_display`.
+- **What the engineering agent has not seen.** The agent did not see the permission correspondence itself. The audit trail is therefore the owner's statement, not a reviewed document.
+- **Owner action:** archive the written permission (sender, date, scope and any conditions) under `docs/permissions/`, removing personal contact details if preferred. If the permission carries conditions such as attribution wording, scope limits or a non-commercial clause, update the `attribution` text and these flags to match.
+- **Unchanged:** the CDEC disclaimer still applies. Values are provisional and may be revised. Public pages and datasets keep the CDEC and operator attribution in `config/data_release_policy.json` and state that no endorsement is implied.
+
+| Item | Now published? | Where |
+|---|---|---|
+| 1. CDEC daily storage records (cleaned) | Yes | `public_data/watershedshift-public-data-2026-11-22.2/` |
+| 2. CDEC snow water equivalent (cleaned pillow values and basin index) | Yes | same |
+| 3. Cleaned historical data and audits | Yes | same |
+| 4. Derived feature tables (v3 weekly table) | Yes | same |
+| 5. Model artifacts | Yes, as a hash-pinned bundle once the owner uploads it (`docs/v3/LAUNCH_AND_MERGE.md`) | GitHub Release asset |
+| 6. Generated live forecasts | Yes, on the website and as downloads; issued records are included in the release | website, `public_data/.../issued_forecasts/` |
+| Raw CDEC responses (byte-for-byte) | Permitted. Kept out of git for size (about 29 MB); offered as a release asset with checksums | GitHub Release asset |

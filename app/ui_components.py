@@ -90,7 +90,7 @@ def masthead(b: Bundle):
         mode = '<span class="ws-mode synthetic">Provenance unconfirmed</span>'
     else:
         mode = f'<span class="ws-mode synthetic">data_mode: {esc(str(b.data_mode))}</span>'
-    src = "from WATERSHED_DATA_DIR" if b.dir_source == "env" else "default"
+    src = {"env": "from WATERSHED_DATA_DIR", "public release": "published release"}.get(b.dir_source, "default")
     st.markdown(
         f'<div class="ws-mast"><div class="ws-mark">WatershedShift'
         f'<small>California reservoir storage, observed and backtested</small></div>'
@@ -128,9 +128,11 @@ def callout(title, body, kind="note"):
 
 def footer(b: Bundle):
     st.markdown(
-        '<div class="ws-foot">Storage: California Data Exchange Center (CDEC), daily reservoir storage. '
-        'Snow: CDEC adjusted snow-water equivalent. Weather context: NASA POWER. WatershedShift evaluates '
-        'historical held-out forecasts. It is not an operational forecast, a water-supply outlook or a '
+        '<div class="ws-foot">Storage and snow: California Data Exchange Center (CDEC), California Department of '
+        'Water Resources, with reservoir records from their operators; values are provisional. Weather: NASA '
+        'Langley POWER project. Weather forecasts: NOAA GEFS v12 via the NOAA Open Data Dissemination program. '
+        'No data provider endorses this project. WatershedShift is a research prototype: its forecasts are '
+        'experimental estimates, not an operational forecast, a water-supply outlook, a dam-operation or a '
         'water-safety tool.</div>', unsafe_allow_html=True)
 
 

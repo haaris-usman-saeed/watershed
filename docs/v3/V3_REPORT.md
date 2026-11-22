@@ -30,10 +30,9 @@
 - **The upstream boxes** are rectangles, not delineated watersheds.
 - **Recent snow values** (sensor 82) and NASA POWER near-real-time values may be revised later.
 
-## Blocked
+## Publication and deployment status (updated 2026-11-22, after merging PR #4 and PR #5)
 
-1. **Public display of CDEC-derived values** (storage, snow index, forecasts, model artifacts). Legal status is unresolved, and the owner needs to send the drafted request to DWR. Until then, `WATERSHED_DEPLOYMENT=public` refuses before any fetch.
-2. **Public hosting of the models.** The artifacts are git-ignored. A hash-pinned package and installer exist (`src/v3_artifacts.py`); the owner must upload the package once rights allow (`docs/v3/LAUNCH_AND_MERGE.md`).
-3. **Persistent records on Streamlit Community Cloud.** These need an S3 bucket and credentials. The `RecordStore` S3 backend is tested only with a fake client.
-
-**The public site is therefore not operational for forecasting.** A visitor on a private deployment can select a reservoir and generate a genuine forecast without a terminal.
+- **CDEC publication:** authorized by the owner on 2026-11-22 (`docs/DATA_PUBLICATION_AUDIT.md`, section 7). The written permission still has to be archived by the owner.
+- **Public data:** `public_data/watershedshift-public-data-2026-11-22.2` includes the CDEC-derived data.
+- **Model bundle:** built, byte-reproducible and self-checking. It is not uploaded yet; uploading it is an owner action (`docs/v3/LAUNCH_AND_MERGE.md`).
+- **The public website is not verified as forecasting.** No public URL was available to the engineering agent, so it is not claimed to be live. A clean, data-free deployment run locally in public mode did install the bundle from a URL and generate real forecasts with all four models (see STATUS.md).

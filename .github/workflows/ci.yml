@@ -42,9 +42,8 @@ jobs:
           test -z "$(git ls-files data/raw | grep -v '^data/raw/.gitkeep$')"
           test -z "$(git ls-files data/processed outputs dist | grep -v '.gitkeep$')"
           test -z "$(git ls-files data/live forecasts models data/v3 | grep -v '.gitkeep$')"
-      - name: Public release contains no CDEC-derived files
-        run: |
-          test -z "$(git ls-files public_data | grep -i -E 'cdec|storage|weekly|snow_index|forecast' )"
+      - name: Every published file is listed, checksum-intact and allowed by the release policy
+        run: python -m src.v3_release --check
       - name: Synthetic forecast fixture is reproducible and valid
         run: |
           python -m src.make_forecast_fixture

@@ -33,10 +33,13 @@ def test_frozen_v2_hashes_unchanged():
 def test_issued_forecast_ledger_is_intact_if_record_present():
     led = [json.loads(l) for l in (ROOT / "docs/v3/issued_forecast_ledger.jsonl").read_text().splitlines() if l.strip()]
     assert led[0]["forecast_id"] == "wsf-v2-2026-11-22-20261122T052508Z"
-    p = ROOT / "forecasts/records" / f"{led[0]['forecast_id']}.json"
-    if p.exists():
-        import hashlib
-        assert hashlib.sha256(p.read_bytes()).hexdigest() == led[0]["sha256"]
+    import hashlib
+    for e in led:
+        sub = "records" if e["forecast_id"].startswith("wsf-v2") else "records_v3"
+        for p in [ROOT / "forecasts" / sub / f"{e['forecast_id']}.json"] + \
+                 sorted(ROOT.glob(f"public_data/*/issued_forecasts/{e['forecast_id']}.json")):
+            if p.exists():
+                assert hashlib.sha256(p.read_bytes()).hexdigest() == e["sha256"], p
 
 
 # ---------------------------------------------------------------- 2. Model B weather lag
@@ -364,14 +367,15 @@ def test_days_remaining_from_actual_issue_time():
 # ---------------------------------------------------------------- 20. release policy
 
 def test_public_deployment_blocks_unresolved_cdec_display():
-    policy = json.loads((ROOT / "config/data_release_policy.json").read_text())
+    from tests.conftest import restricted_policy_dict
+    policy = restricted_policy_dict()
     with pytest.raises(PolicyBlocked):
         check_display_allowed(["cdec_storage_sensor15"], policy, mode="public")
     check_display_allowed(["cdec_storage_sensor15"], policy, mode="private")
     check_display_allowed(["noaa_gefs_operational", "nasa_power"], policy, mode="public")
 
 
-def test_public_service_refuses_before_fetching(tmp_path, monkeypatch):
+def test_public_service_refuses_before_fetching(tmp_path, monkeypatch, restricted_policy):
     monkeypatch.setenv("WATERSHED_DEPLOYMENT", "public")
     calls = []
     svc = service(tmp_path, NOW, cdec=lambda n: (calls.append(1), synthetic_cdec(n))[1])
@@ -380,14 +384,15 @@ def test_public_service_refuses_before_fetching(tmp_path, monkeypatch):
     assert calls == []
 
 
-def test_release_pipeline_never_packages_unresolved_sources(tmp_path):
-    from src.v3_release import build_release
-    man = build_release(tmp_path, version="test")
-    names = [f["path"] for f in man["files"]]
-    assert all(("cdec" not in n.lower()) and ("weekly" not in n) and ("storage" not in n) for n in names)
-    assert man["excluded_pending_clearance"]
+def test_release_pipeline_never_packages_unresolved_sources(tmp_path, restricted_policy):
+    from src.v3_release import build_release, check_releases
+    man = build_release(tmp_path, version="test", policy_path=restricted_policy)
+    for f in man["files"]:
+        assert not set(f["sources"]) & {"cdec_storage_sensor15", "cdec_snow_sensor82"}, f["path"]
+    assert any("cdec_daily_storage" in e for e in man["excluded_pending_clearance"])
+    assert check_releases(tmp_path, policy_path=restricted_policy) == []
     with pytest.raises(FileExistsError):
-        build_release(tmp_path, version="test")                 # published versions are never overwritten
+        build_release(tmp_path, version="test", policy_path=restricted_policy)   # never overwritten
 
 
 def test_record_store_is_write_once(tmp_path):
@@ -494,7 +499,8 @@ def test_artifact_package_round_trip_is_hash_pinned(tmp_path):
     from src.v3_artifacts import FILES, install, pack
     src_root, dest = tmp_path / "src", tmp_path / "dest"
     _fake_artifacts(src_root)
-    out, h = pack(tmp_path / "dist", root=src_root)
+    out, h = pack(tmp_path / "dist", root=src_root, selfcheck=False)
+    assert pack(tmp_path / "dist2", root=src_root, selfcheck=False)[1] == h      # byte-reproducible
     data = out.read_bytes()
     man = install(data, h, dest=dest, mode="private")
     assert set(man) == set(FILES) and all((dest / f).read_bytes() == (src_root / f).read_bytes() for f in FILES)
@@ -503,7 +509,7 @@ def test_artifact_package_round_trip_is_hash_pinned(tmp_path):
     assert not (tmp_path / "d2").exists()
 
 
-def test_artifact_install_rejects_unexpected_members_and_public_without_rights(tmp_path):
+def test_artifact_install_rejects_unexpected_members_and_public_without_rights(tmp_path, restricted_policy):
     import hashlib
     import io
     import tarfile
@@ -527,3 +533,65 @@ def test_ensure_artifacts_without_configuration_does_nothing(tmp_path, monkeypat
     from src.v3_artifacts import ensure_artifacts
     monkeypatch.delenv("WATERSHED_ARTIFACT_URL", raising=False)
     assert ensure_artifacts(root=tmp_path).startswith("missing") and not any(tmp_path.iterdir())
+
+
+
+def test_current_policy_permits_public_cdec_and_every_release_complies():
+    from src.v3_release import check_releases
+    from src.v3_service import cdec_display_block_reason
+    assert cdec_display_block_reason(mode="public") is None
+    assert check_releases() == []
+
+
+def test_release_check_catches_files_the_policy_does_not_allow(tmp_path):
+    from tests.conftest import restricted_policy_dict
+    import shutil
+    from src.v3_release import check_releases
+    src = sorted((ROOT / "public_data").glob("watershedshift-public-data-*.2"))
+    if not src:
+        pytest.skip("CDEC-inclusive release not present")
+    shutil.copytree(src[-1], tmp_path / src[-1].name)
+    p = tmp_path / "pol.json"
+    p.write_text(json.dumps(restricted_policy_dict()))
+    probs = check_releases(tmp_path, policy_path=p)
+    assert any("not cleared" in x for x in probs)
+    (tmp_path / src[-1].name / "power_daily.csv").write_text("tampered")
+    assert any("checksum mismatch" in x for x in check_releases(tmp_path))
+
+
+@pytest.mark.skipif(not (ROOT / "models/v3/model_cards.json").exists(), reason="v3 artifacts not built")
+def test_selfcheck_refuses_models_that_do_not_reproduce(tmp_path):
+    import shutil
+    from src.v3_artifacts import INSTALLED_MANIFEST, install, pack, verify_selfcheck
+    out, h = pack(tmp_path / "dist")
+    dest = tmp_path / "site"
+    install(out.read_bytes(), h, dest=dest, mode="private")
+    assert verify_selfcheck(dest) == {}
+    m = json.loads((dest / INSTALLED_MANIFEST).read_text())
+    m["selfcheck"]["models/v3/model_C.joblib"][0] += 1.0              # simulate a library-version drift
+    (dest / INSTALLED_MANIFEST).write_text(json.dumps(m))
+    bad = verify_selfcheck(dest)
+    assert list(bad) == ["models/v3/model_C.joblib"] and "differ" in bad["models/v3/model_C.joblib"]
+
+
+def test_truncated_archive_is_refused_not_crashing(tmp_path, monkeypatch):
+    import hashlib
+    from src import v3_artifacts as va
+    src_root = tmp_path / "src"
+    _fake_artifacts(src_root)
+    out, _ = va.pack(tmp_path / "dist", root=src_root, selfcheck=False)
+    cut = out.read_bytes()[:200]
+    with pytest.raises(ValueError, match="cannot be read"):
+        va.install(cut, hashlib.sha256(cut).hexdigest(), dest=tmp_path / "d", mode="private")
+
+    class R:
+        content = cut
+
+        def raise_for_status(self):
+            pass
+    import requests
+    monkeypatch.setattr(requests, "get", lambda *a, **k: R())
+    monkeypatch.setenv("WATERSHED_ARTIFACT_URL", "https://example.invalid/bundle.tar.gz")
+    monkeypatch.setenv("WATERSHED_ARTIFACT_SHA256", hashlib.sha256(cut).hexdigest())
+    status = va.ensure_artifacts(root=tmp_path / "site")
+    assert status.startswith("install refused or failed") and not (tmp_path / "site/models").exists()

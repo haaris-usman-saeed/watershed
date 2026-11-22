@@ -125,6 +125,41 @@ def weather_figures(r):
     return figs
 
 
+def detail_table(r):
+    """Every field per model, including models that could not run and why."""
+    ob, o = r["observed"], pd.Timestamp(r["origin_date"])
+    weather_src = {
+        "A": "none (CDEC storage and snow only)",
+        "B": f"NASA POWER at the dam, window ending {(o - pd.Timedelta(days=7)).date()}",
+        "B2": f"NASA POWER over the upstream area, window ending {(o - pd.Timedelta(days=7)).date()}",
+        "C": None}
+    rows = []
+    for k in ("A", "B", "B2", "C"):
+        m = r["models"].get(k, {})
+        if k == "C":
+            g = m.get("gefs") or {}
+            weather_src["C"] = (f"NOAA GEFSv12 {g.get('cycle')}, published {g.get('published_utc_max')}, days 1-16"
+                                if g else "NOAA GEFSv12 (not available)")
+        base = {"Model": k, "Status": "ok" if m.get("available") else "unavailable: " + "; ".join(m.get("reasons", [])),
+                "Observed storage": f"{ob['storage_pct']:.1f}% ({ob['storage_af']:,.0f} AF)",
+                "Origin": r["origin_date"], "Issued (UTC)": r["issued_utc"], "Target": r["target_date"],
+                "Days remaining": f"{r['days_remaining']:.1f}", "Storage obs. used": r["origin_date"],
+                "Snow obs. used": r["snow"]["swe_date"], "Weather source": weather_src[k],
+                "Trained on targets before": m.get("training_cutoff_exclusive", "")}
+        if m.get("available"):
+            iv = m["interval"]
+            base.update({"30-day change": f"{m['change_pp']:+.2f} pp ({m['change_af']:+,.0f} AF)",
+                         "Projected": f"{m['projected_pct']:.1f}% ({m['projected_af']:,.0f} AF)",
+                         "90% range": f"{iv['lower_change_pp']:+.1f} to {iv['upper_change_pp']:+.1f} pp; "
+                                      f"{iv['lower_projected_pct']:.1f}% to {iv['upper_projected_pct']:.1f}%"})
+        else:
+            base.update({"30-day change": "", "Projected": "", "90% range": ""})
+        rows.append(base)
+    cols = ["Model", "Status", "Observed storage", "30-day change", "Projected", "90% range", "Origin", "Issued (UTC)",
+            "Target", "Days remaining", "Storage obs. used", "Snow obs. used", "Weather source", "Trained on targets before"]
+    return pd.DataFrame(rows)[cols]
+
+
 def comparison_table(r, perf):
     """Paired comparisons only: each model against Model A (v3 refit) on the same rows."""
     rows = []
@@ -221,12 +256,23 @@ def render_interactive(b):
         c.metric(f"Model {k}: projected", ui.fmt_pct(m["projected_pct"], 1), ui.fmt_pp(m["change_pp"], digits=1))
         c.caption(f"{m['change_af']:+,.0f} AF; 90%: {m['interval']['lower_projected_pct']:.1f}% to "
                   f"{m['interval']['upper_projected_pct']:.1f}%")
+    off = {k: m for k, m in r["models"].items() if not m.get("available")}
+    if off:
+        ui.callout("Models that could not run", ui.esc("; ".join(f"Model {k}: {' '.join(m.get('reasons', []))}"
+                                                                    for k, m in off.items())), "caution")
     if sid == "FOL":
         ui.callout("Interval caution: Folsom", "Nominal 90% ranges covered only about 75% of Folsom outcomes in the "
                    "2024-2025 backtest. Treat Folsom ranges as too narrow.", "caution")
     ui.show_chart(endpoint_figure(r), key=f"v3_chart_{sid}")
     st.caption("Each diamond is one model's estimate for the target date, with its own retrospectively calibrated 90% "
                "range. No model predicts the path between the origin and day 30, so none is drawn.")
+
+    st.markdown("## Forecast details by model")
+    ui.show_table(detail_table(r))
+    st.caption("Origin = the Monday whose end-of-day storage the forecast starts from. Issued = when this forecast was "
+               "computed. Days remaining are counted from the issue time to the end of the target date (UTC). 90% ranges "
+               "are retrospectively calibrated on each model's own historical errors; their future coverage is not "
+               "established.")
 
     st.markdown("## Model comparison")
     ui.show_table(comparison_table(r, _perf()))

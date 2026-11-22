@@ -222,6 +222,14 @@ class ForecastService:
                         "version": "v2-frozen", "core": card["core_snow_pillows"]}
         except (FileNotFoundError, ValueError) as exc:
             out["A"] = {"error": str(exc)}
+        try:
+            from src.v3_artifacts import verify_selfcheck
+            bad = verify_selfcheck(ROOT)
+        except Exception as exc:  # noqa: BLE001  a self-check that cannot run counts as failed
+            bad = {"models/v2_forecast/model.joblib": f"self-check could not run: {exc}"}
+        if "models/v2_forecast/model.joblib" in bad and "model" in out.get("A", {}):
+            out["A"] = {"error": "Model A refused: " + bad["models/v2_forecast/model.joblib"]}
+        self._selfcheck_failures = bad
         cards_p = self.art_v3 / "model_cards.json"
         cards = json.loads(cards_p.read_text())["models"] if cards_p.exists() else {}
         for k in ("B", "B2", "C"):
@@ -232,6 +240,9 @@ class ForecastService:
                 continue
             if _sha(p.read_bytes()) != c["artifact_sha256"]:
                 out[k] = {"error": f"Model {k} artifact hash does not match its card; refusing to load"}
+                continue
+            if f"models/v3/model_{k}.joblib" in bad:
+                out[k] = {"error": f"Model {k} refused: " + bad[f"models/v3/model_{k}.joblib"]}
                 continue
             m = joblib.load(p)   # trusted: our own artifact, hash-checked above
             out[k] = {"model": m, "features": c["feature_order"], "cutoff": c["training_cutoff_exclusive"],
