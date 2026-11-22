@@ -27,6 +27,65 @@ The models forecast the **30-day change in storage, in percentage points (pp) of
 | Merge plan for the owner | `docs/merge_plan.md` |
 | 30-day research forecasts (experimental) | section 10 below, `docs/FORECAST_IMPLEMENTATION.md` |
 
+## Using the website
+
+**Generate a forecast.** Open **30-Day Forecast**, choose one of the six reservoirs and press **Generate Forecast**. The site then:
+1. gets the latest eligible observations, from a shared cache when they are recent enough;
+2. runs four models;
+3. shows each model's estimate of storage 30 days after the forecast origin.
+
+**What you see**
+- the observed storage at the origin (the latest Monday with complete data);
+- each model's predicted change, in percentage points of capacity and in acre-feet;
+- the projected storage and a model-specific 90% range;
+- the origin, issue time, target date and days remaining;
+- the dates of the storage and snow observations used;
+- the weather sources;
+- any freshness warnings.
+
+The models predict only the day-30 value, so the chart draws no path between today and day 30.
+
+**Where the data come from**
+- **Reservoir storage and mountain snowpack:** California Data Exchange Center (CDEC), California Department of Water Resources. Reservoir records are relayed from the operators. Values are provisional.
+- **Recent weather:** NASA Langley POWER project.
+- **Precipitation forecasts:** NOAA GEFS version 12, via the NOAA Open Data Dissemination program.
+
+Attribution wording is in `config/data_release_policy.json`. No data provider endorses this project.
+
+**The four models**
+
+| Model | Uses |
+|---|---|
+| A | The frozen v2 model: storage, recent storage changes, snowpack, season |
+| B | A plus recent weather at the dam |
+| B2 | A plus recent weather over the upstream area |
+| C | A plus NOAA's forecast precipitation for the next 1-7 and 8-16 days |
+
+**Is Model C better?**
+- In the one preregistered 2026 test, Model C had the lowest average error: 2.32 pp, against 2.35 for A, 2.34 for B and 2.36 for B2.
+- The difference is smaller than its statistical uncertainty: every 95% interval includes zero. So no model is established as more accurate.
+- Model C's real-time performance has not yet been checked against later observations.
+
+**How often forecasts can change**
+- A new forecast origin becomes available each Monday, once CDEC has reported that day's end-of-day storage, usually by Tuesday or Wednesday.
+- Source data are re-checked at most every 6 hours for CDEC and 12 hours for NASA POWER. The GEFS forecast is fixed per cycle.
+
+**What the 90% range means.** It is the range that contained the actual outcome 90% of the time in that model's historical tests, for the same season. Its future coverage is not guaranteed. At Folsom, the ranges have been too narrow: they caught 69-75% of outcomes.
+
+**Why a forecast can be unavailable**
+- A source did not respond.
+- Recent storage or snow observations are missing or too old.
+- The weather forecast cycle is incomplete, or was not yet published.
+
+An older forecast is never shown in its place.
+
+**What it is not.** It is an experimental research estimate of net storage, based on historically learned operating behaviour. It does not simulate planned releases, operating rules or downstream demands. It is not a dam-operation, water-supply, flood or safety tool.
+
+**Downloads**
+- Public datasets with checksums and citations: `public_data/` (latest `watershedshift-public-data-2026-11-22.2`). It includes cleaned CDEC storage and snow, the feature tables, the research predictions and the issued forecasts.
+- Model bundle: GitHub Releases, once uploaded.
+- Reproducing the research: sections 2 and 11 below, and `ASSESSORS.md`.
+
 ## 1. Install (verified on macOS, Python 3.14.5)
 
 ```bash
@@ -318,6 +377,6 @@ python -m src.v3_release --version YYYY-MM-DD   # public data release (NOAA and 
 - data freshness;
 - a JSON download of the forecast.
 
-It works on a private deployment today. **It is not publicly operational:** CDEC display rights are unresolved, and the model artifacts are not on the public host (`docs/v3/DEPLOYMENT.md`).
+Public display is authorized by the owner (`docs/DATA_PUBLICATION_AUDIT.md`, section 7). The site needs the model bundle configured on the host before it can forecast publicly (`docs/v3/LAUNCH_AND_MERGE.md`).
 
-**Public data.** `public_data/watershedshift-public-data-2026-11-22/` contains the GEFS basin precipitation and NASA POWER series, with a manifest, checksums and attribution. CDEC-derived data are withheld until DWR confirms the terms; the request is drafted in `docs/DATA_PUBLICATION_AUDIT.md`.
+**Public data.** `public_data/watershedshift-public-data-2026-11-22.2/` contains the cleaned CDEC and weather data, feature tables, research predictions and issued forecasts, each with a manifest entry, checksum and attribution. The earlier release `...-2026-11-22` (weather data only) is kept unchanged.

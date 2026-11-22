@@ -28,19 +28,78 @@ FILES = ["models/v2_forecast/model.joblib", "models/v2_forecast/model_card.json"
         [f"models/v3/model_{k}.joblib" for k in ("A", "B", "B2", "C")]
 ALLOWED = set(FILES) | {"MANIFEST.json"}
 MAX_BYTES = 200 * 1024 * 1024
+INSTALLED_MANIFEST = "models/ARTIFACT_MANIFEST.json"
+SELFCHECK_ROWS = 16
+
+
+def runtime_versions():
+    import joblib
+    import numpy
+    import sklearn
+    return {"scikit-learn": sklearn.__version__, "numpy": numpy.__version__, "joblib": joblib.__version__}
+
+
+def _selfcheck_inputs(features):
+    import numpy as np
+    import pandas as pd
+    rng = np.random.default_rng(20261122)
+    x = pd.DataFrame(rng.normal(0, 3, size=(SELFCHECK_ROWS, len(features))), columns=features)
+    st = [c for c in features if c.startswith("station_")]
+    x[st] = 0.0
+    for i in range(SELFCHECK_ROWS):
+        x.loc[i, st[i % len(st)]] = 1.0
+    return x
+
+
+def _model_paths(root):
+    import joblib
+    out = {"models/v2_forecast/model.joblib": joblib.load(root / "models/v2_forecast/model.joblib")}
+    for k in ("A", "B", "B2", "C"):
+        out[f"models/v3/model_{k}.joblib"] = joblib.load(root / f"models/v3/model_{k}.joblib")
+    return out
+
+
+def selfcheck_reference(root=ROOT):
+    """Predictions of each model on fixed synthetic inputs, stored in the manifest at packing time."""
+    ref = {}
+    for f, m in _model_paths(Path(root)).items():
+        x = _selfcheck_inputs(list(m.feature_names_in_))
+        ref[f] = [float(v) for v in m.predict(x)]
+    return ref
+
+
+def verify_selfcheck(root=ROOT, tol=1e-9):
+    """After installation: every model must reproduce its packing-time predictions with the libraries installed
+    here. Returns {file: error message} for models that fail (empty when all pass, or when no manifest is installed)."""
+    mp = Path(root) / INSTALLED_MANIFEST
+    if not mp.exists():
+        return {}
+    ref = json.loads(mp.read_text()).get("selfcheck", {})
+    bad = {}
+    for f, m in _model_paths(Path(root)).items():
+        if f not in ref:
+            bad[f] = "no self-check reference in the installed manifest"
+            continue
+        got = m.predict(_selfcheck_inputs(list(m.feature_names_in_)))
+        if max(abs(a - b) for a, b in zip(got, ref[f])) > tol:
+            bad[f] = (f"predictions differ from those recorded when the bundle was built "
+                      f"(built with {json.loads(mp.read_text()).get('built_with')}, running {runtime_versions()})")
+    return bad
 
 
 def sha(b):
     return hashlib.sha256(b).hexdigest()
 
 
-def pack(out_dir, root=ROOT):
+def pack(out_dir, root=ROOT, selfcheck=True):
     missing = [f for f in FILES if not (root / f).exists()]
     if missing:
         raise SystemExit(f"REFUSED: missing artifacts {missing}; build them first.")
-    man = {"files": {f: sha((root / f).read_bytes()) for f in FILES}}
+    man = {"files": {f: sha((root / f).read_bytes()) for f in FILES},
+           "selfcheck": selfcheck_reference(root) if selfcheck else {}, "built_with": runtime_versions()}
+    import gzip
     buf = io.BytesIO()
-    with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+    with gzip.GzipFile(fileobj=buf, mode="wb", mtime=0) as gz, tarfile.open(fileobj=gz, mode="w") as tar:
         for name, data in [("MANIFEST.json", json.dumps(man, indent=1, sort_keys=True).encode())] + \
                           [(f, (root / f).read_bytes()) for f in sorted(FILES)]:
             ti = tarfile.TarInfo(name)
@@ -71,13 +130,15 @@ def install(data, expected_sha256, dest=ROOT, mode=None):
                 raise ValueError(f"REFUSED: unexpected archive member {m.name!r}")
         blobs = {m.name: tar.extractfile(m).read() for m in members}
     man = json.loads(blobs["MANIFEST.json"])["files"]
+    if "MANIFEST.json" not in blobs:
+        raise ValueError("REFUSED: archive has no MANIFEST.json")
     if set(man) != set(FILES) or any(sha(blobs.get(f, b"")) != h for f, h in man.items()):
         raise ValueError("REFUSED: archive contents do not match MANIFEST.json")
-    for f in FILES:
+    for f in FILES + [INSTALLED_MANIFEST]:
         p = Path(dest) / f
         p.parent.mkdir(parents=True, exist_ok=True)
         tmp = p.with_suffix(p.suffix + ".tmp")
-        tmp.write_bytes(blobs[f])
+        tmp.write_bytes(blobs["MANIFEST.json"] if f == INSTALLED_MANIFEST else blobs[f])
         tmp.replace(p)
     return man
 

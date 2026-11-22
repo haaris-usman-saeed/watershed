@@ -28,7 +28,12 @@ def resolve_data_dir(env=None):
             from_cwd = Path.cwd() / p
             p = from_cwd if from_cwd.exists() else REPO_ROOT / p
         return p.resolve(), "env"
-    return (REPO_ROOT / C.DEFAULT_DIR_NAME).resolve(), "default"
+    default = (REPO_ROOT / C.DEFAULT_DIR_NAME).resolve()
+    if not default.exists():   # fresh public deployment: use the newest published release's UI files, if any
+        releases = sorted(REPO_ROOT.glob("public_data/watershedshift-public-data-*/ui_outputs"))
+        if releases:
+            return releases[-1].resolve(), "public release"
+    return default, "default"
 
 
 def fingerprint(data_dir: Path):

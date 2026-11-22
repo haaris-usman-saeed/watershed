@@ -1,0 +1,7 @@
+station_id,reservoir_name,lat,lon,capacity_af,capacity_source,status,first_date,last_date,n_storage_days,missing_storage_pct,exclusion_reason,operator
+SHA,Shasta Lake,40.718,-122.42,4552000,CDEC Daily Reservoir Storage Summary (reportapp/javareports?name=RES) retrieved 2026-11-21,included,2001-01-01,2025-12-31,9131,0.0,,US Bureau of Reclamation
+ORO,Lake Oroville,39.54,-121.493,3424753,CDEC Daily Reservoir Storage Summary (reportapp/javareports?name=RES) retrieved 2026-11-21,included,2001-01-01,2025-12-31,9130,0.011,,CA Dept of Water Resources
+FOL,Folsom Lake,38.683,-121.183,977000,CDEC Daily Reservoir Storage Summary (reportapp/javareports?name=RES) retrieved 2026-11-21,included,2001-01-01,2025-12-31,9131,0.0,,US Bureau of Reclamation
+NML,New Melones Lake,37.9481,-120.525,2400000,CDEC Daily Reservoir Storage Summary (reportapp/javareports?name=RES) retrieved 2026-11-21,included,2001-01-01,2025-12-31,9131,0.0,,US Bureau of Reclamation
+DNP,Don Pedro Reservoir,37.702,-120.421,2030000,CDEC Daily Reservoir Storage Summary (reportapp/javareports?name=RES) retrieved 2026-11-21,included,2001-01-01,2025-12-31,9095,0.394,,USGS/USACE (CDEC operator field)
+EXC,Lake McClure (Exchequer),37.585,-120.27,1024600,CDEC Daily Reservoir Storage Summary (reportapp/javareports?name=RES) retrieved 2026-11-21,included,2001-01-01,2025-12-31,9092,0.427,,Merced Irrigation District

@@ -1,0 +1,9 @@
+station_id,date,decision,evidence
+DNP,2019-09-26,artifact,"Storage 1,708,374 -> 1,760,105 -> 1,704,972 AF while CDEC daily elevation (sensor 6) fell smoothly 803.54 -> 803.30 -> 803.16 ft"
+EXC,2022-05-22,artifact,"Storage 447,232 -> 488,105 -> 449,093 AF while CDEC daily elevation rose smoothly 758.48 -> 758.71 -> 758.97 ft"
+FOL,2005-12-30,physical,"Elevation 416.81 -> 411.93 -> 433.85 ft (pre-storm evacuation then New Year 2006 storm inflow); matches storage"
+FOL,2016-12-15,physical,"Elevation 430.68 -> 427.74 -> 430.18 ft during December 2016 flood operations; matches storage"
+FOL,2016-12-16,physical,"Elevation 427.74 -> 430.18 -> 427.43 ft; matches storage"
+FOL,2017-01-07,physical,"Elevation 411.45 -> 408.66 -> 416.83 ft (pre-storm release then January 2017 storm); matches storage"
+FOL,2017-01-11,physical,"Elevation 436.59 -> 440.12 -> 436.13 ft (flood peak); matches storage"
+FOL,2017-02-10,physical,"Elevation 442.74 -> 449.16 -> 444.73 ft (February 2017 flood peak); matches storage"

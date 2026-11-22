@@ -1,0 +1,127 @@
+{
+  "schema_version": "1.0",
+  "model_version": "v2",
+  "features": [
+    {
+      "name": "storage_pct",
+      "description": "Storage at forecast origin",
+      "units": "% of capacity in force",
+      "source": "CDEC sensor 15",
+      "min_lag_days": 0,
+      "used_by_primary_model": true
+    },
+    {
+      "name": "prev7_pct",
+      "description": "Storage change over previous 7 days",
+      "units": "pp of capacity",
+      "source": "CDEC sensor 15",
+      "min_lag_days": 0,
+      "used_by_primary_model": true
+    },
+    {
+      "name": "prev30_pct",
+      "description": "Storage change over previous 30 days",
+      "units": "pp of capacity",
+      "source": "CDEC sensor 15",
+      "min_lag_days": 0,
+      "used_by_primary_model": true
+    },
+    {
+      "name": "prev60_pct",
+      "description": "Storage change over previous 60 days",
+      "units": "pp of capacity",
+      "source": "CDEC sensor 15",
+      "min_lag_days": 0,
+      "used_by_primary_model": true
+    },
+    {
+      "name": "swe_basin_in",
+      "description": "Basin snow water equivalent index (mean of core snow pillows) on t-1",
+      "units": "inches",
+      "source": "CDEC sensor 82 (adjusted SWE)",
+      "min_lag_days": 1,
+      "used_by_primary_model": true
+    },
+    {
+      "name": "swe_change_14d_in",
+      "description": "Change in basin SWE index from t-15 to t-1",
+      "units": "inches",
+      "source": "CDEC sensor 82",
+      "min_lag_days": 1,
+      "used_by_primary_model": true
+    },
+    {
+      "name": "swe_anom_in",
+      "description": "Basin SWE index on t-1 minus smoothed day-of-year mean of training years",
+      "units": "inches",
+      "source": "CDEC sensor 82",
+      "min_lag_days": 1,
+      "used_by_primary_model": true
+    },
+    {
+      "name": "season_sin",
+      "description": "sin(2*pi*day_of_year/365.25)",
+      "units": "unitless",
+      "source": "calendar",
+      "min_lag_days": 0,
+      "used_by_primary_model": true
+    },
+    {
+      "name": "season_cos",
+      "description": "cos(2*pi*day_of_year/365.25)",
+      "units": "unitless",
+      "source": "calendar",
+      "min_lag_days": 0,
+      "used_by_primary_model": true
+    },
+    {
+      "name": "rain_7d_mm",
+      "description": "Precipitation sum, 7 days ending at t-7",
+      "units": "mm",
+      "source": "NASA POWER PRECTOTCORR",
+      "min_lag_days": 7,
+      "used_by_primary_model": false
+    },
+    {
+      "name": "rain_30d_mm",
+      "description": "Precipitation sum, 30 days ending at t-7",
+      "units": "mm",
+      "source": "NASA POWER PRECTOTCORR",
+      "min_lag_days": 7,
+      "used_by_primary_model": false
+    },
+    {
+      "name": "temp_30d_c",
+      "description": "Mean 2 m air temperature, 30 days ending at t-7",
+      "units": "degC",
+      "source": "NASA POWER T2M",
+      "min_lag_days": 7,
+      "used_by_primary_model": false
+    },
+    {
+      "name": "humidity_30d_pct",
+      "description": "Mean 2 m relative humidity, 30 days ending at t-7",
+      "units": "%",
+      "source": "NASA POWER RH2M",
+      "min_lag_days": 7,
+      "used_by_primary_model": false
+    }
+  ],
+  "primary_model_features": [
+    "storage_pct",
+    "prev7_pct",
+    "prev30_pct",
+    "prev60_pct",
+    "swe_basin_in",
+    "swe_change_14d_in",
+    "swe_anom_in",
+    "season_sin",
+    "season_cos",
+    "station_DNP",
+    "station_EXC",
+    "station_FOL",
+    "station_NML",
+    "station_ORO",
+    "station_SHA"
+  ]
+}

@@ -1,0 +1,742 @@
+{
+ "name": "WatershedShift public data",
+ "version": "2026-11-22.2",
+ "created_utc": "2026-11-22T07:23:19Z",
+ "policy_version": "2026-11-22.2",
+ "rights_evidence": "docs/DATA_PUBLICATION_AUDIT.md",
+ "files": [
+  {
+   "path": "gefs_basin_precip.csv",
+   "sha256": "3700c3cae99d52973d94c0d016905f5ad5e8825c1f7152199660add778b752f4",
+   "description": "GEFSv12 control-member precipitation forecast, 00Z Monday cycles, averaged over each reservoir's upstream box: lead hours (0,168] and (168,384]. source = reforecast (retrospective, not issued in real time) or operational (published_utc_max = latest S3 Last-Modified of the 64 files used).",
+   "sources": [
+    "noaa_gefs_reforecast",
+    "noaa_gefs_operational"
+   ],
+   "attribution": [
+    "NOAA GEFSv12 reforecast (Guan et al. 2022, Monthly Weather Review, doi:10.1175/MWR-D-21-0245.1), via the NOAA Open Data Dissemination program on AWS. Retrospective forecasts, not issued in real time. Derived by WatershedShift; no NOAA endorsement is implied.",
+    "NOAA NCEP Global Ensemble Forecast System version 12 (GEFSv12), via the NOAA Open Data Dissemination program on AWS. Basin aggregates are derived by WatershedShift and are not unaltered NOAA data; no NOAA endorsement is implied."
+   ],
+   "rows": 7878,
+   "fields": [
+    "init_date",
+    "source",
+    "station_id",
+    "gefs_p_d1_7_mm",
+    "gefs_p_d8_16_mm",
+    "complete",
+    "n_messages",
+    "bytes_sha256",
+    "published_utc_max",
+    "retrieved_utc",
+    "note"
+   ],
+   "missing_share_by_column": {
+    "init_date": 0.0,
+    "source": 0.0,
+    "station_id": 0.0,
+    "gefs_p_d1_7_mm": 0.0008,
+    "gefs_p_d8_16_mm": 0.0008,
+    "complete": 0.0,
+    "n_messages": 0.0008,
+    "bytes_sha256": 0.0008,
+    "published_utc_max": 0.7555,
+    "retrieved_utc": 0.0,
+    "note": 0.0
+   }
+  },
+  {
+   "path": "power_daily.csv",
+   "sha256": "eff5f464fbc42ac19676aa532f09974687932680b82b7a8cdd5e74a75be831cf",
+   "description": "NASA POWER daily weather (PRECTOTCORR, T2M, RH2M; LST) at each dam (dam_point) and averaged over POWER grid-cell centres inside the upstream box (upstream_box_mean). Implausible values set to missing.",
+   "sources": [
+    "nasa_power"
+   ],
+   "attribution": [
+    "The data was obtained from the National Aeronautics and Space Administration (NASA) Langley Research Center (LaRC) Prediction of Worldwide Energy Resources (POWER) Project funded through the NASA Earth Science Directorate Applied Science Program."
+   ],
+   "rows": 113472,
+   "fields": [
+    "station_id",
+    "source",
+    "date",
+    "rain_mm",
+    "temp_c",
+    "humidity_pct"
+   ],
+   "missing_share_by_column": {
+    "station_id": 0.0,
+    "source": 0.0,
+    "date": 0.0,
+    "rain_mm": 0.0002,
+    "temp_c": 0.0002,
+    "humidity_pct": 0.0002
+   }
+  },
+  {
+   "path": "cdec_daily_storage.csv",
+   "sha256": "b59a8509350ad278d1da3643eacb78f6f449074bd94bdb3d97bcfd6553716ca5",
+   "description": "Cleaned CDEC daily end-of-day reservoir storage (sensor 15), 2001-01-01 to 2026-11-20. storage_pct uses the capacity in force on each date (data/capacity_history.csv). Out-of-range values and unreviewed one-day spikes are blank, never interpolated. cdec_flag: e = estimated, r = revised. 2026 values are provisional.",
+   "sources": [
+    "cdec_storage_sensor15"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied."
+   ],
+   "rows": 56725,
+   "fields": [
+    "station_id",
+    "date",
+    "storage_af",
+    "storage_pct",
+    "capacity_af",
+    "cdec_flag"
+   ],
+   "missing_share_by_column": {
+    "station_id": 0.0,
+    "date": 0.0,
+    "storage_af": 0.0013,
+    "storage_pct": 0.0013,
+    "capacity_af": 0.0,
+    "cdec_flag": 0.9899
+   }
+  },
+  {
+   "path": "cdec_snow_pillow_daily.csv",
+   "sha256": "fd7f0f67e76fce8a408c51cb82507ee9c6e39dab942588d1b22c511e7c994dca",
+   "description": "Cleaned CDEC daily snow water content (sensor 82, adjusted), inches. 2001-2025: all 51 candidate pillows; 2026: the core pillows used by the models. Missing stays missing; small negatives (>= -0.5 in) set to 0.",
+   "sources": [
+    "cdec_snow_sensor82"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied."
+   ],
+   "rows": 392028,
+   "fields": [
+    "snow_station_id",
+    "date",
+    "swe_in",
+    "flag"
+   ],
+   "missing_share_by_column": {
+    "snow_station_id": 0.0,
+    "date": 0.0,
+    "swe_in": 0.0,
+    "flag": 0.1183
+   }
+  },
+  {
+   "path": "basin_snow_index.csv",
+   "sha256": "4b5dc29223e0b67a3c80613c9b1f023b714f24b91c81b1007b8da2f50c489abd",
+   "description": "Daily basin SWE index: mean of core pillows, only when at least 2/3 report (src.features rules).",
+   "sources": [
+    "cdec_snow_sensor82"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied."
+   ],
+   "rows": 56575,
+   "fields": [
+    "station_id",
+    "date",
+    "swe_basin_in",
+    "n_core_reporting",
+    "n_core"
+   ],
+   "missing_share_by_column": {
+    "station_id": 0.0,
+    "date": 0.0,
+    "swe_basin_in": 0.0153,
+    "n_core_reporting": 0.0,
+    "n_core": 0.0
+   }
+  },
+  {
+   "path": "weekly_features_v3.csv",
+   "sha256": "a4066fe586942fe949e49fddef9d3ca85e818bd81a57431f13f8eb1aafd3a4ea",
+   "description": "v3 weekly Monday-origin table: 30-day storage-change target, storage, snow, weather (dam point and upstream box, 7-day lag) and GEFS features (usable cycles only).",
+   "sources": [
+    "cdec_storage_sensor15",
+    "cdec_snow_sensor82",
+    "nasa_power",
+    "noaa_gefs_reforecast",
+    "noaa_gefs_operational"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied.",
+    "NOAA GEFSv12 reforecast (Guan et al. 2022, Monthly Weather Review, doi:10.1175/MWR-D-21-0245.1), via the NOAA Open Data Dissemination program on AWS. Retrospective forecasts, not issued in real time. Derived by WatershedShift; no NOAA endorsement is implied.",
+    "NOAA NCEP Global Ensemble Forecast System version 12 (GEFSv12), via the NOAA Open Data Dissemination program on AWS. Basin aggregates are derived by WatershedShift and are not unaltered NOAA data; no NOAA endorsement is implied.",
+    "The data was obtained from the National Aeronautics and Space Administration (NASA) Langley Research Center (LaRC) Prediction of Worldwide Energy Resources (POWER) Project funded through the NASA Earth Science Directorate Applied Science Program."
+   ],
+   "rows": 7968,
+   "fields": [
+    "station_id",
+    "reservoir_name",
+    "date",
+    "target_date",
+    "storage_af",
+    "capacity_af",
+    "future_storage_af",
+    "target_delta_pp",
+    "storage_pct",
+    "prev7_pct",
+    "prev30_pct",
+    "prev60_pct",
+    "swe_basin_in",
+    "swe_change_14d_in",
+    "season_sin",
+    "season_cos",
+    "rain_7d_mm",
+    "rain_30d_mm",
+    "temp_30d_c",
+    "humidity_30d_pct",
+    "rain_7d_mm_box",
+    "rain_30d_mm_box",
+    "temp_30d_c_box",
+    "humidity_30d_pct_box",
+    "gefs_p_d1_7_mm",
+    "gefs_p_d8_16_mm",
+    "gefs_source",
+    "gefs_published_utc"
+   ],
+   "missing_share_by_column": {
+    "station_id": 0.0,
+    "reservoir_name": 0.0,
+    "date": 0.0,
+    "target_date": 0.0,
+    "storage_af": 0.0,
+    "capacity_af": 0.0,
+    "future_storage_af": 0.0,
+    "target_delta_pp": 0.0,
+    "storage_pct": 0.0,
+    "prev7_pct": 0.0,
+    "prev30_pct": 0.0,
+    "prev60_pct": 0.0,
+    "swe_basin_in": 0.0187,
+    "swe_change_14d_in": 0.0211,
+    "season_sin": 0.0,
+    "season_cos": 0.0,
+    "rain_7d_mm": 0.0,
+    "rain_30d_mm": 0.0,
+    "temp_30d_c": 0.0,
+    "humidity_30d_pct": 0.0,
+    "rain_7d_mm_box": 0.0,
+    "rain_30d_mm_box": 0.0,
+    "temp_30d_c_box": 0.0,
+    "humidity_30d_pct_box": 0.0,
+    "gefs_p_d1_7_mm": 0.0323,
+    "gefs_p_d8_16_mm": 0.0323,
+    "gefs_source": 0.0323,
+    "gefs_published_utc": 0.7662
+   }
+  },
+  {
+   "path": "audits/coverage.csv",
+   "sha256": "e18301276ecb4163449210baa44e71f9f94aa2cab9e8b992a83357853f661e9e",
+   "description": "Per-station storage coverage and cleaning audit (v2).",
+   "sources": [
+    "cdec_storage_sensor15",
+    "cdec_snow_sensor82"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied."
+   ],
+   "rows": 6,
+   "fields": [
+    "raw_files",
+    "raw_rows",
+    "non_numeric_or_blank",
+    "data_flags",
+    "out_of_range",
+    "duplicate_date_rows",
+    "conflicting_duplicate_dates",
+    "spike_candidates",
+    "spikes_kept_physical",
+    "spikes_removed_artifact",
+    "spikes_removed_unreviewed",
+    "power_file",
+    "power_api_version",
+    "power_sources",
+    "power_time_standard",
+    "power_grid_elev_m",
+    "implausible_temp_c",
+    "implausible_rain_mm",
+    "implausible_humidity_pct",
+    "weather_missing_days",
+    "station_id",
+    "first_date",
+    "last_date",
+    "calendar_days",
+    "n_storage_days",
+    "missing_storage_days",
+    "missing_storage_pct",
+    "longest_storage_gap_days",
+    "storage_min_pct",
+    "storage_max_pct",
+    "max_abs_daily_change_pp",
+    "status",
+    "exclusion_reason"
+   ],
+   "missing_share_by_column": {
+    "raw_files": 0.0,
+    "raw_rows": 0.0,
+    "non_numeric_or_blank": 0.0,
+    "data_flags": 0.0,
+    "out_of_range": 0.0,
+    "duplicate_date_rows": 0.0,
+    "conflicting_duplicate_dates": 0.0,
+    "spike_candidates": 0.0,
+    "spikes_kept_physical": 0.0,
+    "spikes_removed_artifact": 0.0,
+    "spikes_removed_unreviewed": 0.0,
+    "power_file": 0.0,
+    "power_api_version": 0.0,
+    "power_sources": 0.0,
+    "power_time_standard": 0.0,
+    "power_grid_elev_m": 0.0,
+    "implausible_temp_c": 0.0,
+    "implausible_rain_mm": 0.0,
+    "implausible_humidity_pct": 0.0,
+    "weather_missing_days": 0.0,
+    "station_id": 0.0,
+    "first_date": 0.0,
+    "last_date": 0.0,
+    "calendar_days": 0.0,
+    "n_storage_days": 0.0,
+    "missing_storage_days": 0.0,
+    "missing_storage_pct": 0.0,
+    "longest_storage_gap_days": 0.0,
+    "storage_min_pct": 0.0,
+    "storage_max_pct": 0.0,
+    "max_abs_daily_change_pp": 0.0,
+    "status": 0.0,
+    "exclusion_reason": 1.0
+   }
+  },
+  {
+   "path": "audits/station_year_audit.csv",
+   "sha256": "4157d56c1292501b0c0f34aef59c28fae7d87d88e818144b6e3d598ede7ac77f",
+   "description": "Per station-year missing days and flags (v2).",
+   "sources": [
+    "cdec_storage_sensor15",
+    "cdec_snow_sensor82"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied."
+   ],
+   "rows": 150,
+   "fields": [
+    "station_id",
+    "year",
+    "days",
+    "valid_days",
+    "missing_days",
+    "longest_gap_days",
+    "flag_e",
+    "flag_r",
+    "other_flags",
+    "min_pct",
+    "max_pct",
+    "weather_missing_days"
+   ],
+   "missing_share_by_column": {
+    "station_id": 0.0,
+    "year": 0.0,
+    "days": 0.0,
+    "valid_days": 0.0,
+    "missing_days": 0.0,
+    "longest_gap_days": 0.0,
+    "flag_e": 0.0,
+    "flag_r": 0.0,
+    "other_flags": 0.0,
+    "min_pct": 0.0,
+    "max_pct": 0.0,
+    "weather_missing_days": 0.0
+   }
+  },
+  {
+   "path": "audits/discontinuity_scan.csv",
+   "sha256": "776a01482045461bccee2ae48a9772b8bb10b4f2d1b7186b0ca506d7abdcc936",
+   "description": "Dry-day level shifts flagged for review (v2).",
+   "sources": [
+    "cdec_storage_sensor15",
+    "cdec_snow_sensor82"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied."
+   ],
+   "rows": 20,
+   "fields": [
+    "station_id",
+    "date",
+    "change_pp",
+    "rain_4d_mm",
+    "documented_break"
+   ],
+   "missing_share_by_column": {
+    "station_id": 0.0,
+    "date": 0.0,
+    "change_pp": 0.0,
+    "rain_4d_mm": 0.0,
+    "documented_break": 0.0
+   }
+  },
+  {
+   "path": "research/v3_test_predictions_2026.csv",
+   "sha256": "6f0419241090ac6ea9c243499afcc1efb69381db17f8405d8961f474e2d82688",
+   "description": "The preregistered v3 2026 test: per-row predictions and intervals of A, B, B2, C, frozen A and baselines.",
+   "sources": [
+    "cdec_storage_sensor15",
+    "cdec_snow_sensor82",
+    "nasa_power",
+    "noaa_gefs_operational"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied.",
+    "NOAA NCEP Global Ensemble Forecast System version 12 (GEFSv12), via the NOAA Open Data Dissemination program on AWS. Basin aggregates are derived by WatershedShift and are not unaltered NOAA data; no NOAA endorsement is implied.",
+    "The data was obtained from the National Aeronautics and Space Administration (NASA) Langley Research Center (LaRC) Prediction of Worldwide Energy Resources (POWER) Project funded through the NASA Earth Science Directorate Applied Science Program."
+   ],
+   "rows": 251,
+   "fields": [
+    "station_id",
+    "date",
+    "target_date",
+    "wy",
+    "season",
+    "target_delta_pp",
+    "storage_pct",
+    "pred_A",
+    "pred_B",
+    "pred_B2",
+    "pred_C",
+    "base_persistence",
+    "base_monthly",
+    "base_doy",
+    "lo_A",
+    "hi_A",
+    "lo_B",
+    "hi_B",
+    "lo_B2",
+    "hi_B2",
+    "lo_C",
+    "hi_C",
+    "pred_A_frozen"
+   ],
+   "missing_share_by_column": {
+    "station_id": 0.0,
+    "date": 0.0,
+    "target_date": 0.0,
+    "wy": 0.0,
+    "season": 0.0,
+    "target_delta_pp": 0.0,
+    "storage_pct": 0.0,
+    "pred_A": 0.0,
+    "pred_B": 0.0,
+    "pred_B2": 0.0,
+    "pred_C": 0.0,
+    "base_persistence": 0.0,
+    "base_monthly": 0.0,
+    "base_doy": 0.0,
+    "lo_A": 0.0,
+    "hi_A": 0.0,
+    "lo_B": 0.0,
+    "hi_B": 0.0,
+    "lo_B2": 0.0,
+    "hi_B2": 0.0,
+    "lo_C": 0.0,
+    "hi_C": 0.0,
+    "pred_A_frozen": 0.0
+   }
+  },
+  {
+   "path": "research/v3_development_oof.csv",
+   "sha256": "e1d134587c2c9c74c19b748652128a6ad6e6a5a286c3a66e861c505f15cd824c",
+   "description": "v3 development out-of-fold predictions, WY2008-2025 (used for model-specific intervals).",
+   "sources": [
+    "cdec_storage_sensor15",
+    "cdec_snow_sensor82",
+    "nasa_power",
+    "noaa_gefs_reforecast",
+    "noaa_gefs_operational"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied.",
+    "NOAA GEFSv12 reforecast (Guan et al. 2022, Monthly Weather Review, doi:10.1175/MWR-D-21-0245.1), via the NOAA Open Data Dissemination program on AWS. Retrospective forecasts, not issued in real time. Derived by WatershedShift; no NOAA endorsement is implied.",
+    "NOAA NCEP Global Ensemble Forecast System version 12 (GEFSv12), via the NOAA Open Data Dissemination program on AWS. Basin aggregates are derived by WatershedShift and are not unaltered NOAA data; no NOAA endorsement is implied.",
+    "The data was obtained from the National Aeronautics and Space Administration (NASA) Langley Research Center (LaRC) Prediction of Worldwide Energy Resources (POWER) Project funded through the NASA Earth Science Directorate Applied Science Program."
+   ],
+   "rows": 5605,
+   "fields": [
+    "station_id",
+    "date",
+    "target_date",
+    "wy",
+    "season",
+    "target_delta_pp",
+    "storage_pct",
+    "pred_A",
+    "pred_B",
+    "pred_B2",
+    "pred_C",
+    "base_persistence",
+    "base_monthly",
+    "base_doy"
+   ],
+   "missing_share_by_column": {
+    "station_id": 0.0,
+    "date": 0.0,
+    "target_date": 0.0,
+    "wy": 0.0,
+    "season": 0.0,
+    "target_delta_pp": 0.0,
+    "storage_pct": 0.0,
+    "pred_A": 0.0,
+    "pred_B": 0.0,
+    "pred_B2": 0.0,
+    "pred_C": 0.045,
+    "base_persistence": 0.0,
+    "base_monthly": 0.0,
+    "base_doy": 0.0
+   }
+  },
+  {
+   "path": "ui_outputs/stations.csv",
+   "sha256": "0618076f8095590538fb55ea2b1cb9b3e247ec1cdeb3efd94b1844093dbc4909",
+   "description": "UI contract file for the website's backtest pages (docs/UI_CONTRACT.md).",
+   "sources": [
+    "cdec_storage_sensor15",
+    "cdec_snow_sensor82",
+    "nasa_power"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied.",
+    "The data was obtained from the National Aeronautics and Space Administration (NASA) Langley Research Center (LaRC) Prediction of Worldwide Energy Resources (POWER) Project funded through the NASA Earth Science Directorate Applied Science Program."
+   ],
+   "rows": 6,
+   "fields": [
+    "station_id",
+    "reservoir_name",
+    "lat",
+    "lon",
+    "capacity_af",
+    "capacity_source",
+    "status",
+    "first_date",
+    "last_date",
+    "n_storage_days",
+    "missing_storage_pct",
+    "exclusion_reason",
+    "operator"
+   ],
+   "missing_share_by_column": {
+    "station_id": 0.0,
+    "reservoir_name": 0.0,
+    "lat": 0.0,
+    "lon": 0.0,
+    "capacity_af": 0.0,
+    "capacity_source": 0.0,
+    "status": 0.0,
+    "first_date": 0.0,
+    "last_date": 0.0,
+    "n_storage_days": 0.0,
+    "missing_storage_pct": 0.0,
+    "exclusion_reason": 1.0,
+    "operator": 0.0
+   }
+  },
+  {
+   "path": "ui_outputs/history_daily.csv",
+   "sha256": "1bae6ef64591b44dbd608d1813b45c2e619d76d30c52d27ca2f43ed4c88a15ea",
+   "description": "UI contract file for the website's backtest pages (docs/UI_CONTRACT.md).",
+   "sources": [
+    "cdec_storage_sensor15",
+    "cdec_snow_sensor82",
+    "nasa_power"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied.",
+    "The data was obtained from the National Aeronautics and Space Administration (NASA) Langley Research Center (LaRC) Prediction of Worldwide Energy Resources (POWER) Project funded through the NASA Earth Science Directorate Applied Science Program."
+   ],
+   "rows": 54786,
+   "fields": [
+    "station_id",
+    "date",
+    "storage_af",
+    "storage_pct",
+    "rain_mm",
+    "temp_c",
+    "humidity_pct",
+    "swe_basin_in"
+   ],
+   "missing_share_by_column": {
+    "station_id": 0.0,
+    "date": 0.0,
+    "storage_af": 0.0014,
+    "storage_pct": 0.0014,
+    "rain_mm": 0.0,
+    "temp_c": 0.0,
+    "humidity_pct": 0.0,
+    "swe_basin_in": 0.0184
+   }
+  },
+  {
+   "path": "ui_outputs/test_predictions.csv",
+   "sha256": "4225a5986d49031449f143c2255f0974d89860319e79956cff23b658329349a8",
+   "description": "UI contract file for the website's backtest pages (docs/UI_CONTRACT.md).",
+   "sources": [
+    "cdec_storage_sensor15",
+    "cdec_snow_sensor82",
+    "nasa_power"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied.",
+    "The data was obtained from the National Aeronautics and Space Administration (NASA) Langley Research Center (LaRC) Prediction of Worldwide Energy Resources (POWER) Project funded through the NASA Earth Science Directorate Applied Science Program."
+   ],
+   "rows": 593,
+   "fields": [
+    "station_id",
+    "reservoir_name",
+    "date",
+    "target_date",
+    "target_delta_pp",
+    "pred_delta_pp",
+    "lower_90_pp",
+    "upper_90_pp",
+    "baseline_persistence_pp",
+    "baseline_trend_pp",
+    "baseline_seasonal_pp",
+    "baseline_doy_pp",
+    "pred_hgb_v1_features_pp",
+    "pred_hgb_swe_pp",
+    "pred_hgb_no_weather_pp",
+    "pred_ridge_pp",
+    "storage_af",
+    "capacity_af",
+    "storage_pct",
+    "season"
+   ],
+   "missing_share_by_column": {
+    "station_id": 0.0,
+    "reservoir_name": 0.0,
+    "date": 0.0,
+    "target_date": 0.0,
+    "target_delta_pp": 0.0,
+    "pred_delta_pp": 0.0,
+    "lower_90_pp": 0.0,
+    "upper_90_pp": 0.0,
+    "baseline_persistence_pp": 0.0,
+    "baseline_trend_pp": 0.0,
+    "baseline_seasonal_pp": 0.0,
+    "baseline_doy_pp": 0.0,
+    "pred_hgb_v1_features_pp": 0.0,
+    "pred_hgb_swe_pp": 0.0,
+    "pred_hgb_no_weather_pp": 0.0,
+    "pred_ridge_pp": 0.0,
+    "storage_af": 0.0,
+    "capacity_af": 0.0,
+    "storage_pct": 0.0,
+    "season": 0.0
+   }
+  },
+  {
+   "path": "ui_outputs/metrics.json",
+   "sha256": "dba61a1c8b7d0030ce07796179986df80866266024b66a61560817b6702797ab",
+   "description": "UI contract file for the website's backtest pages (docs/UI_CONTRACT.md).",
+   "sources": [
+    "cdec_storage_sensor15",
+    "cdec_snow_sensor82",
+    "nasa_power"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied.",
+    "The data was obtained from the National Aeronautics and Space Administration (NASA) Langley Research Center (LaRC) Prediction of Worldwide Energy Resources (POWER) Project funded through the NASA Earth Science Directorate Applied Science Program."
+   ]
+  },
+  {
+   "path": "ui_outputs/feature_catalog.json",
+   "sha256": "b456fea1a2b507974d55fffdf102d935d36cabd852280812769d92406f3605dc",
+   "description": "UI contract file for the website's backtest pages (docs/UI_CONTRACT.md).",
+   "sources": [
+    "cdec_storage_sensor15",
+    "cdec_snow_sensor82",
+    "nasa_power"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied.",
+    "The data was obtained from the National Aeronautics and Space Administration (NASA) Langley Research Center (LaRC) Prediction of Worldwide Energy Resources (POWER) Project funded through the NASA Earth Science Directorate Applied Science Program."
+   ]
+  },
+  {
+   "path": "ui_outputs/forecast_snapshot.json",
+   "sha256": "81433f5954d50600e2f1d465e94f06326b7dc4f0d666e2dc9c09d31aa480b98e",
+   "description": "The first issued Model A forecast (2026-11-22), shown in the website's Issued record tab. Unmodified copy.",
+   "sources": [
+    "cdec_storage_sensor15",
+    "cdec_snow_sensor82"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied."
+   ]
+  },
+  {
+   "path": "issued_forecasts/wsf-v2-2026-11-22-20261122T052508Z.json",
+   "sha256": "81433f5954d50600e2f1d465e94f06326b7dc4f0d666e2dc9c09d31aa480b98e",
+   "description": "Issued Model A forecast record, unmodified (SHA-256 in docs/v3/issued_forecast_ledger.jsonl).",
+   "sources": [
+    "cdec_storage_sensor15",
+    "cdec_snow_sensor82"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied."
+   ]
+  },
+  {
+   "path": "issued_forecasts/wsf-v3-ORO-20261122T064412Z.json",
+   "sha256": "5fe960ad6fe66b1fad68b5f4f4ebb3caa1fcd829cefc85ab94da8d950da64fbe",
+   "description": "First interactive v3 forecast (Oroville, Models A-C), unmodified.",
+   "sources": [
+    "cdec_storage_sensor15",
+    "cdec_snow_sensor82",
+    "nasa_power",
+    "noaa_gefs_operational"
+   ],
+   "attribution": [
+    "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied.",
+    "NOAA NCEP Global Ensemble Forecast System version 12 (GEFSv12), via the NOAA Open Data Dissemination program on AWS. Basin aggregates are derived by WatershedShift and are not unaltered NOAA data; no NOAA endorsement is implied.",
+    "The data was obtained from the National Aeronautics and Space Administration (NASA) Langley Research Center (LaRC) Prediction of Worldwide Energy Resources (POWER) Project funded through the NASA Earth Science Directorate Applied Science Program."
+   ]
+  },
+  {
+   "path": "upstream_boxes.json",
+   "sha256": "183e02391a09b28c02420822af85cad76eb30a2d405f0dd1a4a8cb72cd73e337",
+   "description": "box definitions",
+   "sources": []
+  },
+  {
+   "path": "metadata/capacity_history.csv",
+   "sha256": "9efe68d16a6273aee9f9b6fb01571fe78a45d87cfd8259f58afedc5eab8f0256",
+   "description": "copy of data/capacity_history.csv",
+   "sources": []
+  },
+  {
+   "path": "metadata/series_breaks.csv",
+   "sha256": "84b8f97202f8111a5ec1a1366df8a4ed1630fb3cc9614f43dcc613d00bf00e3d",
+   "description": "copy of data/series_breaks.csv",
+   "sources": []
+  },
+  {
+   "path": "metadata/spike_review.csv",
+   "sha256": "d60dd9518521352251876118886ec8551fc7d0998b6961dedaf72acc637cb76b",
+   "description": "copy of data/spike_review.csv",
+   "sources": []
+  },
+  {
+   "path": "metadata/snow_stations.csv",
+   "sha256": "d10c9fa6a0823acd3a340ab2ef8e4b8d7c86fcc325a239457f6a4e246d78b57e",
+   "description": "copy of data/snow_stations.csv",
+   "sources": []
+  }
+ ],
+ "excluded_pending_clearance": [],
+ "citation": "WatershedShift (2026). Public data for 30-day reservoir storage research forecasts, version 2026-11-22.2. https://github.com/haaris-usman-saeed/watershed"
+}

@@ -90,7 +90,7 @@ def masthead(b: Bundle):
         mode = '<span class="ws-mode synthetic">Provenance unconfirmed</span>'
     else:
         mode = f'<span class="ws-mode synthetic">data_mode: {esc(str(b.data_mode))}</span>'
-    src = "from WATERSHED_DATA_DIR" if b.dir_source == "env" else "default"
+    src = {"env": "from WATERSHED_DATA_DIR", "public release": "published release"}.get(b.dir_source, "default")
     st.markdown(
         f'<div class="ws-mast"><div class="ws-mark">WatershedShift'
         f'<small>California reservoir storage, observed and backtested</small></div>'

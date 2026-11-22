@@ -1,8 +1,8 @@
 pandas>=2.2,<3
 numpy>=1.26,<3
 requests>=2.31,<3
-scikit-learn>=1.4,<2
-joblib>=1.3,<2
+scikit-learn==1.9.1   # must equal the version the model artifacts were built with (checked at startup)
+joblib==1.6.0
 streamlit>=1.38,<2
 matplotlib>=3.8,<4
 pytest>=8,<10

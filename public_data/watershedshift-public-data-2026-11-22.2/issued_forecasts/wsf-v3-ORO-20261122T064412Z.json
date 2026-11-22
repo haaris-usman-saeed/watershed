@@ -1,0 +1,1604 @@
+{
+ "schema": "watershedshift-forecast/2.0",
+ "record_type": "prospective_research_forecast",
+ "is_heldout_test_prediction": false,
+ "data_mode": "real",
+ "station_id": "ORO",
+ "reservoir_name": "Lake Oroville",
+ "issued_utc": "2026-11-22T06:44:12Z",
+ "origins_considered": [
+  {
+   "origin_date": "2026-11-16",
+   "eligible": true,
+   "missing": []
+  }
+ ],
+ "storage_last_obs_date": "2026-11-20",
+ "snow_last_obs_date": "2026-11-21",
+ "source_status": {
+  "cdec": {
+   "ok": true,
+   "cached": true,
+   "retrieved_utc": "2026-11-22T06:24:44Z"
+  },
+  "power": {
+   "ok": true,
+   "cached": true,
+   "retrieved_utc": "2026-11-22T06:24:47Z"
+  },
+  "gefs": {
+   "ok": true,
+   "cached": true,
+   "cycle": "2026-11-16T00Z",
+   "published_utc_max": "2026-11-16T06:02:49Z",
+   "note": "operational; 64 files, latest published 2026-11-16T06:02:49Z"
+  }
+ },
+ "warnings": [],
+ "models": {
+  "A": {
+   "label": "Model A: frozen v2 (storage, snow, season)",
+   "available": true,
+   "reasons": [],
+   "version": "v2-frozen",
+   "training_cutoff_exclusive": "2024-01-01",
+   "artifact_sha256": "00eec47089f28ec2b44ce30bbb7d5c92994befc98cd0233ed634bc23f735e30a",
+   "information_cutoff": {
+    "storage": "2026-11-16",
+    "snow": "2026-11-15"
+   },
+   "inputs": {
+    "storage_pct": 41.934381837171905,
+    "prev7_pct": -0.2060294567228644,
+    "prev30_pct": -2.4051661535883024,
+    "prev60_pct": -10.36063038706733,
+    "swe_basin_in": 0.49125,
+    "swe_change_14d_in": 0.49125,
+    "swe_anom_in": -0.5533409319610918,
+    "season_sin": -0.7021479494046978,
+    "season_cos": 0.712031078778713,
+    "station_DNP": 0.0,
+    "station_EXC": 0.0,
+    "station_FOL": 0.0,
+    "station_NML": 0.0,
+    "station_ORO": 1.0,
+    "station_SHA": 0.0
+   },
+   "change_pp": 1.8171550377533587,
+   "change_af": 62233.07167010928,
+   "projected_af": 1498382.0716701092,
+   "projected_pct": 43.751536874925264,
+   "interval": {
+    "method": "sym_season, model-specific",
+    "season": "SON",
+    "offsets_pp": [
+     -3.8909857168043076,
+     3.8909857168043076
+    ],
+    "lower_change_pp": -2.073830679050949,
+    "upper_change_pp": 5.708140754557666,
+    "lower_projected_pct": 39.860551158120956,
+    "upper_projected_pct": 47.64252259172957,
+    "future_coverage_established": false,
+    "historical_coverage": 0.9090909090909091
+   },
+   "plausible": true
+  },
+  "B": {
+   "label": "Model B: + recent weather at the dam (NASA POWER)",
+   "available": true,
+   "reasons": [],
+   "version": "v3",
+   "training_cutoff_exclusive": "2026-01-01",
+   "artifact_sha256": "ee05cafd99c6c4cf187b6bbc704e883712c0ff73c3e302ff930970cb71e3fe31",
+   "information_cutoff": {
+    "storage": "2026-11-16",
+    "snow": "2026-11-15",
+    "weather": "2026-11-09"
+   },
+   "inputs": {
+    "storage_pct": 41.934381837171905,
+    "prev7_pct": -0.2060294567228644,
+    "prev30_pct": -2.4051661535883024,
+    "prev60_pct": -10.36063038706733,
+    "swe_basin_in": 0.49125,
+    "swe_change_14d_in": 0.49125,
+    "swe_anom_in": -0.5494334243334613,
+    "season_sin": -0.7021479494046978,
+    "season_cos": 0.712031078778713,
+    "rain_7d_mm": 5.65,
+    "rain_30d_mm": 39.12,
+    "temp_30d_c": 13.685666666666668,
+    "humidity_30d_pct": 49.274,
+    "station_DNP": 0.0,
+    "station_EXC": 0.0,
+    "station_FOL": 0.0,
+    "station_NML": 0.0,
+    "station_ORO": 1.0,
+    "station_SHA": 0.0
+   },
+   "change_pp": 0.7666945944629312,
+   "change_af": 26257.39612470707,
+   "projected_af": 1462406.396124707,
+   "projected_pct": 42.70107643163484,
+   "interval": {
+    "method": "sym_season, model-specific",
+    "season": "SON",
+    "offsets_pp": [
+     -3.865937709072303,
+     3.865937709072303
+    ],
+    "lower_change_pp": -3.0992431146093717,
+    "upper_change_pp": 4.632632303535234,
+    "lower_projected_pct": 38.83513872256253,
+    "upper_projected_pct": 46.567014140707144,
+    "future_coverage_established": false,
+    "historical_coverage": 0.9047619047619048
+   },
+   "plausible": true
+  },
+  "B2": {
+   "label": "Model B2: + recent weather over the upstream area (NASA POWER)",
+   "available": true,
+   "reasons": [],
+   "version": "v3",
+   "training_cutoff_exclusive": "2026-01-01",
+   "artifact_sha256": "216304aaddb6085f97947da20fcda694430e774f5b1656d2347f2ef25a0da5e6",
+   "information_cutoff": {
+    "storage": "2026-11-16",
+    "snow": "2026-11-15",
+    "weather": "2026-11-09"
+   },
+   "inputs": {
+    "storage_pct": 41.934381837171905,
+    "prev7_pct": -0.2060294567228644,
+    "prev30_pct": -2.4051661535883024,
+    "prev60_pct": -10.36063038706733,
+    "swe_basin_in": 0.49125,
+    "swe_change_14d_in": 0.49125,
+    "swe_anom_in": -0.5494334243334613,
+    "season_sin": -0.7021479494046978,
+    "season_cos": 0.712031078778713,
+    "rain_7d_mm_box": 3.8533333333333335,
+    "rain_30d_mm_box": 25.975,
+    "temp_30d_c_box": 9.93077777777778,
+    "humidity_30d_pct_box": 50.3025,
+    "station_DNP": 0.0,
+    "station_EXC": 0.0,
+    "station_FOL": 0.0,
+    "station_NML": 0.0,
+    "station_ORO": 1.0,
+    "station_SHA": 0.0
+   },
+   "change_pp": 0.7671791034203959,
+   "change_af": 26273.989359763113,
+   "projected_af": 1462422.9893597632,
+   "projected_pct": 42.7015609405923,
+   "interval": {
+    "method": "sym_season, model-specific",
+    "season": "SON",
+    "offsets_pp": [
+     -4.005050029418516,
+     4.005050029418516
+    ],
+    "lower_change_pp": -3.2378709259981204,
+    "upper_change_pp": 4.772229132838913,
+    "lower_projected_pct": 38.69651091117379,
+    "upper_projected_pct": 46.706610970010814,
+    "future_coverage_established": false,
+    "historical_coverage": 0.9047619047619048
+   },
+   "plausible": true
+  },
+  "C": {
+   "label": "Model C: + GEFS precipitation forecast, days 1-16",
+   "available": true,
+   "reasons": [],
+   "version": "v3",
+   "training_cutoff_exclusive": "2026-01-01",
+   "artifact_sha256": "71aed320ce7a148b91d46c4415362c818eefd9e473af8db521406b6892303aaa",
+   "information_cutoff": {
+    "storage": "2026-11-16",
+    "snow": "2026-11-15",
+    "weather_forecast": "GEFS 2026-11-16 00Z, published by 2026-11-16T06:02:49Z"
+   },
+   "inputs": {
+    "storage_pct": 41.934381837171905,
+    "prev7_pct": -0.2060294567228644,
+    "prev30_pct": -2.4051661535883024,
+    "prev60_pct": -10.36063038706733,
+    "swe_basin_in": 0.49125,
+    "swe_change_14d_in": 0.49125,
+    "swe_anom_in": -0.5494334243334613,
+    "season_sin": -0.7021479494046978,
+    "season_cos": 0.712031078778713,
+    "gefs_p_d1_7_mm": 107.069,
+    "gefs_p_d8_16_mm": 275.7742222222222,
+    "station_DNP": 0.0,
+    "station_EXC": 0.0,
+    "station_FOL": 0.0,
+    "station_NML": 0.0,
+    "station_ORO": 1.0,
+    "station_SHA": 0.0
+   },
+   "change_pp": 4.0812435887866885,
+   "change_af": 139772.5122442798,
+   "projected_af": 1575921.5122442797,
+   "projected_pct": 46.015625425958596,
+   "interval": {
+    "method": "sym_season, model-specific",
+    "season": "SON",
+    "offsets_pp": [
+     -3.8219157037623046,
+     3.8219157037623046
+    ],
+    "lower_change_pp": 0.25932788502438386,
+    "upper_change_pp": 7.9031592925489935,
+    "lower_projected_pct": 42.19370972219629,
+    "upper_projected_pct": 49.837541129720904,
+    "future_coverage_established": false,
+    "historical_coverage": 0.9047619047619048
+   },
+   "plausible": true,
+   "gefs": {
+    "cycle": "2026-11-16T00Z",
+    "published_utc_max": "2026-11-16T06:02:49Z",
+    "source": "operational",
+    "horizon": "days 1-16 only; nothing represents days 17-30",
+    "values": {
+     "gefs_p_d1_7_mm": 107.069,
+     "gefs_p_d8_16_mm": 275.7742222222222
+    },
+    "bytes_sha256": "06258ade6f1e045c2da259a46d695e1c05ef346176ef351504d7125057e49fc4"
+   }
+  }
+ },
+ "sources": {
+  "cdec": {
+   "provider": "CDEC (California DWR)",
+   "endpoint": "https://cdec.water.ca.gov/dynamicapp/req/CSVDataServlet",
+   "window": [
+    "2026-04-16",
+    "2026-11-22"
+   ],
+   "files": [
+    {
+     "file": "cdec/DNP_sensor15_D_2026.csv",
+     "url": "https://cdec.water.ca.gov/dynamicapp/req/CSVDataServlet?Stations=DNP&SensorNums=15&dur_code=D&Start=2026-04-16&End=2026-11-22",
+     "status": 200,
+     "retrieved_utc": "2026-11-22T06:24:42+00:00",
+     "bytes": 13103,
+     "sha256": "af329632ad3bd793c58e7d85c1c5d11a7f86cc523f69daaeb646f68de98498c7",
+     "sha256_ok": true
+    },
+    {
+     "file": "cdec/EXC_sensor15_D_2026.csv",
+     "url": "https://cdec.water.ca.gov/dynamicapp/req/CSVDataServlet?Stations=EXC&SensorNums=15&dur_code=D&Start=2026-04-16&End=2026-11-22",
+     "status": 200,
+     "retrieved_utc": "2026-11-22T06:24:42+00:00",
+     "bytes": 12897,
+     "sha256": "e9a922a4afaf9e98416b259d6863b297fd0a10573eab1f856974f48411f87839",
+     "sha256_ok": true
+    },
+    {
+     "file": "cdec/FOL_sensor15_D_2026.csv",
+     "url": "https://cdec.water.ca.gov/dynamicapp/req/CSVDataServlet?Stations=FOL&SensorNums=15&dur_code=D&Start=2026-04-16&End=2026-11-22",
+     "status": 200,
+     "retrieved_utc": "2026-11-22T06:24:42+00:00",
+     "bytes": 12900,
+     "sha256": "618b7061126e6ae6c1994a16b9a6fda033c7a4762ba0f330dc28c513c04ea32e",
+     "sha256_ok": true
+    },
+    {
+     "file": "cdec/NML_sensor15_D_2026.csv",
+     "url": "https://cdec.water.ca.gov/dynamicapp/req/CSVDataServlet?Stations=NML&SensorNums=15&dur_code=D&Start=2026-04-16&End=2026-11-22",
+     "status": 200,
+     "retrieved_utc": "2026-11-22T06:24:42+00:00",
+     "bytes": 13119,
+     "sha256": "e61cb50f9aef0a98b5d389a5a9a993937e9bfbd22fd1612dfe52216e0f4674f1",
+     "sha256_ok": true
+    },
+    {
+     "file": "cdec/ORO_sensor15_D_2026.csv",
+     "url": "https://cdec.water.ca.gov/dynamicapp/req/CSVDataServlet?Stations=ORO&SensorNums=15&dur_code=D&Start=2026-04-16&End=2026-11-22",
+     "status": 200,
+     "retrieved_utc": "2026-11-22T06:24:42+00:00",
+     "bytes": 13119,
+     "sha256": "9e2de3c9f10ec9eb734cb888e54e8b7b5b924c5e7e88a25012adb9df101f7157",
+     "sha256_ok": true
+    },
+    {
+     "file": "cdec/SHA_sensor15_D_2026.csv",
+     "url": "https://cdec.water.ca.gov/dynamicapp/req/CSVDataServlet?Stations=SHA&SensorNums=15&dur_code=D&Start=2026-04-16&End=2026-11-22",
+     "status": 200,
+     "retrieved_utc": "2026-11-22T06:24:42+00:00",
+     "bytes": 13119,
+     "sha256": "2eda4e75b75f3bd7cc0f3bd66de50c32c07b680f01838ae41a53235d34261047",
+     "sha256_ok": true
+    },
+    {
+     "file": "snow/snow_sensor82_D_2026.csv",
+     "url": "https://cdec.water.ca.gov/dynamicapp/req/CSVDataServlet?Stations=ADM%2CALP%2CBKL%2CBLC%2CBLD%2CBLS%2CCAP%2CCDP%2CCXS%2CDAN%2CDDM%2CFOR%2CGIN%2CGKS%2CGNL%2CGOL%2CGRZ%2CHMB%2CHRS%2CHYS%2CKIB%2CKTL%2CMED%2CPLP%2CRBB%2CRBP%2CRTL%2CSCN%2CSDF%2CSIL%2CSLM%2CSLT%2CSNM%2CSTM%2CSTR%2CTNY%2CVVL&SensorNums=82&dur_code=D&Start=2026-04-16&End=2026-11-22",
+     "status": 200,
+     "retrieved_utc": "2026-11-22T06:24:44+00:00",
+     "bytes": 490347,
+     "sha256": "d4626ad20b750124aa7e3a3ae8c9b7f9b40c0b6ee207c0daf904035f5420f54e",
+     "sha256_ok": true
+    }
+   ],
+   "retrieved_utc": "2026-11-22T06:24:41Z"
+  },
+  "power": {
+   "provider": "NASA LaRC POWER",
+   "endpoint": "https://power.larc.nasa.gov/api/temporal/daily/point",
+   "window": [
+    "2026-09-23",
+    "2026-11-22"
+   ],
+   "requests": 47,
+   "responses_sha256": [
+    "851225519efc6bcd59dfb82191b3382eb2d723f40b9881544ecf4b78998fd85d",
+    "cd5afc2813995123bb6bf27691153a02ee683351337c834562af8c3afab671ea",
+    "48fd1d0312c39b4e07b58115c8b9b382d27d2091a1153256b1058ab20d7266be",
+    "3640d975041bc6585c138b04610556c1f8e7e642123c7247754124d9de124f43",
+    "3f90ed67ed32e508d5f408d3973951f01874c39c40d4b2ea9ae62ec2ffb888e7",
+    "7677e45027bcae416881a1ee4f5c0d4b4cff7d5c083674949a495e81aa87b8d9",
+    "2d3afdf539925f1f48d00bcc21663747c1775b77926ab8fef6fe036a321aa11a",
+    "babe4d61d14f1dba476997a91f505d0877a9c19a7f8e95c319d66bc96fb19232",
+    "1a3eb1b9f22aa8859fdfff845098a753fb7d3e3f53bff599960fcf4df15f37b1",
+    "f5086003a3c5fb6f8b497c19766d0e4d64b20213fad785dcb5a988f11ed53469",
+    "820c4147ef239262d050e210ec1bdebe7820064e73866c2e02b9f1764ab1a88d",
+    "5573e004dda50d7a219d8a4eefcb4cb064b51ee3377fbb4ae594679f55cde8be",
+    "53d3f0d86ee29351e762864111b08bd84e9aa9d0fdab1da5975ce0695fe2d0f5",
+    "508bd05fd31bf7190a5479df5f7b846eb6aeff83144421310abc2023c8978e40",
+    "4500413358d35639eba633be31ababce94998bd0a04b3bd5b169c486b032dd01",
+    "bb2f9cbae41e7d2044d6d06873ee6235440b53f3906d87ed84dab811b8068e07",
+    "37fe412ebbefb2c14641de9821e9665b60ec52d656d204721b5c04862f6347c3",
+    "d66d4e767c60f904a7cc3cea721fae5744eaff0239ecb74e697543468df33a56",
+    "fd21787f2f2b4ca0b87c1d03948ec89fef394c9f02506a42ddc3365fa8f6af0c",
+    "fb21f88c77126c53919e2f1b5fdd46eba45600aa021d2b6404a0edbdf7307872",
+    "b8534bf5421219e58d950204e8afe8de471598aa3f6301279ab8739c93d53260",
+    "7251ff904914ced673c91ec6d1f74f95003a77fb6433437d615418f41dd25658",
+    "adfa0ce4260b26b17c91da27ea41ec8616f42873eb9218c6778350d2ccc0cae5",
+    "b6e8bc18eb3b4cc791106ae3dfd3cb49a55e6641c20b5819746d0a6f8a0ad5c0",
+    "055106410f0700949dad8237f008d24d0ff42d5dd8de21a15725645e00082945",
+    "64ec9a5acf402710b3365c92b369e447d89dc3c64c9031217c9760fbdeeb7264",
+    "8711c0e1844b932a051b90ce7257acd4c64163f5a06a8dd5fbd56c14519578d7",
+    "941a617fff6de3bd9ed6a5348aee1e5526967cf5b3bce4957809ce4ad1dcedff",
+    "6b3284d12164369f4ba3bcd512ab8393f48b77683cb2fe4a0bf585009fe3bbdf",
+    "004cc2dce19129d1f302b098752a2afbea051652933b96b0af41d02b754a0a2c",
+    "157456dff351b28faa481b41d45c16d4e9aa581406274fa69860a5204d724f99",
+    "d5036b3d20cea49d8701efb4c6346db82ee1f2f4a2b7ddaf55ac5875d2a8e3df",
+    "add8f14655ac4d79898b8c2b3021f1dbfbc7535bb67f89721b71ee967957e885",
+    "1679eca0f14cd857795cf9065df8196133e5b1796e2dd599fd06ece586719731",
+    "8109467fc4ec541bc3c8fa93c603d3ba14c41c730b1ee8802597779650d14e2b",
+    "d9fb5bfd040d34237b7e4d65bff3adb85289abcda675872f6a1c99ea79b4d2d1",
+    "83b78b0c8ab666e87e926d2d09d3c2fab1c36d7be58407c5480c68515e21fb5c",
+    "6e11eb4075cfb50c36c228f18fa8ac7d874b30115f63b50665dc48cd569fe7dc",
+    "6a707d41a5ca3fbad2fa363a8377cee86140cb33b46e6d67c9a98ff5e453f0f4",
+    "989a3c1c376e2cfbb17caeac38722fb1eb8f3a23ff1df63dbd56518001532e63",
+    "550458d2ea826548a1210087056d704e2be674d366662adaa8da71ef02dc1c78",
+    "fccf6ceaddf7b2948a35b1786bf2dbb3e93fb9e78a48d854a4a17d61214438ff",
+    "8d89b750f880946a2bdb0064dc731627595bdbf616bb2ba668d177a0a1935116",
+    "2cb1165428bd7211e209a6df566825ee283b8b3a81c2bbe5c9eede2d6196a5af",
+    "9659971f0911d64c4a05930cec457a6935fa400caae4d95f8e758834cb6b1f96",
+    "ba78eaddd995cf3e12a135ab778e287974c16d9f7295124ca868a7bc7e2742ae",
+    "8f2f7442734655d9618e9abad3af33b37fec0297d328ff8aa677c5fa907396f9"
+   ],
+   "retrieved_utc": "2026-11-22T06:24:41Z"
+  }
+ },
+ "status": "ok",
+ "origin_date": "2026-11-16",
+ "target_date": "2026-12-16",
+ "days_remaining": 24.72,
+ "capacity_af": 3424753.0,
+ "observed": {
+  "storage_af": 1436149.0,
+  "storage_pct": 41.934381837171905,
+  "date": "2026-11-16"
+ },
+ "snow": {
+  "swe_date": "2026-11-15",
+  "swe_basin_in": 0.49125,
+  "swe_change_14d_in": 0.49125
+ },
+ "recent_history": [
+  {
+   "date": "2026-05-26",
+   "storage_af": 3352510.0,
+   "storage_pct": 97.89056320266016,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-05-27",
+   "storage_af": 3350678.0,
+   "storage_pct": 97.83707029382849,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-05-28",
+   "storage_af": 3345487.0,
+   "storage_pct": 97.68549731907673,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-05-29",
+   "storage_af": 3340907.0,
+   "storage_pct": 97.55176504699755,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-05-30",
+   "storage_af": 3335725.0,
+   "storage_pct": 97.40045486492019,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-05-31",
+   "storage_af": 3331618.0,
+   "storage_pct": 97.28053380783957,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-01",
+   "storage_af": 3327054.0,
+   "storage_pct": 97.14726872273708,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-02",
+   "storage_af": 3323251.0,
+   "storage_pct": 97.03622421821369,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-03",
+   "storage_af": 3319614.0,
+   "storage_pct": 96.93002677857352,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-04",
+   "storage_af": 3318099.0,
+   "storage_pct": 96.88579001171763,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-05",
+   "storage_af": 3315069.0,
+   "storage_pct": 96.79731647800585,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-06",
+   "storage_af": 3309311.0,
+   "storage_pct": 96.62918756476745,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-07",
+   "storage_af": 3303719.0,
+   "storage_pct": 96.46590571641225,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-08",
+   "storage_af": 3297527.0,
+   "storage_pct": 96.28510435643096,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-09",
+   "storage_af": 3290738.0,
+   "storage_pct": 96.0868710823817,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-10",
+   "storage_af": 3283362.0,
+   "storage_pct": 95.87149788612493,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-11",
+   "storage_af": 3279448.0,
+   "storage_pct": 95.7572122719507,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-12",
+   "storage_af": 3273590.0,
+   "storage_pct": 95.58616344010794,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-13",
+   "storage_af": 3264586.0,
+   "storage_pct": 95.32325396897237,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-14",
+   "storage_af": 3255755.0,
+   "storage_pct": 95.0653959570223,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-15",
+   "storage_af": 3248126.0,
+   "storage_pct": 94.84263536669651,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-16",
+   "storage_af": 3240071.0,
+   "storage_pct": 94.60743592311621,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-17",
+   "storage_af": 3230087.0,
+   "storage_pct": 94.315911249658,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-18",
+   "storage_af": 3219977.0,
+   "storage_pct": 94.02070747875833,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-19",
+   "storage_af": 3208706.0,
+   "storage_pct": 93.69160345286215,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-20",
+   "storage_af": 3197904.0,
+   "storage_pct": 93.37619384522037,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-21",
+   "storage_af": 3186828.0,
+   "storage_pct": 93.05278366060267,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-22",
+   "storage_af": 3179613.0,
+   "storage_pct": 92.8421115332989,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-23",
+   "storage_af": 3172398.0,
+   "storage_pct": 92.63143940599512,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-24",
+   "storage_af": 3160652.0,
+   "storage_pct": 92.2884657667283,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-25",
+   "storage_af": 3146450.0,
+   "storage_pct": 91.87377892653865,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-26",
+   "storage_af": 3135065.0,
+   "storage_pct": 91.54134619343351,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-27",
+   "storage_af": 3120651.0,
+   "storage_pct": 91.12046912580264,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-28",
+   "storage_af": 3109328.0,
+   "storage_pct": 90.78984674223221,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-29",
+   "storage_af": 3096874.0,
+   "storage_pct": 90.42620007924658,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-06-30",
+   "storage_af": 3082292.0,
+   "storage_pct": 90.00041754836042,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-01",
+   "storage_af": 3069190.0,
+   "storage_pct": 89.61784981281862,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-02",
+   "storage_af": 3046819.0,
+   "storage_pct": 88.96463482183971,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-03",
+   "storage_af": 3023134.0,
+   "storage_pct": 88.27305210039965,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-04",
+   "storage_af": 3010059.0,
+   "storage_pct": 87.89127274288101,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-05",
+   "storage_af": 2996454.0,
+   "storage_pct": 87.49401781675934,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-06",
+   "storage_af": 2971615.0,
+   "storage_pct": 86.7687392346251,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-07",
+   "storage_af": 2954484.0,
+   "storage_pct": 86.26852797851407,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-08",
+   "storage_af": 2931556.0,
+   "storage_pct": 85.59904904090894,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-09",
+   "storage_af": 2909035.0,
+   "storage_pct": 84.9414541720235,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-10",
+   "storage_af": 2888969.0,
+   "storage_pct": 84.35554330487483,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-11",
+   "storage_af": 2871204.0,
+   "storage_pct": 83.83681976481223,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-12",
+   "storage_af": 2853511.0,
+   "storage_pct": 83.32019856614477,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-13",
+   "storage_af": 2834385.0,
+   "storage_pct": 82.76173493387698,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-14",
+   "storage_af": 2821052.0,
+   "storage_pct": 82.37242218635913,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-15",
+   "storage_af": 2804919.0,
+   "storage_pct": 81.90135171791951,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-16",
+   "storage_af": 2786961.0,
+   "storage_pct": 81.37699273495052,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-17",
+   "storage_af": 2771224.0,
+   "storage_pct": 80.91748514418413,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-18",
+   "storage_af": 2752071.0,
+   "storage_pct": 80.35823313389317,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-19",
+   "storage_af": 2732088.0,
+   "storage_pct": 79.7747457991861,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-20",
+   "storage_af": 2725842.0,
+   "storage_pct": 79.59236768315846,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-21",
+   "storage_af": 2709398.0,
+   "storage_pct": 79.11221626785932,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-22",
+   "storage_af": 2692954.0,
+   "storage_pct": 78.63206485256018,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-23",
+   "storage_af": 2672357.0,
+   "storage_pct": 78.03064921762241,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-24",
+   "storage_af": 2652658.0,
+   "storage_pct": 77.4554544517517,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-25",
+   "storage_af": 2630216.0,
+   "storage_pct": 76.8001663185637,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-26",
+   "storage_af": 2608424.0,
+   "storage_pct": 76.16385765630397,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-27",
+   "storage_af": 2589329.0,
+   "storage_pct": 75.60629919880354,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-28",
+   "storage_af": 2569688.0,
+   "storage_pct": 75.03279798572335,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-29",
+   "storage_af": 2549781.0,
+   "storage_pct": 74.4515297891556,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-30",
+   "storage_af": 2531359.0,
+   "storage_pct": 73.91362238386243,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-07-31",
+   "storage_af": 2512790.0,
+   "storage_pct": 73.37142269822087,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-01",
+   "storage_af": 2494313.0,
+   "storage_pct": 72.83190933769531,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-02",
+   "storage_af": 2475317.0,
+   "storage_pct": 72.27724159961316,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-03",
+   "storage_af": 2457270.0,
+   "storage_pct": 71.7502838890863,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-04",
+   "storage_af": 2438213.0,
+   "storage_pct": 71.19383500065553,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-05",
+   "storage_af": 2419256.0,
+   "storage_pct": 70.64030603082908,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-06",
+   "storage_af": 2400768.0,
+   "storage_pct": 70.10047147925704,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-07",
+   "storage_af": 2382130.0,
+   "storage_pct": 69.55625704977848,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-08",
+   "storage_af": 2363109.0,
+   "storage_pct": 69.00085933204527,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-09",
+   "storage_af": 2342752.0,
+   "storage_pct": 68.40645150175794,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-10",
+   "storage_af": 2324414.0,
+   "storage_pct": 67.87099682809242,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-11",
+   "storage_af": 2307955.0,
+   "storage_pct": 67.39040742500262,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-12",
+   "storage_af": 2290626.0,
+   "storage_pct": 66.88441473005498,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-13",
+   "storage_af": 2270008.0,
+   "storage_pct": 66.28238591221032,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-14",
+   "storage_af": 2250676.0,
+   "storage_pct": 65.71790724761756,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-15",
+   "storage_af": 2230417.0,
+   "storage_pct": 65.12636093756251,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-16",
+   "storage_af": 2211790.0,
+   "storage_pct": 64.58246769913042,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-17",
+   "storage_af": 2192926.0,
+   "storage_pct": 64.03165425360602,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-18",
+   "storage_af": 2176660.0,
+   "storage_pct": 63.55670029342262,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-19",
+   "storage_af": 2159804.0,
+   "storage_pct": 63.064518813473555,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-20",
+   "storage_af": 2142708.0,
+   "storage_pct": 62.56532952887405,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-21",
+   "storage_af": 2126371.0,
+   "storage_pct": 62.08830242648156,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-22",
+   "storage_af": 2111343.0,
+   "storage_pct": 61.64949705861999,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-23",
+   "storage_af": 2096831.0,
+   "storage_pct": 61.22575847075687,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-24",
+   "storage_af": 2084042.0,
+   "storage_pct": 60.85233008044668,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-25",
+   "storage_af": 2067367.0,
+   "storage_pct": 60.365433653171486,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-26",
+   "storage_af": 2052078.0,
+   "storage_pct": 59.919007297752565,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-27",
+   "storage_af": 2042078.0,
+   "storage_pct": 59.62701543731767,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-28",
+   "storage_af": 2026500.0,
+   "storage_pct": 59.17215051713218,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-29",
+   "storage_af": 2008430.0,
+   "storage_pct": 58.64452122532632,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-30",
+   "storage_af": 1991542.0,
+   "storage_pct": 58.15140537142386,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-08-31",
+   "storage_af": 1973153.0,
+   "storage_pct": 57.61446153927013,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-01",
+   "storage_af": 1955934.0,
+   "storage_pct": 57.11168075478728,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-02",
+   "storage_af": 1941028.0,
+   "storage_pct": 56.67643768762302,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-03",
+   "storage_af": 1927655.0,
+   "storage_pct": 56.28595697266343,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-04",
+   "storage_af": 1912888.0,
+   "storage_pct": 55.85477259235922,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-05",
+   "storage_af": 1903570.0,
+   "storage_pct": 55.58269457680598,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-06",
+   "storage_af": 1894182.0,
+   "storage_pct": 55.3085726182297,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-07",
+   "storage_af": 1880418.0,
+   "storage_pct": 54.9066750215271,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-08",
+   "storage_af": 1869274.0,
+   "storage_pct": 54.58127929225845,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-09",
+   "storage_af": 1862137.0,
+   "storage_pct": 54.37288470146606,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-10",
+   "storage_af": 1851675.0,
+   "storage_pct": 54.06740281707907,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-11",
+   "storage_af": 1842872.0,
+   "storage_pct": 53.810362382338226,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-12",
+   "storage_af": 1833093.0,
+   "storage_pct": 53.52482354201894,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-13",
+   "storage_af": 1823555.0,
+   "storage_pct": 53.24632170553614,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-14",
+   "storage_af": 1813452.0,
+   "storage_pct": 52.95132232893876,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-15",
+   "storage_af": 1803286.0,
+   "storage_pct": 52.65448340362064,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-16",
+   "storage_af": 1798615.0,
+   "storage_pct": 52.5180940056115,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-17",
+   "storage_af": 1790975.0,
+   "storage_pct": 52.29501222423924,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-18",
+   "storage_af": 1778920.0,
+   "storage_pct": 51.94301603648497,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-19",
+   "storage_af": 1764960.0,
+   "storage_pct": 51.53539539931785,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-20",
+   "storage_af": 1753516.0,
+   "storage_pct": 51.20123991423615,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-21",
+   "storage_af": 1738728.0,
+   "storage_pct": 50.76944235102502,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-22",
+   "storage_af": 1725271.0,
+   "storage_pct": 50.37650890443778,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-23",
+   "storage_af": 1717176.0,
+   "storage_pct": 50.14014149341573,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-24",
+   "storage_af": 1706807.0,
+   "storage_pct": 49.83737513333078,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-25",
+   "storage_af": 1695719.0,
+   "storage_pct": 49.51361455848057,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-26",
+   "storage_af": 1682598.0,
+   "storage_pct": 49.130492038403936,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-27",
+   "storage_af": 1668982.0,
+   "storage_pct": 48.73291592123578,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-28",
+   "storage_af": 1654133.0,
+   "storage_pct": 48.299337207676,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-29",
+   "storage_af": 1642543.0,
+   "storage_pct": 47.96091864143195,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-09-30",
+   "storage_af": 1628223.0,
+   "storage_pct": 47.542786297289176,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-01",
+   "storage_af": 1617317.0,
+   "storage_pct": 47.22433997429888,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-02",
+   "storage_af": 1606737.0,
+   "storage_pct": 46.915412585958755,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-03",
+   "storage_af": 1593834.0,
+   "storage_pct": 46.5386554884396,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-04",
+   "storage_af": 1584915.0,
+   "storage_pct": 46.27822794811772,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-05",
+   "storage_af": 1575126.0,
+   "storage_pct": 45.992397115938,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-06",
+   "storage_af": 1570071.0,
+   "storage_pct": 45.84479523048815,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-07",
+   "storage_af": 1564571.0,
+   "storage_pct": 45.68419970724896,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-08",
+   "storage_af": 1560081.0,
+   "storage_pct": 45.55309536191369,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-09",
+   "storage_af": 1555503.0,
+   "storage_pct": 45.419421488206595,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-10",
+   "storage_af": 1550314.0,
+   "storage_pct": 45.26790691182693,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-11",
+   "storage_af": 1545222.0,
+   "storage_pct": 45.11922465649348,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-12",
+   "storage_af": 1538626.0,
+   "storage_pct": 44.92662682535062,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-13",
+   "storage_af": 1534450.0,
+   "storage_pct": 44.804691024433005,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-14",
+   "storage_af": 1533030.0,
+   "storage_pct": 44.76322818025125,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-15",
+   "storage_af": 1527443.0,
+   "storage_pct": 44.60009232782627,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-16",
+   "storage_af": 1522049.0,
+   "storage_pct": 44.442591918307684,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-17",
+   "storage_af": 1518520.0,
+   "storage_pct": 44.33954799076021,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-18",
+   "storage_af": 1515966.0,
+   "storage_pct": 44.264973269605136,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-19",
+   "storage_af": 1511387.0,
+   "storage_pct": 44.131270196711995,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-20",
+   "storage_af": 1505423.0,
+   "storage_pct": 43.95712625114862,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-21",
+   "storage_af": 1499558.0,
+   "storage_pct": 43.78587302500355,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-22",
+   "storage_af": 1494491.0,
+   "storage_pct": 43.63792074932119,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-23",
+   "storage_af": 1489354.0,
+   "storage_pct": 43.487924530615786,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-24",
+   "storage_af": 1484223.0,
+   "storage_pct": 43.33810350702664,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-25",
+   "storage_af": 1479456.0,
+   "storage_pct": 43.19891098715732,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-26",
+   "storage_af": 1476509.0,
+   "storage_pct": 43.11286098588716,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-27",
+   "storage_af": 1474178.0,
+   "storage_pct": 43.044797683219784,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-28",
+   "storage_af": 1472710.0,
+   "storage_pct": 43.00193327810794,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-29",
+   "storage_af": 1471501.0,
+   "storage_pct": 42.96663146218136,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-30",
+   "storage_af": 1469429.0,
+   "storage_pct": 42.90613074869925,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-10-31",
+   "storage_af": 1466844.0,
+   "storage_pct": 42.83065085277683,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-01",
+   "storage_af": 1464350.0,
+   "storage_pct": 42.757828082784364,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-02",
+   "storage_af": 1461856.0,
+   "storage_pct": 42.6850053127919,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-03",
+   "storage_af": 1460308.0,
+   "storage_pct": 42.639804972796576,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-04",
+   "storage_af": 1458077.0,
+   "storage_pct": 42.574661588733555,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-05",
+   "storage_af": 1455250.0,
+   "storage_pct": 42.49211548978861,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-06",
+   "storage_af": 1452167.0,
+   "storage_pct": 42.40209439921653,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-07",
+   "storage_af": 1449090.0,
+   "storage_pct": 42.312248503760706,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-08",
+   "storage_af": 1446532.0,
+   "storage_pct": 42.23755698586146,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-09",
+   "storage_af": 1443205.0,
+   "storage_pct": 42.14041129389477,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-10",
+   "storage_af": 1439463.0,
+   "storage_pct": 42.031147939720036,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-11",
+   "storage_af": 1436914.0,
+   "storage_pct": 41.95671921449517,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-12",
+   "storage_af": 1434534.0,
+   "storage_pct": 41.88722515171167,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-13",
+   "storage_af": 1433855.0,
+   "storage_pct": 41.86739890438814,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-14",
+   "storage_af": 1433431.0,
+   "storage_pct": 41.8550184495057,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-15",
+   "storage_af": 1433600.0,
+   "storage_pct": 41.85995311194705,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-16",
+   "storage_af": 1436149.0,
+   "storage_pct": 41.934381837171905,
+   "used_by_forecast": true
+  },
+  {
+   "date": "2026-11-17",
+   "storage_af": 1436574.0,
+   "storage_pct": 41.94679149124039,
+   "used_by_forecast": false
+  },
+  {
+   "date": "2026-11-18",
+   "storage_af": 1438443.0,
+   "storage_pct": 42.00136476995567,
+   "used_by_forecast": false
+  },
+  {
+   "date": "2026-11-19",
+   "storage_af": 1444143.0,
+   "storage_pct": 42.16780013040356,
+   "used_by_forecast": false
+  },
+  {
+   "date": "2026-11-20",
+   "storage_af": 1446361.0,
+   "storage_pct": 42.23256392504803,
+   "used_by_forecast": false
+  }
+ ],
+ "weather_history": {
+  "dam_point": {
+   "2026-09-23": 0.0,
+   "2026-09-24": 0.0,
+   "2026-09-25": 0.0,
+   "2026-09-26": 0.0,
+   "2026-09-27": 0.13,
+   "2026-09-28": 0.03,
+   "2026-09-29": 0.06,
+   "2026-09-30": 0.01,
+   "2026-10-01": 0.0,
+   "2026-10-02": 0.0,
+   "2026-10-03": 0.0,
+   "2026-10-04": 0.24,
+   "2026-10-05": 0.77,
+   "2026-10-06": 0.0,
+   "2026-10-07": 0.0,
+   "2026-10-08": 0.0,
+   "2026-10-09": 0.0,
+   "2026-10-10": 0.0,
+   "2026-10-11": 0.0,
+   "2026-10-12": 0.0,
+   "2026-10-13": 0.0,
+   "2026-10-14": 0.0,
+   "2026-10-15": 0.0,
+   "2026-10-16": 0.0,
+   "2026-10-17": 0.0,
+   "2026-10-18": 0.0,
+   "2026-10-19": 0.0,
+   "2026-10-20": 0.1,
+   "2026-10-21": 19.34,
+   "2026-10-22": 9.6,
+   "2026-10-23": 1.55,
+   "2026-10-24": 0.0,
+   "2026-10-25": 0.0,
+   "2026-10-26": 0.0,
+   "2026-10-27": 0.0,
+   "2026-10-28": 0.0,
+   "2026-10-29": 0.0,
+   "2026-10-30": 2.14,
+   "2026-10-31": 0.72,
+   "2026-11-01": 0.02,
+   "2026-11-02": 0.0,
+   "2026-11-03": 5.65,
+   "2026-11-04": 0.0,
+   "2026-11-05": 0.0,
+   "2026-11-06": 0.0,
+   "2026-11-07": 0.0,
+   "2026-11-08": 0.0,
+   "2026-11-09": 0.0,
+   "2026-11-10": 0.0,
+   "2026-11-11": 0.0,
+   "2026-11-12": 2.03,
+   "2026-11-13": 53.82,
+   "2026-11-14": 2.31,
+   "2026-11-15": 21.31,
+   "2026-11-16": 7.27,
+   "2026-11-17": 0.95,
+   "2026-11-18": 50.72,
+   "2026-11-19": 17.35
+  },
+  "upstream_box_mean": {
+   "2026-09-23": 0.0,
+   "2026-09-24": 0.0,
+   "2026-09-25": 0.0,
+   "2026-09-26": 0.0,
+   "2026-09-27": 0.08833333333333333,
+   "2026-09-28": 0.024999999999999998,
+   "2026-09-29": 0.02666666666666667,
+   "2026-09-30": 0.005,
+   "2026-10-01": 0.0,
+   "2026-10-02": 0.0,
+   "2026-10-03": 0.0,
+   "2026-10-04": 0.08166666666666667,
+   "2026-10-05": 0.40166666666666667,
+   "2026-10-06": 0.0,
+   "2026-10-07": 0.0,
+   "2026-10-08": 0.0,
+   "2026-10-09": 0.0,
+   "2026-10-10": 0.0,
+   "2026-10-11": 0.05166666666666667,
+   "2026-10-12": 0.006666666666666667,
+   "2026-10-13": 0.0,
+   "2026-10-14": 0.0,
+   "2026-10-15": 0.0,
+   "2026-10-16": 0.0,
+   "2026-10-17": 0.0,
+   "2026-10-18": 0.0,
+   "2026-10-19": 0.0,
+   "2026-10-20": 0.065,
+   "2026-10-21": 7.923333333333333,
+   "2026-10-22": 10.458333333333334,
+   "2026-10-23": 0.8450000000000001,
+   "2026-10-24": 0.0,
+   "2026-10-25": 0.0,
+   "2026-10-26": 0.0,
+   "2026-10-27": 0.041666666666666664,
+   "2026-10-28": 0.0,
+   "2026-10-29": 0.0,
+   "2026-10-30": 1.39,
+   "2026-10-31": 1.2950000000000002,
+   "2026-11-01": 0.045000000000000005,
+   "2026-11-02": 0.0,
+   "2026-11-03": 3.841666666666667,
+   "2026-11-04": 0.011666666666666667,
+   "2026-11-05": 0.0,
+   "2026-11-06": 0.0,
+   "2026-11-07": 0.0,
+   "2026-11-08": 0.0,
+   "2026-11-09": 0.0,
+   "2026-11-10": 0.0,
+   "2026-11-11": 0.0,
+   "2026-11-12": 0.8233333333333333,
+   "2026-11-13": 31.021666666666665,
+   "2026-11-14": 1.5350000000000001,
+   "2026-11-15": 12.866666666666667,
+   "2026-11-16": 5.8500000000000005,
+   "2026-11-17": 0.7283333333333334,
+   "2026-11-18": 30.973333333333333,
+   "2026-11-19": 13.705
+  }
+ }
+}
