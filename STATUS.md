@@ -399,3 +399,28 @@ This branch is based on `feature/30-day-forecast` (PR #4, open, CI passing). It 
 - **Comparison table:** now shows paired, same-row MAE against Model A, with the preregistered verdicts displayed on the page. README and report wording no longer imply any unsupported superiority.
 - **Artifact provisioning:** `src/v3_artifacts.py` packs and installs hash-pinned artifacts and installs them at app start when configured. Tested.
 - **Merge sequence:** simulated without conflicts. CI now re-runs when a PR is retargeted. Details in `docs/v3/LAUNCH_AND_MERGE.md`.
+
+## Merge and public-launch preparation (2026-11-22)
+
+- **Merged:** PR #4 into `main` (merge commit `32d6122`). PR #5 was retargeted to `main`, its CI run 44997714780 passed (97 passed, 11 skipped), and it was merged (merge commit `f972621`). The `main` push CI is green for both.
+- **Post-merge checks on `main`, all passing:**
+  - full suite: 109 passed;
+  - frozen v2 unchanged, with hashes equal to `RUN_RECORD.json`;
+  - UI contracts, v2 integration, report facts and the UI zip;
+  - Model A reproduces 593/593 predictions;
+  - the v3 artifacts reproduce the 2026 predictions;
+  - the 2026 metrics and verdicts are unchanged;
+  - public-release checksums;
+  - the ledger: both issued records are unchanged and read-only.
+- **Publication:** CDEC flags set to `true` on the owner's reported authorization (`docs/DATA_PUBLICATION_AUDIT.md`, section 7); the written permission is still to be archived. Release `2026-11-22.2` includes the CDEC-derived data, and CI enforces the policy against every published file.
+- **Model bundle:** `dist/watershedshift_models_7ad581d9f585.tar.gz`, SHA-256 `7ad581d9f58594050688ec33cb810ff5ff513f2df3e233cc8fc1160eb193b97d`. It is byte-reproducible, self-checking and **not uploaded**.
+- **Clean deployment run locally in public mode** (fresh clone, bundle served over HTTP):
+  - all four models generated real forecasts for Folsom and Shasta, the second served from the shared cache;
+  - all five pages rendered;
+  - on a 375 px phone viewport, cards stack with no horizontal scroll;
+  - a wrong pin, a missing URL, no configuration and a truncated bundle are each refused safely.
+- **Bugs found and fixed during this work:**
+  - the Model and Research page crashed on real data (missing chart symbol, from before this work);
+  - an empty `outputs/` folder in a clone hid the public release;
+  - a truncated bundle raised an unhandled error.
+- **Public website not verified:** its URL is not in the repository and there is no host access. The site cannot forecast publicly until PR #6 is merged and the bundle is uploaded and configured.
