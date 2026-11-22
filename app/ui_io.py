@@ -29,7 +29,7 @@ def resolve_data_dir(env=None):
             p = from_cwd if from_cwd.exists() else REPO_ROOT / p
         return p.resolve(), "env"
     default = (REPO_ROOT / C.DEFAULT_DIR_NAME).resolve()
-    if not default.exists():   # fresh public deployment: use the newest published release's UI files, if any
+    if not (default / "metrics.json").exists():   # fresh deployment (outputs/ absent or only .gitkeep): newest release
         releases = sorted(REPO_ROOT.glob("public_data/watershedshift-public-data-*/ui_outputs"))
         if releases:
             return releases[-1].resolve(), "public release"

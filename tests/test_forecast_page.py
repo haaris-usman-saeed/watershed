@@ -216,4 +216,7 @@ def test_fresh_deployment_uses_latest_public_release(monkeypatch, tmp_path):
     rel.mkdir(parents=True)
     assert ui_io.resolve_data_dir() == (rel.resolve(), "public release")
     (tmp_path / "outputs").mkdir()
+    (tmp_path / "outputs/.gitkeep").write_text("")
+    assert ui_io.resolve_data_dir()[1] == "public release"          # an empty outputs/ (as in a clone) is not data
+    (tmp_path / "outputs/metrics.json").write_text("{}")
     assert ui_io.resolve_data_dir()[1] == "default"                 # private outputs win when present
