@@ -114,9 +114,12 @@ def test_gefs_lead_split_has_no_days_after_16():
     assert sum(1 for h in g.LEADS if h <= g.D1_7) == 28
 
 
-@pytest.mark.skipif(not (ROOT / "data/v3/gefs_basin_precip.csv").exists(), reason="GEFS history not built")
-def test_gefs_history_uses_forecast_cycles_only_and_operational_published_before_issue():
-    d = pd.read_csv(ROOT / "data/v3/gefs_basin_precip.csv", parse_dates=["init_date"])
+GEFS_FILES = [ROOT / "data/v3/gefs_basin_precip.csv"] + sorted(ROOT.glob("public_data/*/gefs_basin_precip.csv"))
+
+
+@pytest.mark.parametrize("path", [p for p in GEFS_FILES if p.exists()] or [pytest.param(None, marks=pytest.mark.skip("no GEFS file"))])
+def test_gefs_history_uses_forecast_cycles_only_and_operational_published_before_issue(path):
+    d = pd.read_csv(path, parse_dates=["init_date"])
     ok = d[d.complete.astype(bool)]
     assert set(ok.source) <= {"reforecast", "operational"}
     assert (ok.init_date.dt.dayofweek == 0).all()                 # cycle date == the Monday origin
