@@ -1,0 +1,43 @@
+{
+ "version": "v3",
+ "registered": "2026-11-22",
+ "document": "docs/v3/PREREGISTRATION_V3.md",
+ "models": {
+  "A": "storage + snow + season",
+  "B": "A + dam-point weather",
+  "B2": "A + upstream-box weather",
+  "C": "A + GEFS days 1-7 and 8-16"
+ },
+ "hyperparameters": {
+  "learning_rate": 0.03,
+  "max_iter": 150,
+  "max_depth": null,
+  "min_samples_leaf": 30,
+  "l2_regularization": 1.0,
+  "random_state": 42
+ },
+ "dev_folds": "WY2008-2025",
+ "train_rule": "target_date < 2026-01-01",
+ "test_rule": "origin >= 2026-01-01 and target_date <= 2026-11-20",
+ "hypotheses": {
+  "H1": "C < A",
+  "H2": "B < A",
+  "H3": "B2 < B"
+ },
+ "decision_rule": "95% moving-block bootstrap CI of the paired MAE difference below zero for 5, 9 and 13 week blocks",
+ "interval": "sym_season per model from its own development OOF residuals",
+ "code_sha256": {
+  "src/v3_basins.py": "8dbe8ea6bd204460d0f93a4eb699454012192f2adfb367fe0801a79d52939dd7",
+  "src/v3_gefs.py": "08c0ff113c1626cc6f6b0b233bcc33b6a1c3001fa6c47a1636f24e3192878e5f",
+  "src/v3_power.py": "f55d0e6f990d29125a63a9297f1c744a4e361045c8e022cbc47825cfdd091de5",
+  "src/v3_dataset.py": "e83ecdb47afa58cb05a553a925a84a4799ead6345e20dd34e56fd68d71cf9a9d",
+  "src/v3_experiment.py": "4f8f1009d92c26dfa4637b37f429fe282db548fb385187a204b8ec8f9bee0254",
+  "src/features.py": "68912938f3512b719c2d448d276a3faa532b0629aea007688c553eb686afda3a",
+  "src/models.py": "416210cfc76d1908feff580dc18929b22fc45dac578eaa35fa6112a4c29ade97",
+  "src/evaluation.py": "da29e5683c29c18b6831d603b468f3309da22cc21ccf01457db6ba417761a01d",
+  "src/build_dataset.py": "b40a6d9b1fd3bcb77688a727d0ed1e2669a06f150889729fb37f31d42b94125c",
+  "src/forecast_live.py": "436e13fcc46ba7f63e9a31d4370520919d52fdedc6b98235b225af5c65be8dad",
+  "src/forecast_model.py": "6c636c7f7434f720b1bef141ac5d8260f2e9fa5de0c3dbd0756557e93b8fcdca",
+  "docs/v3/PREREGISTRATION_V3.md": "e4c3d3d0012afdfe6b4a16db55a156bcbe0e292659604d42de4ade43df5aa632"
+ }
+}

@@ -1,0 +1,15 @@
+{
+  "policy_version": "2026-11-22",
+  "evidence": "docs/DATA_PUBLICATION_AUDIT.md",
+  "changed_only_by": "project owner, after written clarification from the publisher",
+  "sources": {
+    "cdec_storage_sensor15": {"status": "unresolved", "publish_raw": false, "publish_derived": false, "public_display": false},
+    "cdec_snow_sensor82": {"status": "unresolved", "publish_raw": false, "publish_derived": false, "public_display": false},
+    "nasa_power": {"status": "confirmed", "publish_raw": true, "publish_derived": true, "public_display": true,
+                   "attribution": "The data was obtained from the National Aeronautics and Space Administration (NASA) Langley Research Center (LaRC) Prediction of Worldwide Energy Resources (POWER) Project funded through the NASA Earth Science Directorate Applied Science Program."},
+    "noaa_gefs_operational": {"status": "confirmed", "publish_raw": true, "publish_derived": true, "public_display": true,
+                              "attribution": "NOAA NCEP Global Ensemble Forecast System version 12 (GEFSv12), via the NOAA Open Data Dissemination program on AWS. Basin aggregates are derived by WatershedShift and are not unaltered NOAA data; no NOAA endorsement is implied."},
+    "noaa_gefs_reforecast": {"status": "confirmed", "publish_raw": true, "publish_derived": true, "public_display": true,
+                             "attribution": "NOAA GEFSv12 reforecast (Guan et al. 2022, Monthly Weather Review, doi:10.1175/MWR-D-21-0245.1), via the NOAA Open Data Dissemination program on AWS. Retrospective forecasts, not issued in real time. Derived by WatershedShift; no NOAA endorsement is implied."}
+  }
+}

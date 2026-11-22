@@ -82,9 +82,10 @@ def forecast_figure(r, units, synthetic, height=420):
     lo = f["lower_projected_pct"] if pct else f["lower_projected_af"]
     hi = f["upper_projected_pct"] if pct else f["upper_projected_af"]
     mid = f["projected_pct"] if pct else f["projected_af"]
-    fig.add_trace(go.Scatter(x=[o, t, t, o], y=[y0, hi, lo, y0], fill="toself", mode="lines", line=dict(width=0),
-                             fillcolor=rgba(P["model"], 0.16), hoverinfo="skip",
-                             name="90% interval for the day-30 value (retrospectively calibrated)"))
+    fig.add_shape(type="rect", x0=o, x1=t, y0=0, y1=1, xref="x", yref="paper", fillcolor=rgba(P["model"], 0.05),
+                  line=dict(width=0), layer="below")
+    fig.add_annotation(x=o + (t - o) / 2, y=0.02, xref="x", yref="paper", showarrow=False,
+                       text="30-day horizon: only the day-30 value is predicted", font=dict(size=11, color=P["silt"]))
     col = "storage_pct" if pct else "storage_af"
     if not h.empty:
         h["date"] = pd.to_datetime(h["date"])
@@ -100,14 +101,11 @@ def forecast_figure(r, units, synthetic, height=420):
                                      line=dict(color=P["bone"], width=1.4, dash="dot"), marker=dict(size=4),
                                      connectgaps=False,
                                      hovertemplate="%{x|%b %d, %Y}<br>%{y:,.1f}" + ("%" if pct else " AF") + "<extra>observed later</extra>"))
-    fig.add_trace(go.Scatter(x=[o, t], y=[y0, mid], mode="lines+markers", name="Model forecast (dashed, day 30 only)",
-                             line=dict(color=P["model"], width=2.4, dash="dash"),
-                             marker=dict(size=[7, 10], symbol=["circle", "diamond"], color=P["model"]),
-                             hovertemplate="%{x|%b %d, %Y}<br>%{y:,.1f}" + ("%" if pct else " AF") + "<extra>forecast</extra>"))
-    fig.add_trace(go.Scatter(x=[t], y=[mid], mode="markers", showlegend=False, hoverinfo="skip",
-                             marker=dict(size=1, color=P["model"]),
+    fig.add_trace(go.Scatter(x=[t], y=[mid], mode="markers", name="Day-30 estimate and 90% range",
+                             marker=dict(size=11, symbol="diamond", color=P["model"]),
                              error_y=dict(type="data", symmetric=False, array=[hi - mid], arrayminus=[mid - lo],
-                                          color=P["model"], thickness=1.6, width=8)))
+                                          color=P["model"], thickness=1.8, width=8),
+                             hovertemplate="%{x|%b %d, %Y}<br>%{y:,.1f}" + ("%" if pct else " AF") + "<extra>forecast</extra>"))
     cap = 100.0 if pct else r["capacity_af"]
     top = max([hi, y0] + ([float(np.nanmax(h[col]))] if not h.empty and h[col].notna().any() else []))
     if top >= 0.8 * cap:   # draw the capacity line only when it is near the data, so the forecast stays readable
@@ -242,9 +240,22 @@ def freshness(r, snap, path, source):
 def render():
     b = ui.load_bundle()
     ui.page_intro("30-Day Forecast",
-                  "Experimental research forecasts of reservoir storage 30 days ahead, made by the frozen v2 model from "
-                  "the latest eligible CDEC observations. Storage, not water level: +5 pp means storage rises by 5% of "
-                  "documented capacity.")
+                  "Experimental research estimates of reservoir storage 30 days ahead, from the latest eligible observations. "
+                  "Storage, not water level: +5 pp means storage rises by 5% of documented capacity. They estimate net "
+                  "storage under historically learned operating behaviour; planned releases, operating restrictions and "
+                  "downstream demands are not simulated.")
+    live, issued = st.tabs(["Generate a forecast (Models A, B, B2, C)", "Issued record (frozen Model A)"])
+    with live:
+        try:
+            import view_forecast_v3
+            view_forecast_v3.render_interactive(b)
+        except ImportError as exc:
+            _empty("Interactive forecasting is not installed here", f"<p>{ui.esc(str(exc))}</p>")
+    with issued:
+        render_snapshot(b)
+
+
+def render_snapshot(b):
     path, source = resolve_snapshot(b)
     if path is None or not path.exists():
         _empty("No forecast snapshot on this deployment",
@@ -260,6 +271,11 @@ def render():
         _empty("Forecast snapshot could not be read", f"<p><code>{ui.esc(str(path))}</code>: {ui.esc(str(exc))}</p>")
         return
     today = datetime.now(timezone.utc).date()
+    from src.v3_service import cdec_display_block_reason
+    blocked = cdec_display_block_reason() if snap.get("data_mode") == "real" else None
+    if blocked:
+        _empty("Not available on this public deployment", f"<p>{ui.esc(blocked)}</p>")
+        return
     errs, warns = validate(snap, today=today)
     synthetic = snap.get("data_mode") != "real"
     if not synthetic and expired(snap, today):
@@ -317,9 +333,9 @@ def render():
 
     ui.show_chart(forecast_figure(r, units, synthetic), key=f"fc_chart_{sid}")
     st.caption("Solid: observed storage up to the origin, the only storage the model saw. Dotted: storage reported after "
-               "the origin, shown for context and not used. Dashed violet: the forecast. The model predicts only the "
-               "day-30 value; the dashed line and shaded wedge join the origin to that value and say nothing about the "
-               "path in between. Percent-full uses the capacity in force on the origin date.")
+               "the origin, shown for context and not used. Diamond: the estimate for the target date with its 90% range. "
+               "The model predicts only the day-30 value, so no path between the origin and day 30 is drawn. "
+               "Percent-full uses the capacity in force on the origin date.")
 
     st.markdown("## Snowpack inputs")
     s = r["snow"]

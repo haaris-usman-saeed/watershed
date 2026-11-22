@@ -265,3 +265,59 @@ The synthetic fixture in `app/sample_data/` (`python -m src.make_forecast_fixtur
 - The re-downloaded 2025 storage was identical to the archived 2025 data on every station-day.
 
 These numbers are private and are not reproduced here. They are new forecasts, not held-out test results, and they do not change any v2 result.
+
+## 11. v3: weather-aware models and interactive forecasting
+
+v3 adds three models alongside the unchanged frozen Model A. It also adds a **Generate Forecast** button that fetches fresh data and runs all four models. Everything in v3 is new work; the frozen v2 results are untouched.
+
+| Model | Adds to A | Data |
+|---|---|---|
+| A | (frozen v2: storage history, snowpack, season, reservoir) | CDEC |
+| B | Recent weather at the dam (7-day lag) | NASA POWER point |
+| B2 | Recent weather averaged over the upstream area (7-day lag) | NASA POWER grid cells in the upstream box |
+| C | Forecast precipitation for days 1-7 and 8-16 over the upstream area | NOAA GEFSv12 control member, 00Z on the origin Monday (reforecast 2001-2019, operational from 2020-09-24) |
+
+**Key documents**
+- `docs/v3/MODEL_C_FEASIBILITY.md`: which forecast archives exist and what Model C may use.
+- `docs/v3/PREREGISTRATION_V3.md` and `config/v3_plan.json`: the fixed comparison plan.
+- `docs/DATA_PUBLICATION_AUDIT.md`: who may publish what.
+- `docs/v3/DEPLOYMENT.md`: how to run the interactive site.
+
+**Rebuilding the models and results**
+
+```bash
+python -m src.v3_gefs --history          # GEFS basin precipitation, about 20 GB streamed, small CSV kept
+python -m src.v3_power --end YYYY-MM-DD  # NASA POWER dam points and upstream-box cells
+python -m src.v3_dataset                 # private weekly table (CDEC-derived)
+python -m src.v3_experiment --dev        # development folds WY2008-2025, model-specific intervals
+python -m src.v3_experiment --final      # the one preregistered 2026 test; writes models/v3/
+python -m src.v3_release --version YYYY-MM-DD   # public data release (NOAA and NASA-derived only)
+```
+
+**Results.** Run once on 2026-11-22; the full numbers are in `results/v3/final/metrics.json` and `results/v3/development/summary.json`.
+
+| | A (v3 refit) | B | B2 | C | A (frozen) | Smoothed seasonal baseline |
+|---|---|---|---|---|---|---|
+| Development folds WY2008-2025, MAE pp (paired rows) | 2.803 | 2.802 | 2.809 | 2.717 vs A 2.832 on C rows | | |
+| 2026 test, MAE pp (251 rows, all models available) | 2.349 | 2.339 | 2.364 | 2.316 | 2.355 | 2.882 |
+| 2026 test, 90% interval coverage | 0.94 | 0.94 | 0.93 | 0.94 | | |
+
+- **Preregistered verdicts: all three "not established".**
+  - H1 (C has lower MAE than A): difference -0.033 pp, 95% CI from -0.17 to +0.12 with 5-week blocks.
+  - H2 (B beats A): -0.010 pp.
+  - H3 (B2 has lower MAE than B): difference +0.025 pp, the opposite sign.
+- **Reading the development folds:**
+  - On the same development rows, Model C's MAE was 2.72 pp against 2.83 for A. Development folds are descriptive only: they include 2024-2025, which were seen earlier, and they have no uncertainty interval or preregistered test.
+  - The 2026 point estimate has the same sign, but its 95% interval includes zero. **Whether forecast precipitation improves accuracy is not established.**
+  - Past observed weather (B) adds essentially nothing, and averaging it over the upstream box (B2) does not help.
+- **Interval coverage by reservoir:** the overall figures above hide Folsom, where the 90% ranges covered only 69-74% of 2026 outcomes (about 75% in v2).
+- **Context only:** the 2024-2025 v2 comparison of A and B reproduces exactly (2.3323 against 2.3231). It is not a v3 test.
+
+**Interactive site.** The **30-Day Forecast** page has a **Generate Forecast** button. It fetches current CDEC, NASA POWER and GEFS data, which are shared and cached between visitors, then runs all four models with model-specific 90% ranges and shows:
+- each model's information cutoff and the forecast cycle used;
+- data freshness;
+- a JSON download of the forecast.
+
+It works on a private deployment today. **It is not publicly operational:** CDEC display rights are unresolved, and the model artifacts are not on the public host (`docs/v3/DEPLOYMENT.md`).
+
+**Public data.** `public_data/watershedshift-public-data-2026-11-22/` contains the GEFS basin precipitation and NASA POWER series, with a manifest, checksums and attribution. CDEC-derived data are withheld until DWR confirms the terms; the request is drafted in `docs/DATA_PUBLICATION_AUDIT.md`.

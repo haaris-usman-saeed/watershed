@@ -6,6 +6,8 @@ on:
   push:
     branches: [main, engineering, review-v2]
   pull_request:
+    # edited: re-run when a PR is retargeted (for example PR #5 from feature/30-day-forecast to main)
+    types: [opened, synchronize, reopened, edited]
 
 permissions:
   contents: read
@@ -21,8 +23,6 @@ jobs:
           python-version: "3.14"
       - name: Install pinned dependencies
         run: pip install -r requirements-lock.txt
-      - name: Install plotly for the headless page tests (frontend dependency, not in the pipeline lock)
-        run: pip install plotly==7.1.0
       - name: Tests (all tests run without local raw or processed data)
         run: python -m pytest -q tests
       - name: Validate synthetic UI fixtures against the contract
@@ -41,7 +41,10 @@ jobs:
         run: |
           test -z "$(git ls-files data/raw | grep -v '^data/raw/.gitkeep$')"
           test -z "$(git ls-files data/processed outputs dist | grep -v '.gitkeep$')"
-          test -z "$(git ls-files data/live forecasts models | grep -v '.gitkeep$')"
+          test -z "$(git ls-files data/live forecasts models data/v3 | grep -v '.gitkeep$')"
+      - name: Public release contains no CDEC-derived files
+        run: |
+          test -z "$(git ls-files public_data | grep -i -E 'cdec|storage|weekly|snow_index|forecast' )"
       - name: Synthetic forecast fixture is reproducible and valid
         run: |
           python -m src.make_forecast_fixture

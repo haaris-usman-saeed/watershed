@@ -340,3 +340,62 @@ The frozen v2 evaluation is untouched. The frozen code and config are byte-ident
   - that it is not a tool for operators;
   - where it is useful: research, a benchmark, public understanding.
 - **Tests:** 3 new page tests; 66 passed locally.
+
+## v3: weather-aware models and interactive forecasting (branch `feature/v3-forecast-platform`, 2026-11-22)
+
+This branch is based on `feature/30-day-forecast` (PR #4, open, CI passing). It must be merged after PR #4, or retargeted to `main` once PR #4 is merged. The frozen v2 files are unchanged, and the frozen hashes equal `RUN_RECORD.json`.
+
+### Phase 0: protection
+- The 2026-11-22 Model A record is read-only on disk. Its SHA-256 is in the tracked ledger `docs/v3/issued_forecast_ledger.jsonl`, and a test checks it.
+- Model A is the unchanged v2 artifact.
+
+### Phase 3 (done first): data rights and forecast-archive audits
+- **Data rights:** `docs/DATA_PUBLICATION_AUDIT.md` and `config/data_release_policy.json`.
+  - NOAA GEFS (operational and reforecast) and NASA POWER: confirmed redistributable.
+  - CDEC: unresolved. DWR's Conditions of Use contain only a disclaimer, and CDEC pages carry "Copyright © State of California". A permission request is drafted.
+- **Weather-forecast archives:** `docs/v3/MODEL_C_FEASIBILITY.md`.
+  - Verified directly on AWS: GEFSv12 reforecast 2000-2019 (00Z daily, 5 members, to day 16) and operational GEFSv12 from 2020-09-23.
+  - The two use the same APCP encoding. Operational S3 publication times are recorded.
+
+### Phase 1: models and data
+- **Model B** reproduces the v2 HGB + SWE comparison exactly: 2.3231 against Model A's 2.3323 on 2024-2025, a marginal difference already published.
+- **Model B2:** upstream-box NASA POWER means. The 2001-2025 POWER re-download is identical to the v2 weather on all 54,786 overlapping days.
+- **Model C:** basin-box GEFS precipitation for days 1-7 and 8-16, from the control member.
+  - 1,313 Monday cycles from 2001 to 2026 were downloaded in byte ranges.
+  - One reforecast cycle (2007-06-04) has a malformed index and is recorded as incomplete.
+- **v3 weekly table:** identical to the v2 table on all 7,693 shared rows. It adds 24 December 2025 rows and 251 rows with 2026 origins.
+
+### Phase 2: scientific comparison (run once, 2026-11-22)
+- **Development folds (WY2008-2025):**
+  - C vs A on paired rows: 2.717 vs 2.832.
+  - B vs A: 2.802 vs 2.803.
+  - B2 vs B: 2.809 vs 2.802.
+- **2026 test (251 rows):** A 2.349, B 2.339, B2 2.364, C 2.316, frozen A 2.355, seasonal baseline 2.882.
+  - H1, H2 and H3 are all "not established": every 95% CI includes zero.
+  - Interval coverage is 0.93-0.94 overall, but only 0.69-0.74 at Folsom.
+
+### Phases 4-6: interactive forecasting
+- `src/v3_service.py`:
+  - a shared cache in 6-hour (CDEC), 12-hour (POWER) and per-cycle (GEFS) buckets;
+  - coalescing of identical requests, upstream rate limiting and a cooldown on forced refreshes;
+  - cache entries hash-checked, and records written once;
+  - a policy gate for public deployments.
+- **Forecast page:** a "Generate a forecast" tab with cards for Models A, B, B2 and C. The chart shows only the day-30 endpoint with error bars; no straight-line path is drawn. It also has the model comparison, weather charts (observed for B, forecast for C), data freshness, provenance and a download. The issued v2 record is in a second tab.
+- **Live demo:** Oroville on 2026-11-22 in the local app, with all four models available.
+
+### Phase 7: tests
+- 96 tests passing locally before the final run.
+- The CI simulation in a clean clone is recorded in the PR.
+
+### Remaining blockers
+- See `docs/v3/V3_REPORT.md`: CDEC public display rights, public hosting of the model artifacts, and persistent records on Streamlit Community Cloud.
+
+### PR #5 review fixes (2026-11-22)
+- **CI failure fixed:** `test_external_api_failure_gives_no_forecast` failed on the clean runner because the missing-artifact guard ran before the mocked CDEC timeout.
+  - The service tests now inject a controlled mock model, so the CDEC failure path really runs.
+  - A separate test drives the real loading path with no artifacts installed and checks that nothing is fetched.
+  - The service's safety checks are unchanged.
+- **Public gate widened:** with `WATERSHED_DEPLOYMENT=public`, `app.py` renders no page content from real (CDEC-derived) outputs, and the "Issued record" tab hides real snapshots. Both are tested.
+- **Comparison table:** now shows paired, same-row MAE against Model A, with the preregistered verdicts displayed on the page. README and report wording no longer imply any unsupported superiority.
+- **Artifact provisioning:** `src/v3_artifacts.py` packs and installs hash-pinned artifacts and installs them at app start when configured. Tested.
+- **Merge sequence:** simulated without conflicts. CI now re-runs when a PR is retargeted. Details in `docs/v3/LAUNCH_AND_MERGE.md`.

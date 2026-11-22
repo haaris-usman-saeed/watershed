@@ -1,0 +1,130 @@
+"""Package and install model artifacts for a deployment, verified by SHA-256 (no private datasets).
+
+Run (trusted build machine):  python -m src.v3_artifacts pack --out dist/
+Run (deployment):             python -m src.v3_artifacts install --url URL --sha256 HEX
+
+The package contains only what inference needs:
+  models/v2_forecast/model.joblib, models/v2_forecast/model_card.json   (Model A, frozen v2)
+  models/v3/model_{A,B,B2,C}.joblib, models/v3/model_cards.json          (v3)
+plus MANIFEST.json with each file's SHA-256. It contains no observation table, history, forecast or
+residual file. Model cards do carry aggregate CDEC-derived values (snow climatology, interval
+offsets), and the fitted models are fitted to CDEC values, so the package is governed by the CDEC
+entry of config/data_release_policy.json.
+
+install refuses unless: the archive's SHA-256 equals --sha256 (pinned by the owner); every member is
+a regular file at an expected path (no links, no traversal); every file matches MANIFEST.json; and,
+on a public deployment, the policy allows public display of CDEC-derived values.
+"""
+import argparse
+import hashlib
+import io
+import json
+import os
+from pathlib import Path
+import tarfile
+
+ROOT = Path(__file__).resolve().parents[1]
+FILES = ["models/v2_forecast/model.joblib", "models/v2_forecast/model_card.json", "models/v3/model_cards.json"] + \
+        [f"models/v3/model_{k}.joblib" for k in ("A", "B", "B2", "C")]
+ALLOWED = set(FILES) | {"MANIFEST.json"}
+MAX_BYTES = 200 * 1024 * 1024
+
+
+def sha(b):
+    return hashlib.sha256(b).hexdigest()
+
+
+def pack(out_dir, root=ROOT):
+    missing = [f for f in FILES if not (root / f).exists()]
+    if missing:
+        raise SystemExit(f"REFUSED: missing artifacts {missing}; build them first.")
+    man = {"files": {f: sha((root / f).read_bytes()) for f in FILES}}
+    buf = io.BytesIO()
+    with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+        for name, data in [("MANIFEST.json", json.dumps(man, indent=1, sort_keys=True).encode())] + \
+                          [(f, (root / f).read_bytes()) for f in sorted(FILES)]:
+            ti = tarfile.TarInfo(name)
+            ti.size, ti.mtime, ti.mode = len(data), 0, 0o444
+            tar.addfile(ti, io.BytesIO(data))
+    data = buf.getvalue()
+    out = Path(out_dir) / f"watershedshift_models_{sha(data)[:12]}.tar.gz"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_bytes(data)
+    (out.parent / (out.name + ".sha256")).write_text(f"{sha(data)}  {out.name}\n")
+    return out, sha(data)
+
+
+def install(data, expected_sha256, dest=ROOT, mode=None):
+    from src.v3_service import cdec_display_block_reason
+    if (mode or os.environ.get("WATERSHED_DEPLOYMENT", "private")) == "public":
+        why = cdec_display_block_reason(mode="public")
+        if why:
+            raise PermissionError("REFUSED: " + why)
+    if len(data) > MAX_BYTES:
+        raise ValueError("REFUSED: archive larger than expected")
+    if sha(data) != expected_sha256.lower():
+        raise ValueError("REFUSED: archive SHA-256 does not match the pinned value")
+    with tarfile.open(fileobj=io.BytesIO(data), mode="r:gz") as tar:
+        members = tar.getmembers()
+        for m in members:
+            if not m.isfile() or m.name not in ALLOWED:
+                raise ValueError(f"REFUSED: unexpected archive member {m.name!r}")
+        blobs = {m.name: tar.extractfile(m).read() for m in members}
+    man = json.loads(blobs["MANIFEST.json"])["files"]
+    if set(man) != set(FILES) or any(sha(blobs.get(f, b"")) != h for f, h in man.items()):
+        raise ValueError("REFUSED: archive contents do not match MANIFEST.json")
+    for f in FILES:
+        p = Path(dest) / f
+        p.parent.mkdir(parents=True, exist_ok=True)
+        tmp = p.with_suffix(p.suffix + ".tmp")
+        tmp.write_bytes(blobs[f])
+        tmp.replace(p)
+    return man
+
+
+def ensure_artifacts(root=ROOT):
+    """At app start: if artifacts are missing and WATERSHED_ARTIFACT_URL / _SHA256 are set (for example from
+    Streamlit secrets), download and install them once with every check above. Returns a status string."""
+    if all((root / f).exists() for f in FILES):
+        return "present"
+    url, pin = os.environ.get("WATERSHED_ARTIFACT_URL"), os.environ.get("WATERSHED_ARTIFACT_SHA256")
+    if not url or not pin:
+        return "missing (no WATERSHED_ARTIFACT_URL / WATERSHED_ARTIFACT_SHA256 configured)"
+    import requests
+    headers = {"Authorization": f"Bearer {os.environ['WATERSHED_ARTIFACT_TOKEN']}"} if os.environ.get("WATERSHED_ARTIFACT_TOKEN") else {}
+    try:
+        r = requests.get(url, headers=headers, timeout=120)
+        r.raise_for_status()
+        install(r.content, pin, dest=root)
+        return "installed"
+    except (requests.RequestException, ValueError, PermissionError) as exc:
+        return f"install refused or failed: {exc}"
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    pk = sub.add_parser("pack")
+    pk.add_argument("--out", default=str(ROOT / "dist"))
+    ins = sub.add_parser("install")
+    ins.add_argument("--url", default=os.environ.get("WATERSHED_ARTIFACT_URL"))
+    ins.add_argument("--sha256", default=os.environ.get("WATERSHED_ARTIFACT_SHA256"))
+    a = ap.parse_args()
+    if a.cmd == "pack":
+        out, h = pack(Path(a.out))
+        print(f"{out}\nsha256 {h}")
+        return
+    if not a.url or not a.sha256:
+        raise SystemExit("install needs --url and --sha256 (or WATERSHED_ARTIFACT_URL / WATERSHED_ARTIFACT_SHA256)")
+    import requests
+    headers = {}
+    if os.environ.get("WATERSHED_ARTIFACT_TOKEN"):
+        headers["Authorization"] = f"Bearer {os.environ['WATERSHED_ARTIFACT_TOKEN']}"
+    r = requests.get(a.url, headers=headers, timeout=120)
+    r.raise_for_status()
+    man = install(r.content, a.sha256)
+    print(f"installed {len(man)} verified files")
+
+
+if __name__ == "__main__":
+    main()
