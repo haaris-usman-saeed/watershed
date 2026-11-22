@@ -22,3 +22,7 @@ dist/
 
 # rehearsal UI copies contain CDEC-derived storage values
 results/v2/rehearsal/ui_outputs_rehearsal/
+
+# 30-day research forecasts: live CDEC downloads and forecast snapshots are private (CDEC terms unresolved)
+data/live/
+forecasts/
