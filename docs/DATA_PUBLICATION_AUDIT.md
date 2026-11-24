@@ -6,6 +6,8 @@ The machine-readable policy that the release pipeline enforces is `config/data_r
 
 ## Summary
 
+> **Status note (2026-11-24).** The CDEC rows below record the published terms as found on 2026-11-22. They are **superseded by section 7**: publication was authorized on the owner's reported permission, and the policy flags are `true`. The NOAA and NASA rows are unchanged.
+
 | Source | Reuse | Redistribution of raw values | Derived data | Public website display | Status |
 |---|---|---|---|---|---|
 | CDEC daily reservoir storage (sensor 15) | Appears permitted (no restriction stated) | Not expressly granted | Not expressly granted | Not expressly granted | **Unresolved**: ask DWR |
@@ -84,6 +86,8 @@ The machine-readable policy that the release pipeline enforces is `config/data_r
 
 ## 5. Derived datasets and trained models
 
+> The "Unresolved" entries in this table were resolved by section 7 (2026-11-22).
+
 | Item | Contains | Status |
 |---|---|---|
 | `data/v3/public/gefs_basin_precip.csv` (basin-box GEFS precipitation per cycle) | NOAA-derived only | Publishable |
@@ -128,6 +132,6 @@ Until a written answer is received, `config/data_release_policy.json` keeps ever
 | 2. CDEC snow water equivalent (cleaned pillow values and basin index) | Yes | same |
 | 3. Cleaned historical data and audits | Yes | same |
 | 4. Derived feature tables (v3 weekly table) | Yes | same |
-| 5. Model artifacts | Yes, as a hash-pinned bundle once the owner uploads it (`docs/v3/LAUNCH_AND_MERGE.md`) | GitHub Release asset |
+| 5. Model artifacts | Yes, as a hash-pinned bundle, uploaded as GitHub Release `models-2026-11-22` (pre-release) | GitHub Release asset |
 | 6. Generated live forecasts | Yes, on the website and as downloads; issued records are included in the release | website, `public_data/.../issued_forecasts/` |
 | Raw CDEC responses (byte-for-byte) | Permitted. Kept out of git for size (about 29 MB); offered as a release asset with checksums | GitHub Release asset |

@@ -4,7 +4,12 @@ WatershedShift is a historical backtest of 30-day storage change at six Californ
 
 **Software.** Python 3.14.5 (tested on macOS only), git, and about 1 GB of disk space. Package versions: `requirements.txt` (exact verified versions in `requirements-lock.txt`).
 
-**Getting the data bundle.** The public repository does not include raw CDEC responses or the complete daily storage dataset. It does include derived historical prediction labels, model outputs, and aggregate evaluation results. Redistribution terms for the underlying observations remain under review. Ask the owner for `watershedshift_v2_bundle.tar.gz` and its `.sha256` file, sent privately. It must not be reposted: CDEC redistribution terms are unconfirmed.
+**Getting the data.**
+- **Public data.** Since the owner authorized CDEC publication on 2026-11-22 (`docs/DATA_PUBLICATION_AUDIT.md`, section 7), the cleaned data are published with checksums in `public_data/watershedshift-public-data-2026-11-22.2/`: CDEC storage and snow, the feature tables, research predictions and the issued forecasts.
+- **What the public release lacks.** It does not include the raw agency responses or the full v2 processed tables needed for the frozen rerun below.
+- **For the rerun,** ask the owner for `watershedshift_v2_bundle.tar.gz` and its `.sha256` file.
+
+This guide covers the frozen v2 submission only. v3 and later are summarised in `README.md`.
 
 **What the bundle contains, and what it leaves out.** `SOURCE_COMMIT.txt` names the git commit the bundle was built from.
 
@@ -16,7 +21,7 @@ WatershedShift is a historical backtest of 30-day storage change at six Californ
 | Metadata | `data/raw_manifest.jsonl` (URL, time and SHA-256 of every download), `data/provenance.md`, `data/*.csv` (capacities, breaks, spike review, snow pillows), `config/v2_frozen.json`, `results/v2/report_facts.*` |
 | Code | the full pipeline in `src/`, `tests/`, synthetic UI fixtures in `app/sample_data/` |
 
-The bundle leaves out the raw agency responses, the frontend (`app.py`, `app/` code) and git history. Raw responses are included only if the owner built the bundle with `--include-raw` after the CDEC terms were confirmed. **The bundle cannot rerun the frozen evaluation by itself.** The run guard needs a git checkout (step 2 below).
+The bundle leaves out the raw agency responses, the frontend (`app.py`, `app/` code) and git history. Raw responses are included only if the owner built the bundle with `--include-raw`. **The bundle cannot rerun the frozen evaluation by itself.** The run guard needs a git checkout (step 2 below).
 
 ## 1. Verify and extract
 

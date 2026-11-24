@@ -1,5 +1,7 @@
 # Merge plan (owner actions)
 
+> **Historical (2026-11-21).** This plan was carried out: PRs #1 and #2 were merged on 2026-11-21. Its CDEC cautions were superseded by the owner's authorization on 2026-11-22 (`docs/DATA_PUBLICATION_AUDIT.md`, section 7). The `submission-v2` tag it proposes was never created. For the current state see `docs/PROJECT_HANDOFF.md`.
+
 The engineering agent does not merge either PR. Current state, checked 2026-11-21:
 - `main` has no commits that `engineering` lacks.
 - `engineering` is an ancestor of `review-v2`.

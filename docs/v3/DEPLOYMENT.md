@@ -43,7 +43,7 @@ A separate service is not needed at this scale.
 | Item | Setting or finding |
 |---|---|
 | Repository and branch | `haaris-usman-saeed/watershed`, `main`, main file `app.py` |
-| Python | Choose 3.12 or 3.13 in Advanced settings. Pins in `requirements.txt` are set so `scikit-learn` equals the artifact build (1.9.1); the startup self-check confirms it. |
+| Python | Choose 3.12 or 3.13 in Advanced settings. Pins in `requirements.txt` are set so `scikit-learn` equals the artifact build (1.9.1); the startup self-check confirms it. Every verified run so far, local and CI, used Python 3.14.5. Wheels for 3.12 and 3.13 exist for all compiled pins, but that path has not been run. |
 | Dependencies | `requirements.txt`, including `eccodes` and `eccodeslib`. The binary wheels bundle the ecCodes C library, so no system packages are needed. |
 | Internet access | CDEC (cdec.water.ca.gov), NASA POWER (power.larc.nasa.gov) and NOAA on AWS (s3.amazonaws.com). Community Cloud allows outbound HTTPS. |
 | CPU and memory | About 280 MB peak measured. Community Cloud gives a small shared container; check its current limits if traffic grows. |

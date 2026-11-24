@@ -9,7 +9,7 @@ It contains **no new physical measurements**. The contribution is the selection,
 
 The v1 dataset (2018 to 2025, storage and weather only) is preserved in `results/v1/provenance.md` and `results/v1/coverage_table.md`.
 
-Raw files stay on the project owner's machine in `data/raw/` and are never committed, because the repository is public and CDEC redistribution terms are unconfirmed. `data/raw_manifest.jsonl` (tracked) records every download with URL, UTC retrieval time, HTTP status, byte size and SHA-256. It has 189 entries: 188 for pipeline inputs, matching the count at the frozen commit `e47deab` and in the preregistration, plus 1 for the ResOpsUS archive, which is used only for verification. An earlier version of this line said 187, a stale count.
+Raw files stay on the project owner's machine in `data/raw/` and are never committed, mainly for size. Cleaned CDEC data have been published in `public_data/` since the owner authorized CDEC publication on 2026-11-22 (`docs/DATA_PUBLICATION_AUDIT.md`, section 7). `data/raw_manifest.jsonl` (tracked) records every download with URL, UTC retrieval time, HTTP status, byte size and SHA-256. It has 189 entries: 188 for pipeline inputs, matching the count at the frozen commit `e47deab` and in the preregistration, plus 1 for the ResOpsUS archive, which is used only for verification. An earlier version of this line said 187, a stale count.
 
 ```bash
 python -m src.fetch --start 2001-01-01 --end 2025-12-31        # storage + weather (network)

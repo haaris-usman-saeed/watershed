@@ -181,11 +181,11 @@ What `interval_reliable` is, and what it is not:
 - It is not proof of future reliability, not a new calibration method and not a scientific certification.
 - The intervals themselves are unchanged.
 
-**Attribution to display.** Use the README section "Attribution and terms". The CDEC wording there is pending owner approval.
+**Attribution to display.** Use the README section "Attribution and terms". Its CDEC wording is the attribution in `config/data_release_policy.json` (policy 2026-11-22.2).
 
 `feature_catalog.json` keeps its `features` array unchanged. The NASA POWER weather entries stay listed with `used_by_primary_model: false`.
 
-**UI export package.** `python -m src.ui_export` writes `dist/outputs_v2_ui.zip`. It holds exactly the five contract files plus a `README.md` with the display guidance: the strongest baseline, the sign convention, the Folsom warning and weather as context only. `--verify` re-checks the package. The ZIP is git-ignored and must stay local until the owner confirms the CDEC reuse terms.
+**UI export package.** `python -m src.ui_export` writes `dist/outputs_v2_ui.zip`. It holds exactly the five contract files plus a `README.md` with the display guidance: the strongest baseline, the sign convention, the Folsom warning and weather as context only. `--verify` re-checks the package. The ZIP is git-ignored. CDEC publication was authorized by the owner on 2026-11-22, and the published copy of these files is `public_data/watershedshift-public-data-2026-11-22.2/ui_outputs/`.
 
 ## 4. Feature status
 
@@ -195,6 +195,7 @@ What `interval_reliable` is, and what it is not:
 | **Investigated and not used** | CDEC reservoir inflow (a mass-balance quantity, not an independent measurement) and releases (operator decisions) |
 | **Future research only (not implemented)** | satellite-derived features, image models or CNNs |
 | **Not supported: do not show or promise** | satellite imagery or CNN predictions, real-time or operational forecasts, forecasts beyond the data end date, flood, drought or drinking-water safety assessments, reservoir siting |
+| **Note (2026-11-24)** | This table describes the v2 backtest contract files. The owner-approved 30-Day Forecast page (PRs #4–#6) shows labelled *research* forecasts from live data under its own rules (`docs/FORECAST_IMPLEMENTATION.md`, `docs/v3/DEPLOYMENT.md`). They are not operational forecasts. Changing this table itself needs the UI owner's agreement. |
 
 ## 5. File ownership (to avoid conflicts)
 

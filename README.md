@@ -9,6 +9,19 @@ The models forecast the **30-day change in storage, in percentage points (pp) of
 
 > This is a research prototype and historical backtest. It is **not** an operational forecast, and not a flood, drought or drinking-water safety tool.
 
+## What is frozen and what is new
+
+| Stage | What it is | Status |
+|---|---|---|
+| v1 | First pipeline and results (2018–2025 data) | Frozen, git tag `v1-results` |
+| **v2 (the submission)** | "HGB SWE no weather". Preregistered and evaluated once on 2024–2025 (n = 593): MAE 2.332 pp against 2.969 for the smoothed seasonal baseline | **Frozen.** The model, configuration, preregistration and results are never changed (`docs/preregistration.md`, `results/v2/final/`) |
+| 30-day research forecast | The frozen v2 model (Model A) applied to live CDEC data. First issued record 2026-11-22 | The record is immutable and listed in `docs/v3/issued_forecast_ledger.jsonl` |
+| v3 (extension) | Models B, B2 and C, plus the interactive Generate Forecast page. One preregistered 2026 test (251 rows) | Frozen. All three hypotheses "not established" (section 11) |
+| Prospective evaluation | Scoring of forecasts issued before their outcomes | Protocol v1.0 in effect since 2026-11-24 (section 12) |
+| v4 (research) | Neural sequence models (branch `research/v4-neuralhydro`) | Not merged, not deployed |
+
+New work never alters an earlier stage. The website's Model A is always the frozen v2 model.
+
 ## Where things are
 
 | What | Where |
@@ -26,6 +39,11 @@ The models forecast the **30-day change in storage, in percentage points (pp) of
 | Reproducibility record | `docs/reproducibility.md` |
 | Merge plan for the owner | `docs/merge_plan.md` |
 | 30-day research forecasts (experimental) | section 10 below, `docs/FORECAST_IMPLEMENTATION.md` |
+| v3 models, preregistration, deployment | section 11 below, `docs/v3/` |
+| Data publication rights and release policy | `docs/DATA_PUBLICATION_AUDIT.md`, `config/data_release_policy.json` |
+| Public datasets (write-once, checksummed) | `public_data/` |
+| Prospective scoring protocol | section 12 below, `docs/prospective/PROTOCOL.md` |
+| Current state, open problems, priorities | `docs/PROJECT_HANDOFF.md`; agent rules in `CLAUDE.md` |
 
 ## Using the website
 
@@ -83,7 +101,7 @@ An older forecast is never shown in its place.
 
 **Downloads**
 - Public datasets with checksums and citations: `public_data/` (latest `watershedshift-public-data-2026-11-22.2`). It includes cleaned CDEC storage and snow, the feature tables, the research predictions and the issued forecasts.
-- Model bundle: GitHub Releases, once uploaded.
+- Model bundle: GitHub Release `models-2026-11-22` (pre-release), file `watershedshift_models_7ad581d9f585.tar.gz`. Its SHA-256 is in the `.sha256` file next to it and in `docs/PROJECT_HANDOFF.md`.
 - Reproducing the research: sections 2 and 11 below, and `ASSESSORS.md`.
 
 ## 1. Install (verified on macOS, Python 3.14.5)
@@ -119,7 +137,7 @@ python -m src.report_facts --check                             # 13. report fact
 Notes on these steps:
 - **Step 8** refuses to run unless `docs/preregistration.md` is committed and the hashes of the config and code match it. Re-running it with the identical frozen configuration is allowed, to check reproducibility. A different configuration needs explicit owner approval.
 - **Step 12** must be re-run after any rerun of step 8, because step 8 rewrites `outputs/` without the additive handoff keys.
-- **Raw data stays on the local machine** (git-ignored) because the repository is public and CDEC redistribution terms are unconfirmed. `data/raw_manifest.jsonl` (tracked) lists every download with its URL, retrieval time and SHA-256.
+- **Raw responses stay on the local machine** (git-ignored, mainly for size). Cleaned CDEC data have been published in `public_data/` since the owner authorized CDEC publication on 2026-11-22 (`docs/DATA_PUBLICATION_AUDIT.md`, section 7). `data/raw_manifest.jsonl` (tracked) lists every download with its URL, retrieval time and SHA-256.
 - **CDEC flakiness:** CDEC sometimes returns empty responses. The fetchers retry and cache completed requests, so they can be re-run safely.
 
 ## 3. Data sources (verified 2026-11-21)
@@ -145,10 +163,13 @@ Key verification findings:
 
 ### Attribution and terms
 
-**CDEC (wording PENDING OWNER APPROVAL):**
-> Reservoir storage and snow observations were obtained from the California Department of Water Resources, California Data Exchange Center (CDEC), retrieved November 21, 2026. Observations may be provisional or revised. CDEC/DWR does not endorse this research prototype. Raw CDEC records are not redistributed in this public repository.
+**CDEC** (the wording in `config/data_release_policy.json`, policy version 2026-11-22.2):
+> Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied.
 
-No specific reuse licence for CDEC data has been verified. Do not redistribute raw or CDEC-derived records (including the private bundle and `outputs_v2_ui.zip`) until the owner confirms the terms.
+**Publication status.**
+- Publication of CDEC storage and snow data, derived data and public display is **authorized by the owner** as of 2026-11-22. This rests on permission the owner reports receiving from DWR/CDEC and the operators (`docs/DATA_PUBLICATION_AUDIT.md`, section 7).
+- The written permission has not yet been archived in the repository.
+- No licence for CDEC data beyond that permission has been verified.
 
 **NASA POWER** (requested acknowledgement):
 > These data were obtained from the NASA Langley Research Center (LaRC) POWER Project funded through the NASA Earth Science/Applied Science Program.
@@ -315,7 +336,10 @@ The synthetic fixture in `app/sample_data/` (`python -m src.make_forecast_fixtur
 
 **Deploying privately.**
 - *Local or private host:* run the two commands above on an authorised machine and start Streamlit there. Point `WATERSHED_FORECAST_FILE` at the snapshot if it lives elsewhere. Re-run `src.forecast_live` weekly, for example from cron on Tuesday.
-- *Public deployment (blocker):* the snapshot, the live downloads and the model artifact all contain CDEC-derived values and are git-ignored. While CDEC redistribution terms are unresolved, they must not be committed or uploaded to a public host. A public deployment built from this repository therefore shows the page's explained "No forecast snapshot" state, or the synthetic fixture under its banner. Enabling real forecasts publicly needs the owner to confirm CDEC terms first. It then needs a private snapshot source, such as a private bucket read through Streamlit secrets, which is **not implemented**.
+- *Public deployment:* the earlier blocker no longer applies. CDEC public display was authorized on 2026-11-22.
+  - The public site forecasts through the v3 Generate Forecast service, using the hash-pinned model bundle (section 11, `docs/v3/DEPLOYMENT.md`).
+  - The issued record shown in the "Issued record" tab is published in `public_data/watershedshift-public-data-2026-11-22.2/issued_forecasts/`.
+  - Whether the public site is actually forecasting has **not yet been verified** on its URL (`docs/v3/LAUNCH_AND_MERGE.md`, section 4).
 
 **Real-world test (2026-11-22): succeeded.** `python -m src.forecast_live` was run against live CDEC data on 2026-11-22:
 - Five reservoirs (SHA, ORO, FOL, NML, EXC) received forecasts from origin Monday 2026-11-16 to target 2026-12-16.
@@ -323,7 +347,9 @@ The synthetic fixture in `app/sample_data/` (`python -m src.make_forecast_fixtur
 - All 14 downloaded files matched their logged SHA-256.
 - The re-downloaded 2025 storage was identical to the archived 2025 data on every station-day.
 
-These numbers are private and are not reproduced here. They are new forecasts, not held-out test results, and they do not change any v2 result.
+The record is published unmodified in `public_data/watershedshift-public-data-2026-11-22.2/issued_forecasts/`, and its SHA-256 is in `docs/v3/issued_forecast_ledger.jsonl`.
+- These are new forecasts, not held-out test results, and they do not change any v2 result.
+- They are scored under the prospective protocol (section 12).
 
 ## 11. v3: weather-aware models and interactive forecasting
 
@@ -350,7 +376,7 @@ python -m src.v3_power --end YYYY-MM-DD  # NASA POWER dam points and upstream-bo
 python -m src.v3_dataset                 # private weekly table (CDEC-derived)
 python -m src.v3_experiment --dev        # development folds WY2008-2025, model-specific intervals
 python -m src.v3_experiment --final      # the one preregistered 2026 test; writes models/v3/
-python -m src.v3_release --version YYYY-MM-DD   # public data release (NOAA and NASA-derived only)
+python -m src.v3_release --version YYYY-MM-DD   # write-once public release of the sources the policy allows
 ```
 
 **Results.** Run once on 2026-11-22; the full numbers are in `results/v3/final/metrics.json` and `results/v3/development/summary.json`.
@@ -377,6 +403,32 @@ python -m src.v3_release --version YYYY-MM-DD   # public data release (NOAA and 
 - data freshness;
 - a JSON download of the forecast.
 
-Public display is authorized by the owner (`docs/DATA_PUBLICATION_AUDIT.md`, section 7). The site needs the model bundle configured on the host before it can forecast publicly (`docs/v3/LAUNCH_AND_MERGE.md`).
+Public display is authorized by the owner (`docs/DATA_PUBLICATION_AUDIT.md`, section 7). The model bundle is published as GitHub Release `models-2026-11-22`, and the host must be configured with it (`docs/v3/LAUNCH_AND_MERGE.md`). Whether the public site forecasts has not yet been verified.
 
 **Public data.** `public_data/watershedshift-public-data-2026-11-22.2/` contains the cleaned CDEC and weather data, feature tables, research predictions and issued forecasts, each with a manifest entry, checksum and attribution. The earlier release `...-2026-11-22` (weather data only) is kept unchanged.
+
+## 12. Prospective evaluation
+
+Forecasts issued before their outcomes exist are scored under a fixed protocol: `docs/prospective/PROTOCOL.md`, version 1.0. It was merged on 2026-11-24, before the first target date (2026-12-09).
+
+- **What is scored:**
+  - official weekly forecasts (Monday origin, all six reservoirs, models A, B, B2 and C), issued manually with no scheduler;
+  - the two forecasts issued on 2026-11-22, which are reported separately;
+  - never visitor forecasts.
+- **When:**
+  - provisional scores from target + 2 days, for monitoring;
+  - settled scores from target + 30 days, used in every analysis.
+- **Preregistered:**
+  - Model A against a fixed seasonal baseline, and the coverage of its 90% intervals, on the first 52 official weeks;
+  - B, B2 and C as secondary comparisons.
+
+The reference scorer `src/prospective.py` verifies the protocol's registered hashes. It refuses records that are not in a ledger and scores that come too early, and it writes write-once score files:
+
+```bash
+python -m src.prospective score forecasts/records/<record>.json --stage provisional
+```
+
+```bash
+python -m src.prospective summary
+```
+
