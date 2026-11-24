@@ -253,8 +253,9 @@ Attribution strings are in the policy file. Full audit: `docs/DATA_PUBLICATION_A
 **Records**
 - Each forecast is saved once, write-once, by `RecordStore`. Record IDs end with 8 hex characters of the record's SHA-256, and the page states where the record went.
 - Locally: `WATERSHED_RECORD_DIR` (default `forecasts/records_v3`), mode 0444.
+- In a GitHub repository when `WATERSHED_RECORD_GITHUB_REPO` and `WATERSHED_RECORD_GITHUB_TOKEN` are set. This is the backend the owner chose on 2026-11-24. Records are created through the contents API without a blob SHA, so GitHub refuses to overwrite them, and each record is one commit. Setup: `docs/v3/DEPLOYMENT.md`.
 - In S3 when `WATERSHED_RECORD_BUCKET` is set, with a conditional write (`If-None-Match: *`). This needs `boto3`, which is not in the requirements: current `botocore` requires `python-dateutil<3`, but the lock pins 4.0.0.
-- **On Streamlit Community Cloud the disk is ephemeral.** Without a bucket, records disappear on restart.
+- **On Streamlit Community Cloud the disk is ephemeral.** Without the GitHub (or bucket) backend configured, records disappear on restart.
 
 ## 9. Deployment
 
@@ -316,7 +317,7 @@ Found in the 2026-11-23 review. Line numbers drift, so functions are named inste
    - `ensure_artifacts()` catches it; the CLI does not.
 5. **`RecordStore`:**
    - **Fixed:** S3 is not truly write-once: any `head_object` error leads to a plain `put_object`.
-   - **Open (owner decision):** `boto3` is not in `requirements.txt`, and adding it conflicts with the locked `python-dateutil==4.0.0`.
+   - **Fixed in code; needs owner setup:** persistent storage. The owner chose a GitHub records repository (2026-11-24), and the backend is implemented. It needs the repository and a fine-grained token in the Streamlit secrets. The S3 path still needs `boto3`, which conflicts with the locked `python-dateutil==4.0.0`.
    - **Fixed:** Record IDs have one-second resolution, so two forecasts for the same reservoir in the same second lose one.
    - **Open (prospective protocol):** Visitor and official forecasts share one record type and one store.
 6. **`fetch_cdec`** writes raw responses to `data/v3/cache/cdec_raw/` whatever `WATERSHED_CACHE_DIR` is set to, and never prunes them.
@@ -365,7 +366,7 @@ None of these files is frozen except the ledger, which is append-only. Fix them 
 - Public Streamlit URL, plus access to the app's logs or settings (or screenshots of them).
 - The written CDEC/DWR/operator permission, archived under `docs/permissions/` (sender, date, scope, conditions). If it has conditions, update the policy and attribution text to match.
 - Licence choice for the code and the data, and the author list for `CITATION.cff`.
-- Which persistent store to use for forecast records, and its credentials as Streamlit secrets. An S3-compatible bucket needs `boto3`, which means changing the locked `python-dateutil` from 4.0.0 to 2.x; a GitHub records repository would need no new dependency.
+- Persistent forecast records: create the GitHub records repository, protect its branch, and add a fine-grained token limited to it to the Streamlit secrets (`docs/v3/DEPLOYMENT.md`, "Persistent records in a GitHub repository").
 - Whether the bundle release should stay a pre-release.
 - Whether the NASA POWER notification email has been sent.
 - Approval for any change under `app.py`, `app/` or `.streamlit/`.

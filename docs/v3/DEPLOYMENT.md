@@ -43,11 +43,37 @@ A separate service is not needed at this scale.
 
 **Forecast records:**
 - Each forecast is saved once, write-once, with an ID ending in the first 8 hex characters of its SHA-256, so two forecasts issued in the same second cannot collide.
-- Below each forecast the page says where the record went. Without a bucket it says "local disk only", which on Community Cloud means the record is lost at the next restart.
-- **S3 backend** (`WATERSHED_RECORD_BUCKET`, optionally `WATERSHED_RECORD_ENDPOINT_URL` for an S3-compatible provider):
-  - It writes with `If-None-Match: *`, so the bucket itself refuses an overwrite.
-  - Only a "not found" answer counts as absent; any other error is raised rather than writing.
-  - **It needs `boto3`, which is not installed.** Current `botocore` requires `python-dateutil<3`, while `requirements-lock.txt` pins `python-dateutil==4.0.0`, so adding it means changing a locked dependency. The persistent backend is an owner decision (`docs/PROJECT_HANDOFF.md`, section 14).
+- Below each forecast the page says where the record went. Without a persistent store it says "local disk only", which on Community Cloud means the record is lost at the next restart. A failed save is reported with a message that never contains credentials.
+- **Backends,** first configured wins:
+  1. **GitHub repository (recommended; chosen by the owner on 2026-11-24).** See the setup below. It needs no extra dependency.
+  2. **S3 or S3-compatible bucket** (`WATERSHED_RECORD_BUCKET`, optionally `WATERSHED_RECORD_ENDPOINT_URL`).
+     - It writes with `If-None-Match: *`, and only a "not found" answer counts as absent.
+     - **It needs `boto3`, which is not installed.** Current `botocore` requires `python-dateutil<3`, while `requirements-lock.txt` pins `python-dateutil==4.0.0`.
+  3. **Local directory** (`WATERSHED_RECORD_DIR`).
+
+**Persistent records in a GitHub repository (owner setup)**
+
+1. **Create a separate repository** for records, for example `<owner>/watershed-records`.
+   - Public makes every record and its commit time visible to anyone.
+   - Private also works.
+   - Do not use the code repository.
+2. **Protect its default branch** (Settings > Rules > Rulesets) with **Block force pushes** and **Restrict deletions**, so commit history cannot be rewritten.
+3. **Create a fine-grained personal access token:**
+   - repository access: **only** the records repository;
+   - permission: **Contents: Read and write** (Metadata read-only is added automatically).
+   - Set an expiry and note when to renew it. The token cannot touch any other repository.
+4. **Add to the Streamlit secrets:**
+   - `WATERSHED_RECORD_GITHUB_REPO = "<owner>/watershed-records"`
+   - `WATERSHED_RECORD_GITHUB_TOKEN = "<token>"`
+   - optionally `WATERSHED_RECORD_GITHUB_BRANCH` (the default is the repository's default branch).
+
+   Reboot the app.
+5. **Check it:** generate one forecast. The caption under it should read "persistent record store (GitHub)", and the record should appear at `forecast-records/YYYY/MM/<id>.json` as its own commit.
+
+**How write-once works on GitHub:**
+- Each record is created through the contents API **without** a blob SHA, which GitHub refuses when the path already exists. The app never sends a SHA, so it cannot update or replace a record.
+- Concurrent writes that collide on the branch (HTTP 409) are retried twice.
+- Every saved forecast is one commit. The prospective-protocol PR will decide which forecasts (official or visitor) are kept in this store.
 
 **Release policy:** `config/data_release_policy.json` (policy version `2026-11-22.2`, owner-authorized) permits public display of CDEC-derived values. If a source is ever withdrawn, set its flag to `false`. With `WATERSHED_DEPLOYMENT=public`, the gates in the service, the app, the issued-record tab and the artifact installer then refuse again (tested).
 
@@ -93,7 +119,9 @@ docker run -d -p 8501:8501 -v watershed-data:/data \
 | `WATERSHED_DEPLOYMENT` | `public` enforces the release policy before any fetch or display | `private` |
 | `WATERSHED_ARTIFACT_URL`, `WATERSHED_ARTIFACT_SHA256` | Model bundle location and pinned hash | unset (no models) |
 | `WATERSHED_ARTIFACT_TOKEN` | Bearer token for a private bundle URL | unset |
-| `WATERSHED_RECORD_BUCKET` (plus AWS credentials) | Persistent write-once forecast records (needs `boto3`, not yet installed; see "Forecast records") | unset |
+| `WATERSHED_RECORD_GITHUB_REPO`, `WATERSHED_RECORD_GITHUB_TOKEN` | Persistent write-once forecast records in a GitHub repository (see "Persistent records in a GitHub repository") | unset |
+| `WATERSHED_RECORD_GITHUB_BRANCH` | Branch of the records repository | the repository's default branch |
+| `WATERSHED_RECORD_BUCKET` (plus AWS credentials) | Persistent write-once forecast records in a bucket (needs `boto3`, not yet installed; see "Forecast records") | unset |
 | `WATERSHED_RECORD_ENDPOINT_URL` | Endpoint of an S3-compatible provider for the record bucket | unset (AWS) |
 | `WATERSHED_POWER_WAIT_S` | Longest a forecast waits for NASA POWER before skipping B and B2 | `45` |
 | `WATERSHED_CACHE_DIR` | Shared source cache | `data/v3/cache` |
