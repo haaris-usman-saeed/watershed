@@ -154,6 +154,11 @@ Tags and branches:
 - `requirements-lock.txt` pins everything (numpy 2.5.5, streamlit 1.67.0).
 - The `Dockerfile` uses `python:3.14-slim`.
 
+**v4 research programme (NeuralHydro; branch `research/v4-neuralhydro`, not merged)**
+- Separate deep-learning research in `src/v4/`, `tests/test_v4.py`, `docs/v4/`, `results/v4/` and `requirements-v4.txt`, in its own `.venv-v4` with PyTorch.
+- Development data stops before 2024-01-01. It touches nothing frozen and is not deployed.
+- See `docs/v4/README.md`.
+
 ## 5. Models
 
 | Model | Inputs | Training targets | Train rows | On the website? | Needs at forecast time |

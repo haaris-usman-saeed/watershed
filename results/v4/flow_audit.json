@@ -1,0 +1,87 @@
+{
+ "period": [
+  "2001-01-01",
+  "2023-12-31"
+ ],
+ "cfs_day_af": 1.983471,
+ "stations": {
+  "DNP": {
+   "inflow_coverage": 0.9049,
+   "outflow_coverage": 0.9058,
+   "negative_inflow_share": 0.0431,
+   "daily_residual_median_abs_pct_capacity": 0.0,
+   "daily_residual_p95_abs_pct_capacity": 0.0005,
+   "daily_residual_mean_pct_capacity": 0.00029,
+   "days_compared": 7569,
+   "thirty_day_mae_pp_flow_sum_vs_storage": 0.0394,
+   "thirty_day_bias_pp": -0.0113,
+   "thirty_day_corr": 0.99944,
+   "thirty_day_windows": 4998
+  },
+  "EXC": {
+   "inflow_coverage": 0.9879,
+   "outflow_coverage": 0.8995,
+   "negative_inflow_share": 0.0001,
+   "daily_residual_median_abs_pct_capacity": 0.0001,
+   "daily_residual_p95_abs_pct_capacity": 0.0444,
+   "daily_residual_mean_pct_capacity": 0.00557,
+   "days_compared": 7541,
+   "thirty_day_mae_pp_flow_sum_vs_storage": 0.3262,
+   "thirty_day_bias_pp": -0.1973,
+   "thirty_day_corr": 0.97955,
+   "thirty_day_windows": 5707
+  },
+  "FOL": {
+   "inflow_coverage": 0.9986,
+   "outflow_coverage": 0.9986,
+   "negative_inflow_share": 0.0,
+   "daily_residual_median_abs_pct_capacity": 0.0074,
+   "daily_residual_p95_abs_pct_capacity": 0.0244,
+   "daily_residual_mean_pct_capacity": -0.00909,
+   "days_compared": 8387,
+   "thirty_day_mae_pp_flow_sum_vs_storage": 0.2793,
+   "thirty_day_bias_pp": 0.2746,
+   "thirty_day_corr": 0.99981,
+   "thirty_day_windows": 8039
+  },
+  "NML": {
+   "inflow_coverage": 0.9957,
+   "outflow_coverage": 0.9987,
+   "negative_inflow_share": 0.0006,
+   "daily_residual_median_abs_pct_capacity": 0.0041,
+   "daily_residual_p95_abs_pct_capacity": 0.0121,
+   "daily_residual_mean_pct_capacity": -0.00531,
+   "days_compared": 8363,
+   "thirty_day_mae_pp_flow_sum_vs_storage": 0.149,
+   "thirty_day_bias_pp": 0.149,
+   "thirty_day_corr": 0.99964,
+   "thirty_day_windows": 7586
+  },
+  "ORO": {
+   "inflow_coverage": 0.9996,
+   "outflow_coverage": 0.9932,
+   "negative_inflow_share": 0.0042,
+   "daily_residual_median_abs_pct_capacity": 0.0045,
+   "daily_residual_p95_abs_pct_capacity": 0.0201,
+   "daily_residual_mean_pct_capacity": -0.00413,
+   "days_compared": 8337,
+   "thirty_day_mae_pp_flow_sum_vs_storage": 0.1293,
+   "thirty_day_bias_pp": 0.1269,
+   "thirty_day_corr": 0.99994,
+   "thirty_day_windows": 7674
+  },
+  "SHA": {
+   "inflow_coverage": 0.9979,
+   "outflow_coverage": 0.9983,
+   "negative_inflow_share": 0.0002,
+   "daily_residual_median_abs_pct_capacity": 0.0045,
+   "daily_residual_p95_abs_pct_capacity": 0.0138,
+   "daily_residual_mean_pct_capacity": -0.00551,
+   "days_compared": 8377,
+   "thirty_day_mae_pp_flow_sum_vs_storage": 0.1668,
+   "thirty_day_bias_pp": 0.1667,
+   "thirty_day_corr": 0.99993,
+   "thirty_day_windows": 7839
+  }
+ }
+}
