@@ -23,16 +23,31 @@ A separate service is not needed at this scale.
 - **Cache buckets:** CDEC 6 hours, POWER 12 hours, GEFS per cycle.
 - **Coalescing:** concurrent identical requests share one download. With 20 concurrent requests, there is 1 upstream fetch (tested).
 - **Upstream budget:** 6 fetch jobs per minute. Forced refreshes have a 10-minute cooldown.
-- **Timeouts:** 60-90 s per request with retries; GEFS file requests time out at 60 s.
+- **Timeouts:** CDEC 60-90 s per request with retries; NASA POWER 30 s per request, 2 tries, and no new request after 180 s; GEFS file requests time out at 60 s.
 
 **Failure handling:** a failed or stale source marks the affected model unavailable and gives the reason. A failed CDEC fetch means no forecast at all. Nothing is filled in.
 
+**NASA POWER never holds up Model A:**
+- POWER is downloaded in the background, at the same time as CDEC.
+- A forecast waits for it at most 45 s (`WATERSHED_POWER_WAIT_S`). If it is slower, Models B and B2 are skipped for that forecast with the reason shown, while A and C proceed. The download continues and later forecasts use it from the cache.
+- After a POWER failure, new attempts wait 5 minutes instead of every visitor retrying.
+
 **Model artifacts:**
-- They are installed at startup from a hash-pinned bundle (`src/v3_artifacts.py`).
+- They are installed on the first forecast request from a hash-pinned bundle (`src/v3_artifacts.py`).
+- The download is retried twice on connection errors, timeouts, HTTP 429 and 5xx (waiting 2 s, then 4 s). Other HTTP errors are final.
+- If installation fails, the forecast page shows the installer's own message (for example a wrong pin or an unreachable URL), and the server tries again at most once a minute. A restart is no longer needed after a transient failure.
 - Installation checks the pinned SHA-256, the archive members (no traversal, no extra files) and the manifest.
 - After installing, every model must reproduce reference predictions recorded at build time. A host with a different scikit-learn version fails this self-check and the model is refused, not run.
 
-**Records and cache are not persistent on Streamlit Community Cloud:** its disk is reset on restart or sleep. The cache simply rebuilds. Forecast records persist only if `WATERSHED_RECORD_BUCKET` is configured; visitors can always download their forecast as JSON.
+**Records and cache are not persistent on Streamlit Community Cloud:** its disk is reset on restart or sleep. The cache simply rebuilds. Visitors can always download their forecast as JSON.
+
+**Forecast records:**
+- Each forecast is saved once, write-once, with an ID ending in the first 8 hex characters of its SHA-256, so two forecasts issued in the same second cannot collide.
+- Below each forecast the page says where the record went. Without a bucket it says "local disk only", which on Community Cloud means the record is lost at the next restart.
+- **S3 backend** (`WATERSHED_RECORD_BUCKET`, optionally `WATERSHED_RECORD_ENDPOINT_URL` for an S3-compatible provider):
+  - It writes with `If-None-Match: *`, so the bucket itself refuses an overwrite.
+  - Only a "not found" answer counts as absent; any other error is raised rather than writing.
+  - **It needs `boto3`, which is not installed.** Current `botocore` requires `python-dateutil<3`, while `requirements-lock.txt` pins `python-dateutil==4.0.0`, so adding it means changing a locked dependency. The persistent backend is an owner decision (`docs/PROJECT_HANDOFF.md`, section 14).
 
 **Release policy:** `config/data_release_policy.json` (policy version `2026-11-22.2`, owner-authorized) permits public display of CDEC-derived values. If a source is ever withdrawn, set its flag to `false`. With `WATERSHED_DEPLOYMENT=public`, the gates in the service, the app, the issued-record tab and the artifact installer then refuse again (tested).
 
@@ -78,7 +93,9 @@ docker run -d -p 8501:8501 -v watershed-data:/data \
 | `WATERSHED_DEPLOYMENT` | `public` enforces the release policy before any fetch or display | `private` |
 | `WATERSHED_ARTIFACT_URL`, `WATERSHED_ARTIFACT_SHA256` | Model bundle location and pinned hash | unset (no models) |
 | `WATERSHED_ARTIFACT_TOKEN` | Bearer token for a private bundle URL | unset |
-| `WATERSHED_RECORD_BUCKET` (plus AWS credentials) | Persistent write-once forecast records (needs `boto3`) | unset |
+| `WATERSHED_RECORD_BUCKET` (plus AWS credentials) | Persistent write-once forecast records (needs `boto3`, not yet installed; see "Forecast records") | unset |
+| `WATERSHED_RECORD_ENDPOINT_URL` | Endpoint of an S3-compatible provider for the record bucket | unset (AWS) |
+| `WATERSHED_POWER_WAIT_S` | Longest a forecast waits for NASA POWER before skipping B and B2 | `45` |
 | `WATERSHED_CACHE_DIR` | Shared source cache | `data/v3/cache` |
 | `WATERSHED_RECORD_DIR` | Local write-once records | `forecasts/records_v3` |
 | `WATERSHED_DATA_DIR` | Backtest UI data | `outputs`, else the newest public release |
