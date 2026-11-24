@@ -674,9 +674,11 @@ class RecordStore:
     def record_id(rec, body):
         return f"wsf-v3-{rec['station_id']}-{rec['issued_utc'].replace(':', '').replace('-', '')}-{_sha(body)[:8]}"
 
-    def save(self, rec):
+    def save(self, rec, record_id=None):
+        """Write `rec` once. `record_id` names the record explicitly (official weekly records); by default the ID is
+        derived from the reservoir, issue time and content hash."""
         body = json.dumps(rec, indent=1, allow_nan=False).encode()
-        rid = self.record_id(rec, body)
+        rid = record_id or self.record_id(rec, body)
         if self.backend == "github":
             return self._save_github(rid, rec, body)
         if self.backend == "s3":
