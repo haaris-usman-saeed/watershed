@@ -307,6 +307,13 @@ Attribution strings are in the policy file. Full audit: `docs/DATA_PUBLICATION_A
 
 Committing this before 2026-12-09 keeps it genuinely pre-specified. **Add no scheduler until the protocol and its storage are agreed.**
 
+**Protocol v1.0 is drafted** in `docs/prospective/PROTOCOL.md`, with `config/prospective_protocol.json` and the reference scorer `src/prospective.py` (branch `protocol/prospective-scoring`). It takes effect when merged. It defines:
+- official weekly issuance, with no scheduler yet;
+- provisional scores from target + 2 days and settled scores from target + 30 days;
+- a fixed seasonal baseline;
+- P1 (Model A vs seasonal) and P2 (90% coverage) on the first 52 official weeks, with S1–S3 secondary;
+- the two pre-protocol records, reported separately.
+
 ## 11. Known bugs and weaknesses
 
 Found in the 2026-11-23 review; none are fixed yet. Line numbers drift, so functions are named instead.

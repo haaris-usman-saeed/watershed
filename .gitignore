@@ -35,3 +35,6 @@ data/v3/
 # and the separate PyTorch environment. Aggregate results go to results/v4/ (tracked).
 data/v4/
 .venv-v4/
+
+# Prospective scoring (src/prospective.py): raw CDEC responses kept with their SHA-256 on the scoring machine.
+data/prospective/
