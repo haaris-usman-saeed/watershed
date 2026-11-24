@@ -1,6 +1,6 @@
 # WatershedShift: project handoff
 
-**Last verified:** 2026-11-24, against `main` at `e79c54b` (after PRs #7 and #10). The first version was a read-only recovery review on 2026-11-23 against `0063cc0`: nothing was retrained, re-evaluated or republished.
+**Last verified:** 2026-11-24, against `main` at `50c83c6` (after PRs #7, #10, #11 and #8). The first version was a read-only recovery review on 2026-11-23 against `0063cc0`: nothing was retrained, re-evaluated or republished.
 
 This document holds everything needed to take over the project without reconstructing it from the history.
 - Rules for agents are in [CLAUDE.md](../CLAUDE.md).
@@ -83,7 +83,7 @@ Notes on these results:
 
 | Item | State | Evidence |
 |---|---|---|
-| `main` | `e79c54b` = `origin/main`. PRs #1–#7 and #10 merged. Open: #8 (forecast reliability and GitHub record storage), #9 (v4 research) and the docs-consistency PR | `git ls-remote`, `gh pr list` |
+| `main` | `50c83c6` = `origin/main`. PRs #1–#8, #10 and #11 merged. Open: #9 (v4 research) and the official-issuance PR | `git ls-remote`, `gh pr list` |
 | CI on `main` | Green (run 44998950732) | GitHub Actions |
 | Frozen v2 and v3 material | Intact | All 6 v2 hashes match `RUN_RECORD.json`. All 12 v3 hashes match `config/v3_plan.json`, and the plan hash matches the v3 run record. |
 | Issued forecast records | 2 records, both unaltered | Local and public copies match `docs/v3/issued_forecast_ledger.jsonl` |
@@ -93,8 +93,8 @@ Notes on these results:
 | CDEC publication permission | Owner-reported, **not archived** | `docs/DATA_PUBLICATION_AUDIT.md` §7; `docs/permissions/` does not exist |
 | Licence and citation | **None** | No `LICENSE`, no `CITATION.cff` |
 | Prospective scoring protocol | **In effect:** v1.0, merged 2026-11-24 09:37 UTC (`e79c54b`), before the first target date | `docs/prospective/PROTOCOL.md`; its hashes are verified by `src/prospective.py` |
-| Official weekly issuance | None since 2026-11-22 | Ledger |
-| Tests on `main` | 118 passed, 13 skipped (no private data); 132 passed with the private data (2026-11-24) | `pytest` |
+| Official weekly issuance | None yet. The command `src/official.py` is in the official-issuance PR. Issuing needs the owner's GitHub records repository and token | `docs/prospective/official_ledger.jsonl` (empty) |
+| Tests on `main` | 142 passed with the private data (2026-11-24, after PR #8) | `pytest` |
 
 ## 3. History
 
@@ -108,6 +108,8 @@ Notes on these results:
 | #6 | `feature/v3-public-launch` | `0063cc0` | 2026-11-22 07:35 | Public launch: CDEC publication on owner authorization, full public release, model bundle, deployment config |
 | #7 | `docs/project-handoff` | `0d524a5` | 2026-11-24 06:32 | `CLAUDE.md` and this handoff document |
 | #10 | `protocol/prospective-scoring` | `e79c54b` | 2026-11-24 09:37 | Prospective evaluation and scoring protocol v1.0 and reference scorer (no scheduler) |
+| #11 | `docs/consistency` | `57cb7d7` | 2026-11-24 09:54 | Docs consistency: publication, bundle, deployment and protocol status |
+| #8 | `fix/forecast-reliability` | `50c83c6` | 2026-11-24 09:55 | Install retries; NASA POWER never delays Model A; write-once records; GitHub record store |
 
 Tags and branches:
 - **Tags:** `v1-results` (`01e43cb`) and `models-2026-11-22`. The `submission-v2` tag proposed in `docs/merge_plan.md` was never created.
@@ -298,7 +300,7 @@ Attribution strings are in the policy file. Full audit: `docs/DATA_PUBLICATION_A
 - It is deliberately left unchanged. Appending a correction line would add a second entry for the same `forecast_id`, which the scorer and the tests would read as a duplicate record.
 - The correct fact is recorded here and in `README.md`.
 
-**Protocol v1.0 is in effect.** It was merged on 2026-11-24 (`e79c54b`), before the first target date, so it is genuinely pre-specified. The files are `docs/prospective/PROTOCOL.md`, `config/prospective_protocol.json` and the reference scorer `src/prospective.py`. **No scheduler until the persistent store (PR #8) is merged and verified.** It defines:
+**Protocol v1.0 is in effect.** It was merged on 2026-11-24 (`e79c54b`), before the first target date, so it is genuinely pre-specified. The files are `docs/prospective/PROTOCOL.md`, `config/prospective_protocol.json` and the reference scorer `src/prospective.py`. The persistent store (GitHub records repository) was merged with PR #8 and becomes active once the owner configures it. **There is still no scheduler.** Official records are issued manually with `src/official.py` ([ISSUING.md](prospective/ISSUING.md)). The protocol defines:
 - official weekly issuance, with no scheduler yet;
 - provisional scores from target + 2 days and settled scores from target + 30 days;
 - a fixed seasonal baseline;
@@ -307,7 +309,7 @@ Attribution strings are in the policy file. Full audit: `docs/DATA_PUBLICATION_A
 
 ## 11. Known bugs and weaknesses
 
-Found in the 2026-11-23 review. Line numbers drift, so functions are named instead. Items marked **Fixed** were fixed by the forecast-reliability PR (branch `fix/forecast-reliability`).
+Found in the 2026-11-23 review. Line numbers drift, so functions are named instead. Items marked **Fixed** were fixed by PR #8 (merged 2026-11-24).
 
 1. **Fixed.** **`app/view_forecast_v3.py` `service()`** (UI-owned):
    - `ensure_artifacts()` runs inside `st.cache_resource`, so a transient download failure leaves the process without models until a reboot.
@@ -352,10 +354,10 @@ The docs-consistency PR (2026-11-24) fixed the stale publication and deployment 
 
 1. **Verify the deployment.** Needs the public URL from the owner. Run the §9 acceptance check for all six reservoirs and record the result. Fix only deployment problems; never retrain to fix them.
 2. **Documentation consistency:** done by the docs-consistency PR (section 12). The UI strings remain, pending the owner.
-3. **Make forecasting resilient:** bugs 1–4, plus a documented table of which models are available for each failure.
+3. **Make forecasting resilient:** bugs 1, 2 and 4 are fixed (PR #8). Still open: bug 3 (shared rate limit), bugs 6 and 7, and a documented table of which models are available for each failure.
 4. **Prospective evaluation:**
    - the protocol is in effect (section 10);
-   - next is the official issuing command, after PR #8 is merged;
+   - the official issuing command is in the official-issuance PR. Issuing starts once it is merged and the records repository is configured;
    - provisional scores of the two November records are due from 2026-12-11 (DNP) and 2026-12-18 (the others).
 5. **Publication:**
    - licence;
