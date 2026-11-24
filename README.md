@@ -18,7 +18,7 @@ The models forecast the **30-day change in storage, in percentage points (pp) of
 | 30-day research forecast | The frozen v2 model (Model A) applied to live CDEC data. First issued record 2026-11-22 | The record is immutable and listed in `docs/v3/issued_forecast_ledger.jsonl` |
 | v3 (extension) | Models B, B2 and C, plus the interactive Generate Forecast page. One preregistered 2026 test (251 rows) | Frozen. All three hypotheses "not established" (section 11) |
 | Prospective evaluation | Scoring of forecasts issued before their outcomes | Protocol v1.0 in effect since 2026-11-24 (section 12) |
-| v4 (research) | Neural sequence models (branch `research/v4-neuralhydro`) | Not merged, not deployed |
+| v4 (research) | Neural sequence models (`src/v4/`, `docs/v4/`; separate PyTorch environment) | Merged as research code (PR #9). No model deployed; development results only |
 
 New work never alters an earlier stage. The website's Model A is always the frozen v2 model.
 
