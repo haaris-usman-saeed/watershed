@@ -14,8 +14,8 @@ import pytest
 
 from src import v3_gefs as g
 from src.v3_basins import STATIONS, basin_boxes, box_mask
-from src.v3_service import (APPROVED_STATIONS, ForecastService, PolicyBlocked, RateLimited, RecordStore, SourceCache,
-                            SourceError, TokenBucket, check_display_allowed, days_remaining, weather_features)
+from src.v3_service import (APPROVED_STATIONS, ForecastService, PolicyBlocked, RateLimited, RecordStore, RecordStoreError,
+                            SourceCache, SourceError, TokenBucket, check_display_allowed, days_remaining, weather_features)
 
 ROOT = Path(__file__).resolve().parents[1]
 HAVE_V3 = (ROOT / "data/v3/private/weekly_v3.csv").exists()
@@ -634,6 +634,81 @@ def test_truncated_archive_is_refused_not_crashing(tmp_path, monkeypatch):
     monkeypatch.setenv("WATERSHED_ARTIFACT_SHA256", hashlib.sha256(cut).hexdigest())
     status = va.ensure_artifacts(root=tmp_path / "site")
     assert status.startswith("install refused or failed") and not (tmp_path / "site/models").exists()
+
+
+
+class FakeGHResponse:
+    def __init__(self, status, body):
+        self.status_code, self._body = status, body
+
+    def json(self):
+        return self._body
+
+
+class FakeGitHub:
+    """GitHub contents API stand-in: a PUT without a blob SHA creates the file, or answers 422 if it exists."""
+    MESSAGES = {401: "Bad credentials", 404: "Not Found", 409: "is at abc but expected def", 422: "sha wasn't supplied"}
+
+    def __init__(self, put_codes=(), net_error=None):
+        self.files, self.puts, self.put_codes, self.net_error = {}, [], list(put_codes), net_error
+
+    def put(self, url, headers, json, timeout):
+        if self.net_error:
+            raise self.net_error
+        self.puts.append({"url": url, "headers": headers, "json": json})
+        if self.put_codes:
+            code = self.put_codes.pop(0)
+            return FakeGHResponse(code, {"message": self.MESSAGES.get(code, "error")})
+        if url in self.files:
+            return FakeGHResponse(422, {"message": self.MESSAGES[422]})
+        self.files[url] = json["content"]
+        path = url.split("/contents/")[1]
+        return FakeGHResponse(201, {"content": {"html_url": f"https://github.com/o/records/blob/main/{path}"},
+                                    "commit": {"sha": "c0ffee"}})
+
+    def get(self, url, headers, timeout, params=None):
+        return FakeGHResponse(200 if url in self.files else 404, {})
+
+
+def test_github_record_store_creates_each_record_once(tmp_path):
+    import base64
+    rec = {"station_id": "FOL", "issued_utc": "2026-11-22T18:00:00Z", "models": {"A": 1}}
+    gh = FakeGitHub()
+    s = RecordStore(root=tmp_path / "local", github_repo="o/records", github_token="t0ken-secret", session=gh)
+    out = s.save(rec)
+    assert s.backend == "github" and s.persistent and "GitHub" in s.describe()
+    assert out["location"].startswith("https://github.com/o/records/blob/main/forecast-records/2026/11/wsf-v3-FOL-")
+    assert out["commit"] == "c0ffee" and out["id"] in out["location"]
+    sent = gh.puts[0]
+    assert "sha" not in sent["json"]                           # create-only: GitHub refuses if the path exists
+    assert sent["url"].startswith("https://api.github.com/repos/o/records/contents/forecast-records/2026/11/")
+    assert json.loads(base64.b64decode(sent["json"]["content"])) == rec
+    assert sent["headers"]["Authorization"] == "Bearer t0ken-secret"
+    with pytest.raises(FileExistsError):
+        s.save(rec)
+    assert len(gh.files) == 1 and not (tmp_path / "local").exists()
+
+
+def test_github_record_store_retries_conflicts_and_reports_safe_errors():
+    import requests
+    rec = {"station_id": "FOL", "issued_utc": "2026-11-22T18:00:00Z"}
+    waits = []
+    gh = FakeGitHub(put_codes=[409, 409])
+    out = RecordStore(github_repo="o/records", github_token="t0ken-secret", session=gh, sleep=waits.append).save(rec)
+    assert out["commit"] == "c0ffee" and waits == [1, 2] and len(gh.puts) == 3
+    for store, expect in [
+        (RecordStore(github_repo="o/records", github_token="t0ken-secret", session=FakeGitHub(put_codes=[401])),
+         "HTTP 401: Bad credentials"),
+        (RecordStore(github_repo="o/records", github_token="t0ken-secret", session=FakeGitHub(put_codes=[422])),
+         "HTTP 422"),                                          # 422 but the file is absent: an error, not "exists"
+        (RecordStore(github_repo="o/records", github_token="t0ken-secret",
+                     session=FakeGitHub(net_error=requests.ConnectionError("t0ken-secret in a URL"))),
+         "could not be reached (ConnectionError)"),
+        (RecordStore(github_repo="o/records", github_token=None, session=FakeGitHub()), "WATERSHED_RECORD_GITHUB_TOKEN"),
+    ]:
+        with pytest.raises(RecordStoreError) as exc:
+            store.save(rec)
+        assert expect in str(exc.value) and "t0ken-secret" not in str(exc.value)
 
 
 # ---------------------------------------------------------------- reliability: model installation, NASA POWER

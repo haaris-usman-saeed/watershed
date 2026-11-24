@@ -603,6 +603,13 @@ def fetch_gefs(cycle):
 
 # ------------------------------------------------------------------ records
 
+GITHUB_API = "https://api.github.com"
+
+
+class RecordStoreError(RuntimeError):
+    """A record could not be saved. The message is safe to show visitors: it never contains credentials."""
+
+
 def _s3_error_code(exc):
     """The error code of a botocore ClientError (for example "404", "NoSuchKey", "PreconditionFailed"), else None."""
     resp = getattr(exc, "response", None) or {}
@@ -611,29 +618,51 @@ def _s3_error_code(exc):
     return str(code) if code is not None else (str(status) if status is not None else None)
 
 
-class RecordStore:
-    """Immutable forecast records. Local directory by default; an S3 or S3-compatible bucket when
-    WATERSHED_RECORD_BUCKET is set (with WATERSHED_RECORD_ENDPOINT_URL for non-AWS providers).
+def _github_message(r):
+    try:
+        return str(r.json().get("message", ""))[:200]
+    except ValueError:
+        return ""
 
-    Write-once in both backends: an existing record is never overwritten. On S3 the object is written with
-    If-None-Match: * (a conditional write), after a HEAD request in which only "not found" counts as absent;
-    any other error (permissions, network) is raised instead of writing. Record IDs end with the first 8 hex
+
+class RecordStore:
+    """Immutable forecast records, in one of three backends (first configured wins):
+
+    - GitHub repository (WATERSHED_RECORD_GITHUB_REPO = "owner/name" and WATERSHED_RECORD_GITHUB_TOKEN, a
+      fine-grained token with Contents read/write on that repository only; optional
+      WATERSHED_RECORD_GITHUB_BRANCH). Each record is created as forecast-records/YYYY/MM/<id>.json through the
+      contents API without a blob SHA, which GitHub refuses when the path already exists, and every record is
+      its own commit, so git history shows when it was written. Needs no extra dependency.
+    - S3 or S3-compatible bucket (WATERSHED_RECORD_BUCKET, optional WATERSHED_RECORD_ENDPOINT_URL; needs boto3).
+      Written with If-None-Match: * after a HEAD in which only "not found" counts as absent.
+    - Local directory (default), exclusive create, mode 0444. Lost on hosts with temporary disks.
+
+    Write-once in every backend: an existing record is never overwritten. Record IDs end with the first 8 hex
     characters of the record's SHA-256, so two different forecasts issued in the same second cannot collide."""
 
-    def __init__(self, root=None, client=None, bucket=None, prefix="forecast-records/", endpoint_url=None):
+    def __init__(self, root=None, client=None, bucket=None, prefix="forecast-records/", endpoint_url=None,
+                 github_repo=None, github_token=None, github_branch=None, session=None, sleep=time.sleep):
         self.root = Path(root or os.environ.get("WATERSHED_RECORD_DIR", ROOT / "forecasts" / "records_v3"))
         self.bucket = bucket or os.environ.get("WATERSHED_RECORD_BUCKET")
         self.endpoint_url = endpoint_url or os.environ.get("WATERSHED_RECORD_ENDPOINT_URL")
-        self.client, self.prefix = client, prefix
+        self.github_repo = github_repo or os.environ.get("WATERSHED_RECORD_GITHUB_REPO")
+        self._github_token = github_token or os.environ.get("WATERSHED_RECORD_GITHUB_TOKEN")
+        self.github_branch = github_branch or os.environ.get("WATERSHED_RECORD_GITHUB_BRANCH")
+        self.client, self.prefix, self.session, self._sleep = client, prefix, session, sleep
+
+    @property
+    def backend(self):
+        return "github" if self.github_repo else ("s3" if self.bucket else "local")
 
     @property
     def persistent(self):
-        """True when records go to a bucket. A local directory is lost on hosts with temporary disks."""
-        return bool(self.bucket)
+        """True for GitHub and bucket backends. A local directory is lost on hosts with temporary disks."""
+        return self.backend != "local"
 
     def describe(self):
-        return ("persistent record store" if self.persistent else
-                "local disk only: lost when the app restarts on hosts with temporary storage such as Streamlit Community Cloud")
+        return {"github": "persistent record store (GitHub)", "s3": "persistent record store (bucket)"}.get(
+            self.backend, "local disk only: lost when the app restarts on hosts with temporary storage such as "
+                          "Streamlit Community Cloud")
 
     def _s3(self):
         if self.client is None:
@@ -648,23 +677,10 @@ class RecordStore:
     def save(self, rec):
         body = json.dumps(rec, indent=1, allow_nan=False).encode()
         rid = self.record_id(rec, body)
-        if self.bucket:
-            key = self.prefix + rid + ".json"
-            s3 = self._s3()
-            try:
-                s3.head_object(Bucket=self.bucket, Key=key)
-            except Exception as exc:  # noqa: BLE001  only "not found" means the record is absent
-                if _s3_error_code(exc) not in ("404", "NoSuchKey", "NotFound"):
-                    raise
-            else:
-                raise FileExistsError(key)
-            try:
-                s3.put_object(Bucket=self.bucket, Key=key, Body=body, ContentType="application/json", IfNoneMatch="*")
-            except Exception as exc:  # noqa: BLE001
-                if _s3_error_code(exc) in ("PreconditionFailed", "412", "ConditionalRequestConflict", "409"):
-                    raise FileExistsError(key) from exc
-                raise
-            return {"id": rid, "location": f"s3://{self.bucket}/{key}", "sha256": _sha(body)}
+        if self.backend == "github":
+            return self._save_github(rid, rec, body)
+        if self.backend == "s3":
+            return self._save_s3(rid, body)
         self.root.mkdir(parents=True, exist_ok=True)
         p = self.root / f"{rid}.json"
         try:
@@ -674,6 +690,61 @@ class RecordStore:
             raise FileExistsError(p) from None
         p.chmod(0o444)
         return {"id": rid, "location": str(p), "sha256": _sha(body)}
+
+    def _save_s3(self, rid, body):
+        key = self.prefix + rid + ".json"
+        s3 = self._s3()
+        try:
+            s3.head_object(Bucket=self.bucket, Key=key)
+        except Exception as exc:  # noqa: BLE001  only "not found" means the record is absent
+            if _s3_error_code(exc) not in ("404", "NoSuchKey", "NotFound"):
+                raise
+        else:
+            raise FileExistsError(key)
+        try:
+            s3.put_object(Bucket=self.bucket, Key=key, Body=body, ContentType="application/json", IfNoneMatch="*")
+        except Exception as exc:  # noqa: BLE001
+            if _s3_error_code(exc) in ("PreconditionFailed", "412", "ConditionalRequestConflict", "409"):
+                raise FileExistsError(key) from exc
+            raise
+        return {"id": rid, "location": f"s3://{self.bucket}/{key}", "sha256": _sha(body)}
+
+    def _save_github(self, rid, rec, body):
+        import base64
+        if not self._github_token:
+            raise RecordStoreError("WATERSHED_RECORD_GITHUB_TOKEN is not set, so the record could not be saved to "
+                                   f"{self.github_repo}.")
+        if self.session is None:
+            import requests
+            self.session = requests.Session()
+        issued = rec["issued_utc"]
+        path = f"{self.prefix}{issued[:4]}/{issued[5:7]}/{rid}.json"
+        url = f"{GITHUB_API}/repos/{self.github_repo}/contents/{path}"
+        headers = {"Authorization": f"Bearer {self._github_token}", "Accept": "application/vnd.github+json",
+                   "X-GitHub-Api-Version": "2022-11-28"}
+        data = {"message": f"Add forecast record {rid}", "content": base64.b64encode(body).decode()}
+        if self.github_branch:
+            data["branch"] = self.github_branch
+        for attempt in range(3):
+            try:
+                r = self.session.put(url, headers=headers, json=data, timeout=30)
+            except Exception as exc:  # noqa: BLE001  network errors: report the type only
+                raise RecordStoreError(f"GitHub could not be reached ({type(exc).__name__}).") from None
+            if r.status_code == 201:                 # created; 200 would mean an update, which needs a SHA we never send
+                j = r.json()
+                return {"id": rid, "location": (j.get("content") or {}).get("html_url") or f"github:{self.github_repo}/{path}",
+                        "sha256": _sha(body), "commit": (j.get("commit") or {}).get("sha")}
+            if r.status_code == 409 and attempt < 2:  # the branch moved under a concurrent write: try again
+                self._sleep(1 + attempt)
+                continue
+            if r.status_code == 422:                 # GitHub refuses a create without SHA when the file exists
+                g = self.session.get(url, headers=headers, timeout=30,
+                                     params={"ref": self.github_branch} if self.github_branch else None)
+                if g.status_code == 200:
+                    raise FileExistsError(path)
+            raise RecordStoreError(f"GitHub refused the record (HTTP {r.status_code}"
+                                   + (f": {_github_message(r)}" if _github_message(r) else "") + ").")
+        raise RecordStoreError("GitHub kept reporting a conflicting write (HTTP 409).")
 
 
 def main():

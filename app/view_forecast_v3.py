@@ -324,7 +324,9 @@ def render_interactive(b):
         except FileExistsError:
             note = f"Already saved ({store.describe()})."
         except Exception as exc:  # noqa: BLE001  the forecast is shown; persistence failure is reported
-            note = f"This forecast could not be saved to the record store ({type(exc).__name__})."
+            from src.v3_service import RecordStoreError
+            note = ("This forecast could not be saved to the record store "
+                    f"({exc if isinstance(exc, RecordStoreError) else type(exc).__name__}).")
         saved = (issued, note)
         st.session_state[f"{key}_saved"] = saved
     st.caption(saved[1])
