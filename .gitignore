@@ -30,3 +30,8 @@ forecasts/
 # v3: private CDEC-derived tables, caches, raw weather downloads and logs. Publishable derived data is
 # released through src/v3_release.py into public_data/ (write-once, policy-checked).
 data/v3/
+
+# v4 (NeuralHydro research): private daily panel, CDEC flow downloads, per-row predictions, checkpoints,
+# and the separate PyTorch environment. Aggregate results go to results/v4/ (tracked).
+data/v4/
+.venv-v4/
