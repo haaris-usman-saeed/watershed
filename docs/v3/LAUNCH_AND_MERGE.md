@@ -4,9 +4,11 @@
 
 - **PR #4** was merged into `main` with a merge commit: `32d6122`.
 - **PR #5** was then retargeted to `main`. Retargeting triggered CI run 44997714780 (97 passed, 11 skipped), and PR #5 was merged with a merge commit: `f972621`.
-- **The launch changes** (policy authorization, the CDEC-inclusive public release, the model self-check and the deployment configuration) are in a separate PR for the owner to review.
+- **The launch changes** (policy authorization, the CDEC-inclusive public release, the model self-check and the deployment configuration) were reviewed and merged as **PR #6** (`0063cc0`).
 
 ## 2. Model bundle: build, upload, configure
+
+**Done:** the bundle was uploaded as GitHub Release `models-2026-11-22` (pre-release), asset `watershedshift_models_7ad581d9f585.tar.gz`. The commands below record how.
 
 The bundle contains exactly 7 model files plus `MANIFEST.json`:
 - the manifest lists each file's SHA-256;

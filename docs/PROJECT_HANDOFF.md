@@ -1,6 +1,6 @@
 # WatershedShift: project handoff
 
-**Last verified:** 2026-11-23, against `main` at `0063cc0`. This was a read-only recovery review: nothing was retrained, re-evaluated or republished.
+**Last verified:** 2026-11-24, against `main` at `e79c54b` (after PRs #7 and #10). The first version was a read-only recovery review on 2026-11-23 against `0063cc0`: nothing was retrained, re-evaluated or republished.
 
 This document holds everything needed to take over the project without reconstructing it from the history.
 - Rules for agents are in [CLAUDE.md](../CLAUDE.md).
@@ -83,7 +83,7 @@ Notes on these results:
 
 | Item | State | Evidence |
 |---|---|---|
-| `main` | `0063cc0` = `origin/main`. PRs #1–#6 merged; none open. | `git ls-remote`, `gh pr list` |
+| `main` | `e79c54b` = `origin/main`. PRs #1–#7 and #10 merged. Open: #8 (forecast reliability and GitHub record storage), #9 (v4 research) and the docs-consistency PR | `git ls-remote`, `gh pr list` |
 | CI on `main` | Green (run 44998950732) | GitHub Actions |
 | Frozen v2 and v3 material | Intact | All 6 v2 hashes match `RUN_RECORD.json`. All 12 v3 hashes match `config/v3_plan.json`, and the plan hash matches the v3 run record. |
 | Issued forecast records | 2 records, both unaltered | Local and public copies match `docs/v3/issued_forecast_ledger.jsonl` |
@@ -92,9 +92,9 @@ Notes on these results:
 | Public website | **Unverified** | No public URL is recorded anywhere in the repository. The acceptance check has not been run. |
 | CDEC publication permission | Owner-reported, **not archived** | `docs/DATA_PUBLICATION_AUDIT.md` §7; `docs/permissions/` does not exist |
 | Licence and citation | **None** | No `LICENSE`, no `CITATION.cff` |
-| Prospective scoring protocol | **Not written** | The first targets fall on **2026-12-09** (DNP) and **2026-12-16** |
+| Prospective scoring protocol | **In effect:** v1.0, merged 2026-11-24 09:37 UTC (`e79c54b`), before the first target date | `docs/prospective/PROTOCOL.md`; its hashes are verified by `src/prospective.py` |
 | Official weekly issuance | None since 2026-11-22 | Ledger |
-| Tests | 107 passed, 12 skipped (no private data); 109 passed with the private data (STATUS.md, 2026-11-22) | `pytest` |
+| Tests on `main` | 118 passed, 13 skipped (no private data); 132 passed with the private data (2026-11-24) | `pytest` |
 
 ## 3. History
 
@@ -106,6 +106,8 @@ Notes on these results:
 | #4 | `feature/30-day-forecast` | `32d6122` | 2026-11-22 07:19 | 30-day research forecast: frozen v2 Model A, live CDEC, Forecast page |
 | #5 | `feature/v3-forecast-platform` | `f972621` | 2026-11-22 07:20 | v3: Models B, B2 and C, preregistered 2026 comparison, Generate Forecast, data rights audit |
 | #6 | `feature/v3-public-launch` | `0063cc0` | 2026-11-22 07:35 | Public launch: CDEC publication on owner authorization, full public release, model bundle, deployment config |
+| #7 | `docs/project-handoff` | `0d524a5` | 2026-11-24 06:32 | `CLAUDE.md` and this handoff document |
+| #10 | `protocol/prospective-scoring` | `e79c54b` | 2026-11-24 09:37 | Prospective evaluation and scoring protocol v1.0 and reference scorer (no scheduler) |
 
 Tags and branches:
 - **Tags:** `v1-results` (`01e43cb`) and `models-2026-11-22`. The `submission-v2` tag proposed in `docs/merge_plan.md` was never created.
@@ -291,18 +293,11 @@ Attribution strings are in the policy file. Full audit: `docs/DATA_PUBLICATION_A
 - Public: `public_data/watershedshift-public-data-2026-11-22.2/issued_forecasts/`.
 - Full hashes: `docs/v3/issued_forecast_ledger.jsonl`.
 
-**Stale ledger note.** The ledger note for the v2 record still says "private"; the record is now published. The ledger is append-only, so correct this with a new line, never an edit.
+**Stale ledger note.** The ledger note for the v2 record still says "private", but the record is published.
+- It is deliberately left unchanged. Appending a correction line would add a second entry for the same `forecast_id`, which the scorer and the tests would read as a duplicate record.
+- The correct fact is recorded here and in `README.md`.
 
-**Before the first target date (2026-12-09), the prospective protocol needs to define:**
-- what an *official* weekly issuance is (who, when, which models), and how visitor-generated forecasts are kept apart;
-- immutable records for official forecasts, and an explicit "no forecast" record when a source fails;
-- automatic scoring against CDEC observations at the target date, including how later CDEC revisions are handled;
-- persistent storage;
-- which comparisons are preregistered.
-
-Committing this before 2026-12-09 keeps it genuinely pre-specified. **Add no scheduler until the protocol and its storage are agreed.**
-
-**Protocol v1.0 is drafted** in `docs/prospective/PROTOCOL.md`, with `config/prospective_protocol.json` and the reference scorer `src/prospective.py` (branch `protocol/prospective-scoring`). It takes effect when merged. It defines:
+**Protocol v1.0 is in effect.** It was merged on 2026-11-24 (`e79c54b`), before the first target date, so it is genuinely pre-specified. The files are `docs/prospective/PROTOCOL.md`, `config/prospective_protocol.json` and the reference scorer `src/prospective.py`. **No scheduler until the persistent store (PR #8) is merged and verified.** It defines:
 - official weekly issuance, with no scheduler yet;
 - provisional scores from target + 2 days and settled scores from target + 30 days;
 - a fixed seasonal baseline;
@@ -335,32 +330,32 @@ Found in the 2026-11-23 review; none are fixed yet. Line numbers drift, so funct
 
 ## 12. Documents that contradict the current state
 
-None of these files is frozen except the ledger, which is append-only. Fix them in one docs-only PR, after this handoff.
+The docs-consistency PR (2026-11-24) fixed the stale publication and deployment statements:
+- in `README.md`, which also gains a section separating what is frozen from what is new, and a section on prospective evaluation;
+- in `ASSESSORS.md`, `data/provenance.md`, `docs/UI_CONTRACT.md` (wording only), `docs/FORECAST_IMPLEMENTATION.md`, `docs/v3/V3_REPORT.md`, `docs/v3/LAUNCH_AND_MERGE.md`, `docs/v3/DEPLOYMENT.md` (Python versions actually verified), `docs/DATA_PUBLICATION_AUDIT.md` (status notes) and `docs/merge_plan.md` (marked historical);
+- in a `.gitignore` comment.
 
-| File | Stale statement | Current fact |
+**Still stale, and deliberately not changed there:**
+
+| File | Stale statement | Why it stays |
 |---|---|---|
-| `README.md` "Where things are" | Model bundle on GitHub Releases "once uploaded" | Uploaded (section 7) |
-| `README.md` §2 and "Attribution and terms" | Raw data kept local because CDEC terms are "unconfirmed"; CDEC wording "PENDING OWNER APPROVAL" | Publication authorized (owner-reported); wording in the policy file |
-| `README.md` §10 | "Public deployment (blocker)…"; forecast numbers "are private" | Released in `…-2026-11-22.2` |
-| `README.md` §11 | `v3_release` described as "NOAA and NASA-derived only" | The current policy includes CDEC |
-| `ASSESSORS.md` | Terms "under review"; the bundle "must not be reposted" | v2-only guide; does not mention `public_data` |
-| `data/provenance.md` | CDEC redistribution terms "unconfirmed" | as above |
-| `docs/UI_CONTRACT.md` | CDEC wording "pending owner approval"; "forecasts beyond the data end date" not supported | Live research forecasts now exist (wording change needs UI-owner agreement) |
-| `docs/FORECAST_IMPLEMENTATION.md` | Snapshot cannot be public "while CDEC terms are unresolved" | as above |
-| `docs/v3/V3_REPORT.md` | Bundle "not uploaded yet" | Uploaded |
-| `docs/v3/LAUNCH_AND_MERGE.md` §1 | Launch changes "in a separate PR for the owner to review" | PR #6 merged |
-| `docs/DATA_PUBLICATION_AUDIT.md` | Summary and §5 tables say "Unresolved"; §7 table says the bundle is published "once the owner uploads it" | §7 supersedes; uploaded |
-| `docs/merge_plan.md` | Archive must stay private; `submission-v2` tag | Historical document; tag never created |
-| `STATUS.md` | Last entry: bundle "not uploaded" | Append a new entry; do not edit old ones |
-| `src/make_bundle.py`, `.gitignore` (comments) | "CDEC terms … not confirmed / unresolved" | Comments only |
-| `docs/v3/issued_forecast_ledger.jsonl` | v2 record "is private" | Append a correction line |
+| `app/view_forecast.py` | CDEC terms "unresolved" (two UI strings) | UI-owned: needs the owner's approval (bug 9) |
+| `app/README_FRONTEND.md` | Real outputs not to be committed "while reuse conditions are unresolved" | UI-owned |
+| `docs/UI_CONTRACT.md` §4 table | "forecasts beyond the data end date" not supported | A dated note now explains the owner-approved research forecast page. Changing the rule needs the UI owner |
+| `src/make_bundle.py` | Bundle README text: raw responses excluded because terms were "not confirmed" | Code that generates bundle text; change it in a functional PR |
+| `docs/v3/issued_forecast_ledger.jsonl` | v2 record "is private" | Append-only; see section 10 |
+| `STATUS.md` (old entries) | Blockers and "not uploaded" | Append-only; a new entry records the current state |
+| `docs/prospective/PROTOCOL.md` | "takes effect when merged" | Hash-registered. Still accurate as the record of when it took effect |
 
 ## 13. Priorities
 
 1. **Verify the deployment.** Needs the public URL from the owner. Run the §9 acceptance check for all six reservoirs and record the result. Fix only deployment problems; never retrain to fix them.
-2. **Make the documentation consistent** (section 12), and add a section separating the frozen v2 submission from the v3 extensions. Docs only.
+2. **Documentation consistency:** done by the docs-consistency PR (section 12). The UI strings remain, pending the owner.
 3. **Make forecasting resilient:** bugs 1–4, plus a documented table of which models are available for each failure.
-4. **Prospective evaluation protocol** (section 10). **It must be committed before 2026-12-09** to remain pre-specified.
+4. **Prospective evaluation:**
+   - the protocol is in effect (section 10);
+   - next is the official issuing command, after PR #8 is merged;
+   - provisional scores of the two November records are due from 2026-12-11 (DNP) and 2026-12-18 (the others).
 5. **Publication:**
    - licence;
    - `CITATION.cff`;

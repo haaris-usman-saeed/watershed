@@ -424,3 +424,20 @@ This branch is based on `feature/30-day-forecast` (PR #4, open, CI passing). It 
   - an empty `outputs/` folder in a clone hid the public release;
   - a truncated bundle raised an unhandled error.
 - **Public website not verified:** its URL is not in the repository and there is no host access. The site cannot forecast publicly until PR #6 is merged and the bundle is uploaded and configured.
+
+## Engineering (Claude Code): recovery, reliability, prospective protocol and v4 (2026-11-23 to 2026-11-24)
+
+- **Recovery review (2026-11-23, read-only).**
+  - All frozen v2 and v3 hashes intact; both issued records match the ledger.
+  - The model bundle **is uploaded**: GitHub Release `models-2026-11-22`, a pre-release whose digest equals the pinned SHA-256. This supersedes "not uploaded" above.
+  - Public website still **not verified**: no URL available.
+- **Merged** (each with the owner's explicit approval):
+  - PR #7, `CLAUDE.md` and `docs/PROJECT_HANDOFF.md` (2026-11-24 06:32 UTC, `0d524a5`);
+  - PR #10, prospective evaluation and scoring protocol v1.0 with reference scorer `src/prospective.py`, and no scheduler (2026-11-24 09:37 UTC, `e79c54b`). This is before the first target date, 2026-12-09.
+- **Open for review:**
+  - PR #8: retry for failed model installs; NASA POWER no longer delays Model A; write-once records; GitHub records repository backend, chosen by the owner, which needs the owner's repository and token;
+  - PR #9: v4 NeuralHydro research. Shared LSTM/GRU/TCN on a daily, leakage-tested pipeline. They match HGB with the frozen v2 configuration on the development folds but do not beat it;
+  - the docs-consistency PR, which adds this entry.
+- **Tests on `main`:** 132 passed with the private data; 118 passed and 13 skipped without it.
+- **Current state and priorities:** `docs/PROJECT_HANDOFF.md`.
+

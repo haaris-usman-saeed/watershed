@@ -34,5 +34,5 @@
 
 - **CDEC publication:** authorized by the owner on 2026-11-22 (`docs/DATA_PUBLICATION_AUDIT.md`, section 7). The written permission still has to be archived by the owner.
 - **Public data:** `public_data/watershedshift-public-data-2026-11-22.2` includes the CDEC-derived data.
-- **Model bundle:** built, byte-reproducible and self-checking. It is not uploaded yet; uploading it is an owner action (`docs/v3/LAUNCH_AND_MERGE.md`).
+- **Model bundle:** built, byte-reproducible and self-checking. It is published as GitHub Release `models-2026-11-22` (pre-release; checked 2026-11-23: its digest equals the pinned SHA-256).
 - **The public website is not verified as forecasting.** No public URL was available to the engineering agent, so it is not claimed to be live. A clean, data-free deployment run locally in public mode did install the bundle from a URL and generate real forecasts with all four models (see STATUS.md).
