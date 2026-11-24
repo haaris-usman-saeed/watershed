@@ -81,8 +81,34 @@ def classify(rid, record_sha, ledgers=LEDGERS):
     return None
 
 
+def _extract_v3(rec):
+    """One reservoir entry from a v3 per-reservoir record (also the form used inside official records)."""
+    e = {"station_id": rec["station_id"], "status": rec["status"], "reasons": rec.get("reasons", []),
+         "origin_date": rec.get("origin_date"), "target_date": rec.get("target_date"),
+         "capacity_af": rec.get("capacity_af"), "issue_storage_af": (rec.get("observed") or {}).get("storage_af"),
+         "models": {}}
+    for k in MODELS:
+        m = (rec.get("models") or {}).get(k) or {}
+        if m.get("available"):
+            iv = m["interval"]
+            e["models"][k] = {"change_pp": m["change_pp"], "lower_change_pp": iv["lower_change_pp"],
+                              "upper_change_pp": iv["upper_change_pp"], "projected_pct": m.get("projected_pct")}
+    return e
+
+
 def extract(record):
-    """Per-reservoir entries from either record schema (v2 issued record or v3 interactive record)."""
+    """Per-reservoir entries from any record schema: official weekly records (src/official.py), the v2 issued record,
+    or a v3 interactive record."""
+    if record.get("record_type") == "official_weekly_forecast":
+        out = []
+        for s in record["stations"]:
+            if s.get("status") == "no_forecast":
+                out.append({"station_id": s["station_id"], "status": "no_forecast", "reasons": s.get("reasons", []),
+                            "origin_date": record["origin_date"], "target_date": None, "capacity_af": None,
+                            "issue_storage_af": None, "models": {}})
+            else:
+                out.append(_extract_v3(s))
+        return out
     out = []
     if "stations" in record:                                   # v2 schema: one Model A forecast per reservoir
         for s in record["stations"]:
@@ -96,18 +122,7 @@ def extract(record):
                                     "upper_change_pp": f["upper_change_pp"], "projected_pct": f.get("projected_pct")}
             out.append(e)
         return out
-    e = {"station_id": record["station_id"], "status": record["status"], "reasons": record.get("reasons", []),
-         "origin_date": record.get("origin_date"), "target_date": record.get("target_date"),
-         "capacity_af": record.get("capacity_af"), "issue_storage_af": (record.get("observed") or {}).get("storage_af"),
-         "models": {}}
-    for k in MODELS:
-        m = (record.get("models") or {}).get(k) or {}
-        if m.get("available"):
-            iv = m["interval"]
-            e["models"][k] = {"change_pp": m["change_pp"], "lower_change_pp": iv["lower_change_pp"],
-                              "upper_change_pp": iv["upper_change_pp"], "projected_pct": m.get("projected_pct")}
-    out.append(e)
-    return out
+    return [_extract_v3(record)]
 
 
 def ready(stage, target_date, retrieved_utc, cfg):
