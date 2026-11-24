@@ -31,8 +31,9 @@ MODEL_INPUTS = {
 def service():
     from src.v3_artifacts import ensure_artifacts
     from src.v3_service import ForecastService
-    ensure_artifacts()          # no-op when present; installs hash-pinned artifacts when configured
-    return ForecastService()
+    # The service installs hash-pinned artifacts when configured, retries a failed installation (at most once a
+    # minute) instead of keeping the failure until a restart, and reports the installation status to visitors.
+    return ForecastService(artifact_installer=ensure_artifacts)
 
 
 @st.cache_resource(show_spinner=False)
@@ -315,9 +316,15 @@ def render_interactive(b):
     st.download_button("Download this forecast (JSON with provenance)", body,
                        file_name=f"watershedshift_{sid}_{issued.replace(':', '')}.json", mime="application/json",
                        key=f"v3_dl_{sid}")
-    try:
-        record_store().save(r)
-    except FileExistsError:
-        pass
-    except Exception:  # noqa: BLE001  the forecast is shown; persistence failure is reported
-        st.caption("This forecast could not be saved to the record store.")
+    saved = st.session_state.get(f"{key}_saved")
+    if saved is None or saved[0] != issued:          # save once per forecast, not on every rerun
+        store = record_store()
+        try:
+            note = f"Saved as record {store.save(r)['id']} ({store.describe()})."
+        except FileExistsError:
+            note = f"Already saved ({store.describe()})."
+        except Exception as exc:  # noqa: BLE001  the forecast is shown; persistence failure is reported
+            note = f"This forecast could not be saved to the record store ({type(exc).__name__})."
+        saved = (issued, note)
+        st.session_state[f"{key}_saved"] = saved
+    st.caption(saved[1])

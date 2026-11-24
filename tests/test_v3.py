@@ -402,21 +402,60 @@ def test_record_store_is_write_once(tmp_path):
     with pytest.raises(FileExistsError):
         s.save(rec)
 
-    class FakeS3:
-        def __init__(self):
-            self.objs = {}
-
-        def head_object(self, Bucket, Key):
-            if Key not in self.objs:
-                raise KeyError(Key)
-
-        def put_object(self, Bucket, Key, Body, ContentType):
-            self.objs[Key] = Body
-    s3 = RecordStore(client=FakeS3(), bucket="b")
+    fake = FakeS3()
+    s3 = RecordStore(client=fake, bucket="b")
     out = s3.save(rec)
-    assert out["location"].startswith("s3://b/")
+    assert out["location"].startswith("s3://b/") and s3.persistent
+    assert fake.puts[0]["IfNoneMatch"] == "*"                  # conditional write: S3 itself refuses an overwrite
     with pytest.raises(FileExistsError):
         s3.save(rec)
+    assert len(fake.puts) == 1
+
+
+class S3ClientError(Exception):
+    """Shaped like botocore.exceptions.ClientError: the code is in .response["Error"]["Code"]."""
+    def __init__(self, code, status):
+        super().__init__(code)
+        self.response = {"Error": {"Code": code}, "ResponseMetadata": {"HTTPStatusCode": status}}
+
+
+class FakeS3:
+    def __init__(self, head_error=None, put_error=None):
+        self.objs, self.puts, self.head_error, self.put_error = {}, [], head_error, put_error
+
+    def head_object(self, Bucket, Key):
+        if self.head_error:
+            raise self.head_error
+        if Key not in self.objs:
+            raise S3ClientError("404", 404)
+
+    def put_object(self, Bucket, Key, Body, ContentType, IfNoneMatch=None):
+        if self.put_error:
+            raise self.put_error
+        if IfNoneMatch == "*" and Key in self.objs:
+            raise S3ClientError("PreconditionFailed", 412)
+        self.puts.append({"Key": Key, "IfNoneMatch": IfNoneMatch})
+        self.objs[Key] = Body
+
+
+def test_s3_record_store_never_writes_after_an_ambiguous_check():
+    rec = {"station_id": "FOL", "issued_utc": "2026-11-22T18:00:00Z"}
+    denied = FakeS3(head_error=S3ClientError("403", 403))      # e.g. missing permission: not proof of absence
+    with pytest.raises(S3ClientError):
+        RecordStore(client=denied, bucket="b").save(rec)
+    assert denied.puts == []
+    raced = FakeS3(put_error=S3ClientError("PreconditionFailed", 412))   # another writer won the race
+    with pytest.raises(FileExistsError):
+        RecordStore(client=raced, bucket="b").save(rec)
+
+
+def test_record_ids_do_not_collide_within_one_second(tmp_path):
+    s = RecordStore(root=tmp_path)
+    a = s.save({"station_id": "FOL", "issued_utc": "2026-11-22T18:00:00Z", "models": {"A": 1}})
+    b = s.save({"station_id": "FOL", "issued_utc": "2026-11-22T18:00:00Z", "models": {"A": 2}})
+    assert a["id"] != b["id"] and len(list(tmp_path.glob("*.json"))) == 2
+    assert a["id"].startswith("wsf-v3-FOL-20261122T180000Z-")
+    assert not s.persistent and "lost when the app restarts" in s.describe()
 
 
 @pytest.mark.skipif(not (ROOT / "models/v3/model_cards.json").exists() or not HAVE_V3, reason="v3 artifacts not built")
@@ -595,3 +634,122 @@ def test_truncated_archive_is_refused_not_crashing(tmp_path, monkeypatch):
     monkeypatch.setenv("WATERSHED_ARTIFACT_SHA256", hashlib.sha256(cut).hexdigest())
     status = va.ensure_artifacts(root=tmp_path / "site")
     assert status.startswith("install refused or failed") and not (tmp_path / "site/models").exists()
+
+
+# ---------------------------------------------------------------- reliability: model installation, NASA POWER
+
+def test_archive_without_manifest_is_refused_cleanly(tmp_path):
+    import hashlib
+    import io
+    import tarfile
+    from src.v3_artifacts import FILES, install
+    buf = io.BytesIO()
+    with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+        for f in FILES:
+            data = f"content of {f}".encode()
+            ti = tarfile.TarInfo(f)
+            ti.size = len(data)
+            tar.addfile(ti, io.BytesIO(data))
+    blob = buf.getvalue()
+    with pytest.raises(ValueError, match="no MANIFEST.json"):
+        install(blob, hashlib.sha256(blob).hexdigest(), dest=tmp_path / "d", mode="private")
+
+
+class FakeResponse:
+    def __init__(self, status, content=b"bundle"):
+        self.status_code, self.content = status, content
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            import requests
+            raise requests.HTTPError(f"HTTP {self.status_code}")
+
+
+def test_bundle_download_retries_only_transient_failures(monkeypatch):
+    import requests
+    from src import v3_artifacts as va
+    replies, waits = [FakeResponse(503), FakeResponse(502), FakeResponse(200, b"ok")], []
+    monkeypatch.setattr(requests, "get", lambda *a, **k: replies.pop(0))
+    assert va.download("https://example.invalid/b", sleep=waits.append) == b"ok" and waits == [2, 4]
+    calls = []
+    monkeypatch.setattr(requests, "get", lambda *a, **k: calls.append(1) or FakeResponse(404))
+    with pytest.raises(requests.HTTPError):
+        va.download("https://example.invalid/b", sleep=waits.append)
+    assert len(calls) == 1                                     # a 404 is final, not retried
+    monkeypatch.setattr(requests, "get", lambda *a, **k: FakeResponse(503))
+    with pytest.raises(RuntimeError, match="after 3 attempts"):
+        va.download("https://example.invalid/b", sleep=lambda s: None)
+
+
+def test_failed_installation_is_retried_and_reported(tmp_path):
+    clock = [1000.0]
+    statuses = ["install refused or failed: download failed after 3 attempts (HTTP 503)", "installed"]
+    installs = []
+
+    def installer():
+        installs.append(clock[0])
+        return statuses.pop(0)
+    calls = []
+    counting = {k: (lambda *a, k=k: calls.append(k)) for k in ("cdec", "power", "gefs")}
+    svc = service(tmp_path, NOW, models=None, **counting)
+    svc.artifact_installer, svc._mono = installer, lambda: clock[0]
+    svc._load_models = lambda: (mock_models() if installs and not statuses else
+                                {k: {"error": "model artifact missing"} for k in ("A", "B", "B2", "C")})
+    r = svc.forecast("FOL")
+    assert r["status"] == "unavailable" and "artifacts are not installed" in r["reasons"][0]
+    assert "HTTP 503" in r["reasons"][0] and "tries again automatically" in r["reasons"][0]
+    assert "forecast_model --build" not in r["reasons"][0] and calls == []
+    clock[0] += 10
+    svc.forecast("FOL")
+    assert len(installs) == 1                                  # not retried on every request
+    clock[0] += 60
+    svc.fetchers = {"cdec": lambda n: synthetic_cdec(n), "power": synthetic_power, "gefs": synthetic_gefs}
+    r = svc.forecast("FOL")
+    assert len(installs) == 2 and r["status"] == "ok" and r["models"]["A"]["available"]
+
+
+def _models_with_b():
+    models = mock_models()
+    models["B"] = dict(models["A"], features=models["A"]["features"][:9] +
+                       ["rain_7d_mm", "rain_30d_mm", "temp_30d_c", "humidity_30d_pct"] + models["A"]["features"][9:])
+    return models
+
+
+def test_slow_nasa_power_does_not_delay_model_a(tmp_path):
+    release = threading.Event()
+
+    def slow_power(n):
+        release.wait(20)
+        return synthetic_power(n)
+    svc = service(tmp_path, NOW, models=_models_with_b(), power=slow_power)
+    svc.power_wait_s = 0.3
+    t0 = time.monotonic()
+    r = svc.forecast("FOL")
+    assert time.monotonic() - t0 < 5
+    assert r["status"] == "ok" and r["models"]["A"]["available"]
+    assert not r["models"]["B"]["available"] and "NASA POWER" in r["models"]["B"]["reasons"][0]
+    assert "did not respond within 0.3 seconds" in r["source_status"]["power"]["error"]
+    release.set()                                              # POWER answers; the background download finishes
+    svc._power_jobs[next(iter(svc._power_jobs))][0].result(timeout=10)
+    r = svc.forecast("FOL")
+    assert r["models"]["B"]["available"] and r["source_status"]["power"] == dict(r["source_status"]["power"], ok=True, cached=True)
+
+
+def test_power_failure_backs_off_and_unexpected_errors_never_block_model_a(tmp_path):
+    clock, calls = [0.0], []
+
+    def failing(n):
+        calls.append(1)
+        raise SourceError("POWER 503")
+    svc = service(tmp_path, NOW, models=_models_with_b(), power=failing)
+    svc._mono = lambda: clock[0]
+    for _ in range(3):
+        r = svc.forecast("FOL")
+        assert r["models"]["A"]["available"] and "POWER 503" in r["source_status"]["power"]["error"]
+    assert len(calls) == 1                                     # failure reused, not retried by every visitor
+    clock[0] += 301
+    svc.forecast("FOL")
+    assert len(calls) == 2
+    broken = service(tmp_path / "b", NOW, models=_models_with_b(), power=lambda n: {}["series"])
+    r = broken.forecast("FOL")
+    assert r["status"] == "ok" and r["models"]["A"]["available"] and "KeyError" in r["source_status"]["power"]["error"]

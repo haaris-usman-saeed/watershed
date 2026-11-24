@@ -151,6 +151,9 @@ def test_generate_forecast_button_runs_service_offline(monkeypatch, tmp_path):
     assert "Model comparison" in t and "Data freshness" in t and "Interval caution: Folsom" in t
     assert any("Model A" in m.label for m in at.metric)
     assert len(list((tmp_path / "rec").glob("*.json"))) == 1
+    assert "Saved as record wsf-v3-FOL-" in t and "local disk only" in t
+    at.run()                                                   # a rerun shows the note without saving again
+    assert len(list((tmp_path / "rec").glob("*.json"))) == 1 and "Saved as record" in text(at)
 
 
 def test_public_mode_shows_policy_block(monkeypatch, tmp_path, restricted_policy):

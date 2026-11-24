@@ -18,9 +18,15 @@ Design
   whose public_display is false makes the service refuse to return values derived from it.
 - Never fills: a model is "unavailable" (with reasons) when any input is missing, stale, or its
   upstream fetch failed. Observations after the origin are never used.
+- NASA POWER never holds up Model A: it is fetched in the background alongside CDEC, and a forecast waits
+  for it at most POWER_WAIT_S. If it is slower, B and B2 are skipped for that forecast while the download
+  continues for later ones. After a POWER failure, new attempts wait POWER_RETRY_AFTER_FAILURE_S.
+- Model artifacts: when the app passes an installer (src.v3_artifacts.ensure_artifacts), a failed
+  installation is retried at most once per ARTIFACT_RETRY_S instead of lasting until a restart, and the
+  installer's status is shown in the refusal.
 """
 import argparse
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
 from datetime import date, datetime, timedelta, timezone
 import hashlib
 import json
@@ -41,6 +47,10 @@ HISTORY_DAYS = 220
 WEATHER_LAG = 7
 FORCE_COOLDOWN_S = 600
 UPSTREAM_JOBS_PER_MIN = 6
+POWER_WAIT_S = float(os.environ.get("WATERSHED_POWER_WAIT_S", "45"))   # longest a forecast waits for NASA POWER
+POWER_RETRY_AFTER_FAILURE_S = 300        # after a failed POWER download, wait this long before trying again
+POWER_FETCH_DEADLINE_S = 180             # a POWER download starts no new request after this many seconds
+ARTIFACT_RETRY_S = 60                    # a failed model installation is retried at most this often
 MODEL_LABELS = {"A": "Model A: frozen v2 (storage, snow, season)",
                 "B": "Model B: + recent weather at the dam (NASA POWER)",
                 "B2": "Model B2: + recent weather over the upstream area (NASA POWER)",
@@ -194,7 +204,8 @@ def days_remaining(target_date, issued_utc):
 # ------------------------------------------------------------------ the service
 
 class ForecastService:
-    def __init__(self, cache_dir=None, art_v3=ROOT / "models" / "v3", fetchers=None, clock=utcnow):
+    def __init__(self, cache_dir=None, art_v3=ROOT / "models" / "v3", fetchers=None, clock=utcnow,
+                 artifact_installer=None, power_wait_s=None, monotonic=time.monotonic):
         self.cache = SourceCache(cache_dir or os.environ.get("WATERSHED_CACHE_DIR", ROOT / "data" / "v3" / "cache"))
         self.art_v3 = Path(art_v3)
         self.clock = clock
@@ -202,10 +213,26 @@ class ForecastService:
         self.force_times = {}
         self._models = None
         self._lock = threading.Lock()
+        self.artifact_installer = artifact_installer      # e.g. src.v3_artifacts.ensure_artifacts; None = never install
+        self.artifact_status = None                       # last status string returned by the installer
+        self._artifact_tried = None
+        self.power_wait_s = POWER_WAIT_S if power_wait_s is None else float(power_wait_s)
+        self._mono = monotonic
+        self._bg = None                                   # background executor for NASA POWER, created on first use
+        self._power_jobs = {}                             # cache key -> [future, monotonic time it finished or None]
+        self._power_lock = threading.Lock()
 
     # ----- models
     def models(self):
         with self._lock:
+            missing = self._models is None or "error" in self._models.get("A", {})
+            if missing and self.artifact_installer is not None:
+                now = self._mono()
+                if self._artifact_tried is None or now - self._artifact_tried >= ARTIFACT_RETRY_S:
+                    self._artifact_tried = now
+                    self.artifact_status = self.artifact_installer()
+                    if self.artifact_status == "installed":
+                        self._models = None                 # reload from the newly installed files
             if self._models is None:
                 self._models = self._load_models()
             return self._models
@@ -271,6 +298,29 @@ class ForecastService:
         force = force and self._allow_force(key, now)
         return self.cache.get_or_fetch(key, lambda: self.fetchers.get("power", fetch_power)(now), force=force)
 
+    def _power_job(self, now, force=False):
+        """The background POWER fetch for this refresh bucket, shared by concurrent forecasts. A failed fetch is
+        reused (not retried) for POWER_RETRY_AFTER_FAILURE_S."""
+        key = f"power_{self._bucket(POWER_BUCKET_H, now)}"
+        with self._power_lock:
+            t = self._mono()
+            job = self._power_jobs.get(key)
+            if job is not None:
+                fut, done_at = job
+                if not fut.done():
+                    return fut
+                if fut.exception() is not None and done_at is not None and t - done_at < POWER_RETRY_AFTER_FAILURE_S:
+                    return fut
+            if self._bg is None:
+                self._bg = ThreadPoolExecutor(max_workers=2, thread_name_prefix="watershed-power")
+            self._power_jobs = {k: j for k, j in self._power_jobs.items() if not j[0].done()}
+            job = [None, None]
+            fut = self._bg.submit(self.power, now, force)
+            job[0] = fut
+            fut.add_done_callback(lambda f, job=job: job.__setitem__(1, self._mono()))
+            self._power_jobs[key] = job
+            return fut
+
     def gefs(self, cycle):
         key = f"gefs_{cycle.isoformat()}"
         hit = self.cache.read(key)
@@ -287,19 +337,32 @@ class ForecastService:
         status, warnings = {}, []
         loaded = self.models()
         if "error" in loaded.get("A", {"error": ""}):
-            return self._failed(station, issued, "Model artifacts are not installed on this deployment, so no forecast can "
-                                                 "be made: " + loaded["A"]["error"])
+            why = "Model artifacts are not installed on this deployment, so no forecast can be made"
+            if self.artifact_installer is not None and self.artifact_status not in (None, "present", "installed"):
+                why += (f". Last installation attempt: {self.artifact_status}. The server tries again automatically, "
+                        f"at most once every {ARTIFACT_RETRY_S} seconds.")
+            else:
+                why += ": " + loaded["A"]["error"]
+            return self._failed(station, issued, why)
+        power_job = self._power_job(issued, force_refresh)    # runs alongside the CDEC refresh
+        power_deadline = self._mono() + self.power_wait_s
         try:
             cdec_entry, cdec_cached = self.cdec(issued, force_refresh)
             status["cdec"] = {"ok": True, "cached": cdec_cached, "retrieved_utc": cdec_entry["written_utc"]}
         except (SourceError, RateLimited, RuntimeError) as exc:
             return self._failed(station, issued, f"CDEC refresh failed: {exc}")
         try:
-            pw_entry, pw_cached = self.power(issued, force_refresh)
+            pw_entry, pw_cached = power_job.result(timeout=max(0.0, power_deadline - self._mono()))
             status["power"] = {"ok": True, "cached": pw_cached, "retrieved_utc": pw_entry["written_utc"]}
-        except (SourceError, RateLimited, RuntimeError) as exc:
+        except FuturesTimeout:
             pw_entry = None
-            status["power"] = {"ok": False, "error": str(exc)}
+            status["power"] = {"ok": False, "error": f"NASA POWER did not respond within {self.power_wait_s:g} seconds, so "
+                                                     "Models B and B2 were skipped for this forecast. The download continues "
+                                                     "in the background and later forecasts will use it."}
+        except Exception as exc:  # noqa: BLE001  a POWER problem may disable only B and B2, never Model A
+            pw_entry = None
+            status["power"] = {"ok": False, "error": str(exc) if isinstance(exc, (SourceError, RateLimited))
+                               else f"{type(exc).__name__}: {exc}"}
         return self._infer(station, issued, cdec_entry, pw_entry, status, warnings)
 
     def _failed(self, station, issued, why):
@@ -486,11 +549,14 @@ def fetch_power(now):
     boxes = basin_boxes()
     jobs = [(s, "dam_point", float(st.loc[s, "lat"]), float(st.loc[s, "lon"])) for s in APPROVED_STATIONS]
     jobs += [(s, "box", la, lo) for s in APPROVED_STATIONS for la, lo in grid_cells(boxes[s])]
+    deadline = time.monotonic() + POWER_FETCH_DEADLINE_S
 
     def one(j):
+        if time.monotonic() > deadline:
+            raise SourceError(f"gave up after {POWER_FETCH_DEADLINE_S} s")
         params = {"parameters": "T2M,PRECTOTCORR,RH2M", "community": "AG", "longitude": j[3], "latitude": j[2],
                   "start": start.strftime("%Y%m%d"), "end": end.strftime("%Y%m%d"), "format": "JSON", "time-standard": "LST"}
-        r = get(POWER, params, lambda r: "properties" in r.json(), tries=3, timeout=90)
+        r = get(POWER, params, lambda r: "properties" in r.json(), tries=2, timeout=30)
         obj = r.json()
         par, fill = obj["properties"]["parameter"], obj["header"].get("fill_value", -999.0)
         w = pd.DataFrame({"temp_c": par["T2M"], "rain_mm": par["PRECTOTCORR"], "humidity_pct": par["RH2M"]})
@@ -537,38 +603,75 @@ def fetch_gefs(cycle):
 
 # ------------------------------------------------------------------ records
 
-class RecordStore:
-    """Immutable forecast records. Local directory by default; S3-compatible when WATERSHED_RECORD_BUCKET is set."""
+def _s3_error_code(exc):
+    """The error code of a botocore ClientError (for example "404", "NoSuchKey", "PreconditionFailed"), else None."""
+    resp = getattr(exc, "response", None) or {}
+    code = (resp.get("Error") or {}).get("Code")
+    status = (resp.get("ResponseMetadata") or {}).get("HTTPStatusCode")
+    return str(code) if code is not None else (str(status) if status is not None else None)
 
-    def __init__(self, root=None, client=None, bucket=None, prefix="forecast-records/"):
+
+class RecordStore:
+    """Immutable forecast records. Local directory by default; an S3 or S3-compatible bucket when
+    WATERSHED_RECORD_BUCKET is set (with WATERSHED_RECORD_ENDPOINT_URL for non-AWS providers).
+
+    Write-once in both backends: an existing record is never overwritten. On S3 the object is written with
+    If-None-Match: * (a conditional write), after a HEAD request in which only "not found" counts as absent;
+    any other error (permissions, network) is raised instead of writing. Record IDs end with the first 8 hex
+    characters of the record's SHA-256, so two different forecasts issued in the same second cannot collide."""
+
+    def __init__(self, root=None, client=None, bucket=None, prefix="forecast-records/", endpoint_url=None):
         self.root = Path(root or os.environ.get("WATERSHED_RECORD_DIR", ROOT / "forecasts" / "records_v3"))
         self.bucket = bucket or os.environ.get("WATERSHED_RECORD_BUCKET")
+        self.endpoint_url = endpoint_url or os.environ.get("WATERSHED_RECORD_ENDPOINT_URL")
         self.client, self.prefix = client, prefix
+
+    @property
+    def persistent(self):
+        """True when records go to a bucket. A local directory is lost on hosts with temporary disks."""
+        return bool(self.bucket)
+
+    def describe(self):
+        return ("persistent record store" if self.persistent else
+                "local disk only: lost when the app restarts on hosts with temporary storage such as Streamlit Community Cloud")
 
     def _s3(self):
         if self.client is None:
-            import boto3   # optional dependency, only for the S3 backend
-            self.client = boto3.client("s3")
+            import boto3
+            self.client = boto3.client("s3", endpoint_url=self.endpoint_url) if self.endpoint_url else boto3.client("s3")
         return self.client
+
+    @staticmethod
+    def record_id(rec, body):
+        return f"wsf-v3-{rec['station_id']}-{rec['issued_utc'].replace(':', '').replace('-', '')}-{_sha(body)[:8]}"
 
     def save(self, rec):
         body = json.dumps(rec, indent=1, allow_nan=False).encode()
-        rid = f"wsf-v3-{rec['station_id']}-{rec['issued_utc'].replace(':', '').replace('-', '')}"
+        rid = self.record_id(rec, body)
         if self.bucket:
             key = self.prefix + rid + ".json"
+            s3 = self._s3()
             try:
-                self._s3().head_object(Bucket=self.bucket, Key=key)
+                s3.head_object(Bucket=self.bucket, Key=key)
+            except Exception as exc:  # noqa: BLE001  only "not found" means the record is absent
+                if _s3_error_code(exc) not in ("404", "NoSuchKey", "NotFound"):
+                    raise
+            else:
                 raise FileExistsError(key)
-            except FileExistsError:
+            try:
+                s3.put_object(Bucket=self.bucket, Key=key, Body=body, ContentType="application/json", IfNoneMatch="*")
+            except Exception as exc:  # noqa: BLE001
+                if _s3_error_code(exc) in ("PreconditionFailed", "412", "ConditionalRequestConflict", "409"):
+                    raise FileExistsError(key) from exc
                 raise
-            except Exception:  # noqa: BLE001  not found: write it
-                self._s3().put_object(Bucket=self.bucket, Key=key, Body=body, ContentType="application/json")
             return {"id": rid, "location": f"s3://{self.bucket}/{key}", "sha256": _sha(body)}
         self.root.mkdir(parents=True, exist_ok=True)
         p = self.root / f"{rid}.json"
-        if p.exists():
-            raise FileExistsError(p)
-        p.write_bytes(body)
+        try:
+            with open(p, "xb") as fh:         # exclusive create: never overwrites, even under concurrency
+                fh.write(body)
+        except FileExistsError:
+            raise FileExistsError(p) from None
         p.chmod(0o444)
         return {"id": rid, "location": str(p), "sha256": _sha(body)}
 
