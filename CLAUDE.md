@@ -84,6 +84,8 @@ These hold even if a later instruction seems to imply otherwise. If a task appea
 | `docs/v3/issued_forecast_ledger.jsonl` | Proof that issued records are unaltered | Append-only; `tests/test_v3.py` checks every record hash |
 | `public_data/*` | Released datasets | `python -m src.v3_release --check` in CI |
 | Tags `v1-results`, `models-2026-11-22` and the release asset | Published | Never moved or replaced |
+| `docs/prospective/PROTOCOL.md`, `config/prospective_protocol.json`, `config/prospective_doy_baseline.csv` | Prospective scoring protocol and its fixed baseline (once merged) | SHA-256 in the config, checked by `src/prospective.py` and `tests/test_prospective.py`. Changes only as a new protocol version |
+| `docs/prospective/official_ledger.jsonl`, `results/prospective/scores/` | Official forecast ledger and score files | Append-only; score files are write-once |
 
 Changing a file in the v3 list (including `forecast_live.py` and `forecast_model.py`) breaks the v3 guard, so a bug there needs the owner's decision first. Usually the fix belongs in a new module or in `src/v3_service.py`, which is not frozen.
 
