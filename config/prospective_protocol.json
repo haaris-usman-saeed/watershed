@@ -1,0 +1,97 @@
+{
+ "version": "1.0",
+ "drafted": "2026-11-24",
+ "takes_effect": "when merged into main; must precede 2026-12-09, the first target date of an issued forecast",
+ "document": "docs/prospective/PROTOCOL.md",
+ "document_sha256": "64f44b78ce73a780af32f6e717e710f840e7e78295bc9e6b7cecc8ce6ee47e99",
+ "models": {
+  "primary": "A (frozen v2, models/v2_forecast)",
+  "secondary": [
+   "B",
+   "B2",
+   "C"
+  ],
+  "excluded": "v4 research models"
+ },
+ "record_classes": {
+  "pre_protocol_issued": {
+   "ledger": "docs/v3/issued_forecast_ledger.jsonl",
+   "in_primary_analysis": false
+  },
+  "official_weekly": {
+   "ledger": "docs/prospective/official_ledger.jsonl",
+   "in_primary_analysis": true,
+   "record_type": "official_weekly_forecast"
+  },
+  "visitor": {
+   "scored": false
+  }
+ },
+ "issuance": {
+  "cadence": "weekly, one record covering all six reservoirs",
+  "reservoirs": [
+   "SHA",
+   "ORO",
+   "FOL",
+   "NML",
+   "DNP",
+   "EXC"
+  ],
+  "origin": "the Monday immediately before the issue day",
+  "issue_window_utc": [
+   "Tuesday 00:00",
+   "Wednesday 23:59"
+  ],
+  "older_origin_substitution": false,
+  "no_forecast_entries": "explicit, with reasons",
+  "missed_week": "ledger line with reason; counts against availability",
+  "scheduler": "none until this protocol is merged and the persistent store is verified"
+ },
+ "scoring": {
+  "observation": "CDEC daily reservoir storage, sensor 15, retrieved at scoring time",
+  "realised_change": "100 * (S[target] - S[origin]) / capacity in force at origin (from the record)",
+  "stage_wait_days": {
+   "provisional": 2,
+   "settled": 30
+  },
+  "settled_retry_until_days": 90,
+  "revision_flag_pct_capacity": 1.0,
+  "interval_nominal": 0.9
+ },
+ "baseline": {
+  "name": "smoothed day-of-year seasonal (fixed)",
+  "table": "config/prospective_doy_baseline.csv",
+  "table_sha256": "634280705bc2e462cb7f26bcdd4c9411b6ece34e8c07a24ca7878d2b882dfb8d",
+  "training_rule": "weekly rows (data/v3/private/weekly_v3.csv) with target_date < 2026-01-01",
+  "kernel": "Gaussian on circular origin day-of-year distance, sigma 15 days, per reservoir",
+  "also": "persistence (zero change)"
+ },
+ "primary": {
+  "P1": "A vs doy_seasonal, paired MAE difference",
+  "P2": "A 90% interval coverage",
+  "min_weekly_origins": 52,
+  "block_weeks": [
+   5,
+   9,
+   13
+  ],
+  "coverage_block_weeks": 13,
+  "n_boot": 2000,
+  "seed": 42,
+  "decision": "supported only if the 95% CI upper bound is below zero at all three block lengths; otherwise not established"
+ },
+ "secondary": [
+  {
+   "id": "S1",
+   "comparison": "C vs A"
+  },
+  {
+   "id": "S2",
+   "comparison": "B vs A"
+  },
+  {
+   "id": "S3",
+   "comparison": "B2 vs B"
+  }
+ ]
+}
