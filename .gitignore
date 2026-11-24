@@ -31,5 +31,10 @@ forecasts/
 # released through src/v3_release.py into public_data/ (write-once, policy-checked).
 data/v3/
 
+# v4 (NeuralHydro research): private daily panel, CDEC flow downloads, per-row predictions, checkpoints,
+# and the separate PyTorch environment. Aggregate results go to results/v4/ (tracked).
+data/v4/
+.venv-v4/
+
 # Prospective scoring (src/prospective.py): raw CDEC responses kept with their SHA-256 on the scoring machine.
 data/prospective/
