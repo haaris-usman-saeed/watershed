@@ -241,8 +241,8 @@ Attribution strings are in the policy file. Full audit: `docs/DATA_PUBLICATION_A
 
 1. **CDEC** storage and snow, cached in 6-hour buckets.
    - If this fails, or Model A cannot load, **no forecast** is produced.
-2. **NASA POWER**, cached in 12-hour buckets.
-   - If this fails, **B and B2 are unavailable**. A and C proceed.
+2. **NASA POWER**, cached in 12-hour buckets, fetched in the background alongside CDEC.
+   - If it fails, or takes longer than 45 s (`WATERSHED_POWER_WAIT_S`), **B and B2 are unavailable** for that forecast. A and C proceed. A slow download continues for later forecasts; after a failure, new attempts wait 5 minutes.
 3. **GEFS:** the 00Z cycle of the origin Monday, cached per cycle.
    - If that cycle is missing or incomplete, or was not published before the issue time, **C is unavailable**.
 
@@ -253,10 +253,11 @@ Attribution strings are in the policy file. Full audit: `docs/DATA_PUBLICATION_A
 - In public mode, the policy gate runs before any fetch or display.
 
 **Records**
-- Each forecast is saved write-once by `RecordStore`.
+- Each forecast is saved once, write-once, by `RecordStore`. Record IDs end with 8 hex characters of the record's SHA-256, and the page states where the record went.
 - Locally: `WATERSHED_RECORD_DIR` (default `forecasts/records_v3`), mode 0444.
-- In S3 when `WATERSHED_RECORD_BUCKET` is set. This needs `boto3`, which is not in the requirements.
-- **On Streamlit Community Cloud the disk is ephemeral.** Without a bucket, records disappear on restart.
+- In a GitHub repository when `WATERSHED_RECORD_GITHUB_REPO` and `WATERSHED_RECORD_GITHUB_TOKEN` are set. This is the backend the owner chose on 2026-11-24. Records are created through the contents API without a blob SHA, so GitHub refuses to overwrite them, and each record is one commit. Setup: `docs/v3/DEPLOYMENT.md`.
+- In S3 when `WATERSHED_RECORD_BUCKET` is set, with a conditional write (`If-None-Match: *`). This needs `boto3`, which is not in the requirements: current `botocore` requires `python-dateutil<3`, but the lock pins 4.0.0.
+- **On Streamlit Community Cloud the disk is ephemeral.** Without the GitHub (or bucket) backend configured, records disappear on restart.
 
 ## 9. Deployment
 
@@ -306,24 +307,24 @@ Attribution strings are in the policy file. Full audit: `docs/DATA_PUBLICATION_A
 
 ## 11. Known bugs and weaknesses
 
-Found in the 2026-11-23 review; none are fixed yet. Line numbers drift, so functions are named instead.
+Found in the 2026-11-23 review. Line numbers drift, so functions are named instead. Items marked **Fixed** were fixed by the forecast-reliability PR (branch `fix/forecast-reliability`).
 
-1. **`app/view_forecast_v3.py` `service()`** (UI-owned):
+1. **Fixed.** **`app/view_forecast_v3.py` `service()`** (UI-owned):
    - `ensure_artifacts()` runs inside `st.cache_resource`, so a transient download failure leaves the process without models until a reboot.
    - Its status string is discarded, so visitors see "run `python -m src.forecast_model --build`" instead of the real reason.
-2. **`src/v3_service.py` `fetch_power`:** 47 jobs, each with 3 tries, a 90 s timeout and backoff, run 8 at a time. If POWER *hangs* rather than fails, the whole forecast, including Model A, can stall for many minutes. Fast failures are handled and tested.
+2. **Fixed.** **`src/v3_service.py` `fetch_power`:** 47 jobs, each with 3 tries, a 90 s timeout and backoff, run 8 at a time. If POWER *hangs* rather than fails, the whole forecast, including Model A, can stall for many minutes. Fast failures are handled and tested.
 3. **Shared rate limit:** CDEC, POWER and GEFS share one token bucket. An incomplete GEFS cycle is refetched on every request, which can use up the budget and rate-limit a later CDEC refresh, blocking every model.
-4. **`src/v3_artifacts.py` `install`:** it reads `blobs["MANIFEST.json"]` *before* checking that the manifest is present.
+4. **Fixed.** **`src/v3_artifacts.py` `install`:** it reads `blobs["MANIFEST.json"]` *before* checking that the manifest is present.
    - An archive without a manifest raises `KeyError` instead of "REFUSED".
    - `ensure_artifacts()` catches it; the CLI does not.
 5. **`RecordStore`:**
-   - S3 is not truly write-once: any `head_object` error leads to a plain `put_object`.
-   - `boto3` is not in `requirements.txt`.
-   - Record IDs have one-second resolution, so two forecasts for the same reservoir in the same second lose one.
-   - Visitor and official forecasts share one record type and one store.
+   - **Fixed:** S3 is not truly write-once: any `head_object` error leads to a plain `put_object`.
+   - **Fixed in code; needs owner setup:** persistent storage. The owner chose a GitHub records repository (2026-11-24), and the backend is implemented. It needs the repository and a fine-grained token in the Streamlit secrets. The S3 path still needs `boto3`, which conflicts with the locked `python-dateutil==4.0.0`.
+   - **Fixed:** Record IDs have one-second resolution, so two forecasts for the same reservoir in the same second lose one.
+   - **Open (prospective protocol):** Visitor and official forecasts share one record type and one store.
 6. **`fetch_cdec`** writes raw responses to `data/v3/cache/cdec_raw/` whatever `WATERSHED_CACHE_DIR` is set to, and never prunes them.
 7. **GEFS publication times:** failed HEAD requests are ignored, so a recorded publication time can be earlier than the true one.
-8. **Rerun saves:** every Streamlit rerun calls `record_store().save(r)`. The duplicate save is silently ignored.
+8. **Fixed.** **Rerun saves:** every Streamlit rerun calls `record_store().save(r)`. The duplicate save is silently ignored.
 9. **Stale UI text** (UI-owned; needs the owner's approval):
    - `app/view_forecast.py` still says CDEC terms are unresolved.
    - The Folsom caution cites only the 2024–25 coverage (about 75%), not 2026 (0.69–0.74).
@@ -367,7 +368,7 @@ The docs-consistency PR (2026-11-24) fixed the stale publication and deployment 
 - Public Streamlit URL, plus access to the app's logs or settings (or screenshots of them).
 - The written CDEC/DWR/operator permission, archived under `docs/permissions/` (sender, date, scope, conditions). If it has conditions, update the policy and attribution text to match.
 - Licence choice for the code and the data, and the author list for `CITATION.cff`.
-- Whether to keep records persistently: a bucket and credentials as Streamlit secrets, plus adding `boto3`.
+- Persistent forecast records: create the GitHub records repository, protect its branch, and add a fine-grained token limited to it to the Streamlit secrets (`docs/v3/DEPLOYMENT.md`, "Persistent records in a GitHub repository").
 - Whether the bundle release should stay a pre-release.
 - Whether the NASA POWER notification email has been sent.
 - Approval for any change under `app.py`, `app/` or `.streamlit/`.

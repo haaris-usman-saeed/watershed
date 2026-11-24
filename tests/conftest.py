@@ -26,3 +26,11 @@ def restricted_policy(monkeypatch, tmp_path):
     p = tmp_path / "restricted_policy.json"
     p.write_text(json.dumps(pol))
     return p
+
+
+@pytest.fixture(autouse=True)
+def no_external_record_store(monkeypatch):
+    """Tests never write forecast records to a real bucket or GitHub repository, whatever the shell has set."""
+    for k in ("WATERSHED_RECORD_BUCKET", "WATERSHED_RECORD_ENDPOINT_URL", "WATERSHED_RECORD_GITHUB_REPO",
+              "WATERSHED_RECORD_GITHUB_TOKEN", "WATERSHED_RECORD_GITHUB_BRANCH"):
+        monkeypatch.delenv(k, raising=False)

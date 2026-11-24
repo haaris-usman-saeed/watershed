@@ -151,6 +151,29 @@ def test_generate_forecast_button_runs_service_offline(monkeypatch, tmp_path):
     assert "Model comparison" in t and "Data freshness" in t and "Interval caution: Folsom" in t
     assert any("Model A" in m.label for m in at.metric)
     assert len(list((tmp_path / "rec").glob("*.json"))) == 1
+    assert "Saved as record wsf-v3-FOL-" in t and "local disk only" in t
+    at.run()                                                   # a rerun shows the note without saving again
+    assert len(list((tmp_path / "rec").glob("*.json"))) == 1 and "Saved as record" in text(at)
+
+
+
+def test_record_save_failure_is_reported_without_secrets(monkeypatch, tmp_path):
+    import sys
+    sys.path.insert(0, str(ROOT / "app"))
+    import view_forecast_v3
+    from tests.test_v3 import NOW, service as synthetic_service
+    svc = synthetic_service(tmp_path, NOW)
+    monkeypatch.setattr(view_forecast_v3, "service", lambda: svc)
+    from src.v3_service import RecordStore
+    monkeypatch.setattr(view_forecast_v3, "record_store", lambda: RecordStore(github_repo="o/records", github_token=None))
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setenv("WATERSHED_DATA_DIR", str(ROOT / "app/sample_data"))
+    at = AppTest.from_function(_interactive, default_timeout=60)
+    at.run()
+    at.segmented_control(key="v3_station").set_value("FOL").run() if hasattr(at, "segmented_control") else None
+    at.button(key="v3_go").click().run()
+    assert not at.exception, at.exception
+    assert "could not be saved to the record store (WATERSHED_RECORD_GITHUB_TOKEN is not set" in text(at)
 
 
 def test_public_mode_shows_policy_block(monkeypatch, tmp_path, restricted_policy):

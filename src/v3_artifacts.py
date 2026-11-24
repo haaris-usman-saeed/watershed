@@ -22,6 +22,8 @@ import json
 import os
 from pathlib import Path
 import tarfile
+import threading
+import time
 
 ROOT = Path(__file__).resolve().parents[1]
 FILES = ["models/v2_forecast/model.joblib", "models/v2_forecast/model_card.json", "models/v3/model_cards.json"] + \
@@ -132,9 +134,12 @@ def install(data, expected_sha256, dest=ROOT, mode=None):
             blobs = {m.name: tar.extractfile(m).read() for m in members}
     except (tarfile.TarError, EOFError, OSError) as exc:      # truncated or corrupted archive
         raise ValueError(f"REFUSED: archive cannot be read ({type(exc).__name__}: {exc})")
-    man = json.loads(blobs["MANIFEST.json"])["files"]
     if "MANIFEST.json" not in blobs:
         raise ValueError("REFUSED: archive has no MANIFEST.json")
+    try:
+        man = json.loads(blobs["MANIFEST.json"])["files"]
+    except (ValueError, KeyError, TypeError) as exc:
+        raise ValueError(f"REFUSED: MANIFEST.json cannot be read ({type(exc).__name__})")
     if set(man) != set(FILES) or any(sha(blobs.get(f, b"")) != h for f, h in man.items()):
         raise ValueError("REFUSED: archive contents do not match MANIFEST.json")
     for f in FILES + [INSTALLED_MANIFEST]:
@@ -146,23 +151,49 @@ def install(data, expected_sha256, dest=ROOT, mode=None):
     return man
 
 
-def ensure_artifacts(root=ROOT):
-    """At app start: if artifacts are missing and WATERSHED_ARTIFACT_URL / _SHA256 are set (for example from
-    Streamlit secrets), download and install them once with every check above. Returns a status string."""
-    if all((root / f).exists() for f in FILES):
-        return "present"
-    url, pin = os.environ.get("WATERSHED_ARTIFACT_URL"), os.environ.get("WATERSHED_ARTIFACT_SHA256")
-    if not url or not pin:
-        return "missing (no WATERSHED_ARTIFACT_URL / WATERSHED_ARTIFACT_SHA256 configured)"
+DOWNLOAD_ATTEMPTS = 3
+_ENSURE_LOCK = threading.Lock()
+
+
+def download(url, headers=None, attempts=DOWNLOAD_ATTEMPTS, sleep=time.sleep):
+    """GET the bundle. Retries only transient failures (connection errors, timeouts, HTTP 429 and 5xx), waiting
+    2 s, then 4 s. Any other HTTP error is final. Returns the body bytes."""
     import requests
-    headers = {"Authorization": f"Bearer {os.environ['WATERSHED_ARTIFACT_TOKEN']}"} if os.environ.get("WATERSHED_ARTIFACT_TOKEN") else {}
-    try:
-        r = requests.get(url, headers=headers, timeout=120)
-        r.raise_for_status()
-        install(r.content, pin, dest=root)
-        return "installed"
-    except Exception as exc:  # noqa: BLE001  any failure leaves models absent; the app then refuses to forecast
-        return f"install refused or failed: {exc}"
+    last = None
+    for i in range(attempts):
+        try:
+            r = requests.get(url, headers=headers or {}, timeout=120)
+            code = getattr(r, "status_code", None)
+            if code is not None and (code == 429 or code >= 500):
+                last = f"HTTP {code}"
+            else:
+                r.raise_for_status()
+                return r.content
+        except (requests.ConnectionError, requests.Timeout) as exc:
+            last = f"{type(exc).__name__}: {exc}"
+        if i < attempts - 1:
+            sleep(2 * 2 ** i)
+    raise RuntimeError(f"download failed after {attempts} attempts ({last})")
+
+
+def ensure_artifacts(root=ROOT, sleep=time.sleep):
+    """At app start: if artifacts are missing and WATERSHED_ARTIFACT_URL / _SHA256 are set (for example from
+    Streamlit secrets), download and install them with every check above. Returns a status string.
+    Concurrent calls are serialised, so two visitors never install at the same time. Transient download
+    failures are retried here; a caller that keeps the process alive (ForecastService) may call this again later."""
+    root = Path(root)
+    with _ENSURE_LOCK:
+        if all((root / f).exists() for f in FILES):
+            return "present"
+        url, pin = os.environ.get("WATERSHED_ARTIFACT_URL"), os.environ.get("WATERSHED_ARTIFACT_SHA256")
+        if not url or not pin:
+            return "missing (no WATERSHED_ARTIFACT_URL / WATERSHED_ARTIFACT_SHA256 configured)"
+        headers = {"Authorization": f"Bearer {os.environ['WATERSHED_ARTIFACT_TOKEN']}"} if os.environ.get("WATERSHED_ARTIFACT_TOKEN") else {}
+        try:
+            install(download(url, headers, sleep=sleep), pin, dest=root)
+            return "installed"
+        except Exception as exc:  # noqa: BLE001  any failure leaves models absent; the app then refuses to forecast
+            return f"install refused or failed: {exc}"
 
 
 def main():
@@ -180,13 +211,10 @@ def main():
         return
     if not a.url or not a.sha256:
         raise SystemExit("install needs --url and --sha256 (or WATERSHED_ARTIFACT_URL / WATERSHED_ARTIFACT_SHA256)")
-    import requests
     headers = {}
     if os.environ.get("WATERSHED_ARTIFACT_TOKEN"):
         headers["Authorization"] = f"Bearer {os.environ['WATERSHED_ARTIFACT_TOKEN']}"
-    r = requests.get(a.url, headers=headers, timeout=120)
-    r.raise_for_status()
-    man = install(r.content, a.sha256)
+    man = install(download(a.url, headers), a.sha256)
     print(f"installed {len(man)} verified files")
 
 
