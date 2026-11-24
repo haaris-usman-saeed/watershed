@@ -441,3 +441,17 @@ This branch is based on `feature/30-day-forecast` (PR #4, open, CI passing). It 
 - **Tests on `main`:** 132 passed with the private data; 118 passed and 13 skipped without it.
 - **Current state and priorities:** `docs/PROJECT_HANDOFF.md`.
 
+### 2026-11-24 (later): all open PRs merged
+
+- **Merged, each with the owner's explicit approval:**
+  - PR #11, docs consistency (`57cb7d7`);
+  - PR #8, forecast reliability and GitHub record store (`50c83c6`);
+  - PR #12, official weekly issuance command, manual with no scheduler (`e3e3466`);
+  - PR #9, v4 NeuralHydro research, not deployed (`1accaa6`).
+- **Testing before merging:** PRs #8 and #9 were tested merged onto the then-current `main` locally first.
+- **No PRs open.**
+- **Waiting on the owner:**
+  - the GitHub records repository and token, needed before the first official issue;
+  - the public Streamlit URL, needed for the deployment check.
+- **Next due:** provisional scores for the two pre-protocol records, from 2026-12-11 (DNP) and 2026-12-18 (the others).
+

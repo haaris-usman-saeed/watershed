@@ -1,6 +1,6 @@
 # WatershedShift: project handoff
 
-**Last verified:** 2026-11-24, against `main` at `50c83c6` (after PRs #7, #10, #11 and #8). The first version was a read-only recovery review on 2026-11-23 against `0063cc0`: nothing was retrained, re-evaluated or republished.
+**Last verified:** 2026-11-24, against `main` at `1accaa6` (after PRs #7, #10, #11, #8, #12 and #9). The first version was a read-only recovery review on 2026-11-23 against `0063cc0`: nothing was retrained, re-evaluated or republished.
 
 This document holds everything needed to take over the project without reconstructing it from the history.
 - Rules for agents are in [CLAUDE.md](../CLAUDE.md).
@@ -83,7 +83,7 @@ Notes on these results:
 
 | Item | State | Evidence |
 |---|---|---|
-| `main` | `50c83c6` = `origin/main`. PRs #1–#8, #10 and #11 merged. Open: #9 (v4 research) and the official-issuance PR | `git ls-remote`, `gh pr list` |
+| `main` | `1accaa6` = `origin/main`. PRs #1–#12 merged; none open | `git ls-remote`, `gh pr list` |
 | CI on `main` | Green (run 44998950732) | GitHub Actions |
 | Frozen v2 and v3 material | Intact | All 6 v2 hashes match `RUN_RECORD.json`. All 12 v3 hashes match `config/v3_plan.json`, and the plan hash matches the v3 run record. |
 | Issued forecast records | 2 records, both unaltered | Local and public copies match `docs/v3/issued_forecast_ledger.jsonl` |
@@ -93,8 +93,8 @@ Notes on these results:
 | CDEC publication permission | Owner-reported, **not archived** | `docs/DATA_PUBLICATION_AUDIT.md` §7; `docs/permissions/` does not exist |
 | Licence and citation | **None** | No `LICENSE`, no `CITATION.cff` |
 | Prospective scoring protocol | **In effect:** v1.0, merged 2026-11-24 09:37 UTC (`e79c54b`), before the first target date | `docs/prospective/PROTOCOL.md`; its hashes are verified by `src/prospective.py` |
-| Official weekly issuance | None yet. The command `src/official.py` is in the official-issuance PR. Issuing needs the owner's GitHub records repository and token | `docs/prospective/official_ledger.jsonl` (empty) |
-| Tests on `main` | 142 passed with the private data (2026-11-24, after PR #8) | `pytest` |
+| Official weekly issuance | None yet. The command `src/official.py` is merged (PR #12; [ISSUING.md](prospective/ISSUING.md)). Issuing needs the owner's GitHub records repository and token, set in the issuing machine's shell | `docs/prospective/official_ledger.jsonl` (empty) |
+| Tests on `main` | With the private data: 164 passed and 2 skipped in the app environment (the PyTorch tests skip); 166 passed in the v4 environment (2026-11-24, after PR #9) | `pytest` |
 
 ## 3. History
 
@@ -110,6 +110,8 @@ Notes on these results:
 | #10 | `protocol/prospective-scoring` | `e79c54b` | 2026-11-24 09:37 | Prospective evaluation and scoring protocol v1.0 and reference scorer (no scheduler) |
 | #11 | `docs/consistency` | `57cb7d7` | 2026-11-24 09:54 | Docs consistency: publication, bundle, deployment and protocol status |
 | #8 | `fix/forecast-reliability` | `50c83c6` | 2026-11-24 09:55 | Install retries; NASA POWER never delays Model A; write-once records; GitHub record store |
+| #12 | `feature/official-issuance` | `e3e3466` | 2026-11-24 10:03 | Official weekly issuance command (manual, no scheduler) and operator guide |
+| #9 | `research/v4-neuralhydro` | `1accaa6` | 2026-11-24 10:05 | v4 NeuralHydro research: daily neural pipeline, shared LSTM/GRU/TCN, initial development results |
 
 Tags and branches:
 - **Tags:** `v1-results` (`01e43cb`) and `models-2026-11-22`. The `submission-v2` tag proposed in `docs/merge_plan.md` was never created.
@@ -158,7 +160,7 @@ Tags and branches:
 - `requirements-lock.txt` pins everything (numpy 2.5.5, streamlit 1.67.0).
 - The `Dockerfile` uses `python:3.14-slim`.
 
-**v4 research programme (NeuralHydro; branch `research/v4-neuralhydro`, not merged)**
+**v4 research programme (NeuralHydro; merged as PR #9 on 2026-11-24; not deployed)**
 - Separate deep-learning research in `src/v4/`, `tests/test_v4.py`, `docs/v4/`, `results/v4/` and `requirements-v4.txt`, in its own `.venv-v4` with PyTorch.
 - Development data stops before 2024-01-01. It touches nothing frozen and is not deployed.
 - See `docs/v4/README.md`.
@@ -362,7 +364,7 @@ The docs-consistency PR (2026-11-24) fixed the stale publication and deployment 
 3. **Make forecasting resilient:** bugs 1, 2 and 4 are fixed (PR #8). Still open: bug 3 (shared rate limit), bugs 6 and 7, and a documented table of which models are available for each failure.
 4. **Prospective evaluation:**
    - the protocol is in effect (section 10);
-   - the official issuing command is in the official-issuance PR. Issuing starts once it is merged and the records repository is configured;
+   - the official issuing command is merged (PR #12). Issuing starts once the owner configures the records repository and token;
    - provisional scores of the two November records are due from 2026-12-11 (DNP) and 2026-12-18 (the others).
 5. **Publication:**
    - licence;
