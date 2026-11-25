@@ -117,3 +117,7 @@ All baselines are refit per fold on the same weekly rows as v2 and scored on ide
 They are labelled **post-hoc**. They explain where the neural models' accuracy comes from and select nothing.
 
 **2026-11-24: one seed in the history-length study.** The history-length selection used one seed (0), as specified, and the margins were small. A repeat with 3 seeds on tuning folds is planned before any further length decision.
+
+**2026-11-25: N4 plan fixed before any N4 run.** The candidates, selection rule (tuning folds WY2012–2015) and confirmation comparisons for N4 are in [N4_PLAN.md](N4_PLAN.md). It was written after the code passed its offline tests and before N4 was run on real data. Its SHA-256 is recorded in every N4 summary.
+
+**2026-11-25: N4 runs followed the plan.** The tuning stage (04:00–04:47 UTC) and the confirmation stage (04:48–05:17 UTC) ran exactly as `N4_PLAN.md` specifies; nothing was added or chosen afterwards. Selected on tuning folds: `wb_noaux`, 30 days. On confirmation folds its difference from the HGB SWE no weather per-fold refit (−0.076 pp) is **not established**. Results: [RESULTS_N4.md](RESULTS_N4.md). The only file changed after the tuning run is `src/v4/report.py` (labels), which affects no number.

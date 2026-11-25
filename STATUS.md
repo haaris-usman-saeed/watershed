@@ -455,3 +455,16 @@ This branch is based on `feature/30-day-forecast` (PR #4, open, CI passing). It 
   - the public Streamlit URL, needed for the deployment check.
 - **Next due:** provisional scores for the two pre-protocol records, from 2026-12-11 (DNP) and 2026-12-18 (the others).
 
+
+### 2026-11-25: v4 N4 built and evaluated on development folds (branch `research/v4-n4`, not merged)
+
+- **Built:** N4, a water-balance-structured encoder-decoder LSTM (`WaterBalanceED` in `src/v4/nets.py`, composite loss in `src/v4/train.py`), with offline tests in `tests/test_v4.py`.
+- **Plan fixed before any run:** `docs/v4/N4_PLAN.md`, 2026-11-25 04:00 UTC.
+- **Tuning folds WY2012–2015:** selected `wb_noaux` (water-balance layer, no inflow and outflow loss terms) with a 30-day history.
+- **Confirmation folds WY2016–2023, 2,500 identical rows:**
+  - N4 3-seed ensemble: 3.084 pp;
+  - HGB SWE no weather per-fold refit: 3.160 pp;
+  - difference −0.076 pp, **not established** (95% CIs span zero at 5-, 9- and 13-week blocks).
+- **Other findings:** the water-balance layer adds no measurable accuracy (−0.008 against the direct-head ablation). The intervals undercover (90% nominal gives 0.840).
+- **Not frozen, not deployed.** Nothing from v4 is on the website, per the owner's decision of 2026-11-24.
+- **Details:** `docs/v4/RESULTS_N4.md`.

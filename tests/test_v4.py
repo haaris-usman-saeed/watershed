@@ -272,3 +272,112 @@ def test_training_is_seeded_reduces_loss_and_restores_the_best_epoch():
     assert a["curves"]["train_pinball"][-1] < a["curves"]["train_pinball"][0]
     assert a["best_val_pinball"] == pytest.approx(min(a["curves"]["val_pinball"]))
     assert pa.shape == (20, len(QUANTILES))
+
+
+# ---------------------------------------------------------------- N4 water-balance encoder-decoder
+
+def test_n4_decoder_inputs_are_calendar_only_and_labels_match_their_definitions():
+    p = panel()
+    d = seqdata(p)
+    t = pd.Timestamp("2011-02-07")
+    i = sample_at(d, "BBB", t)
+    fut = d.future([i])[0]
+    days = pd.date_range(t + pd.Timedelta(days=1), periods=HORIZON)
+    assert fut.shape == (HORIZON, d.n_future)
+    assert np.allclose(fut[:, 0], np.sin(2 * np.pi * days.dayofyear / 365.25), atol=1e-6)
+    assert np.allclose(fut[:, 2], np.arange(1, HORIZON + 1) / HORIZON)
+    # every observation after the origin can change without changing the decoder inputs
+    q = p.copy()
+    after = (q.station_id == "BBB") & (q.date > t)
+    q.loc[after, ["storage_af", "inflow_cfs", "outflow_cfs", "swe_in", "rain_mm"]] *= 3.0
+    d2 = seqdata(q)
+    assert np.array_equal(d2.future([sample_at(d2, "BBB", t)])[0], fut)
+    g = p[p.station_id == "BBB"].set_index("date")
+    tg = d.targets([i])
+    assert tg["s0_pct"][0] == pytest.approx(100 * g.storage_af[t] / g.capacity_af[t], rel=1e-5)
+    assert np.allclose(tg["traj"][0], d.samples.loc[i, "traj"]) and tg["traj_mask"][0].all()
+    assert tg["cum_in"][0] == pytest.approx(d.samples.loc[i, "cum_in"], rel=1e-5) and tg["cum_out_ok"][0]
+    # an incomplete label window gives a zero label with mask False, never NaN
+    gap = p.copy()
+    gap.loc[(gap.station_id == "BBB") & (gap.date == t + pd.Timedelta(days=5)), "inflow_cfs"] = np.nan
+    d3 = seqdata(gap)
+    tg3 = d3.targets([sample_at(d3, "BBB", t)])
+    assert not tg3["cum_in_ok"][0] and tg3["cum_in"][0] == 0.0 and tg3["cum_out_ok"][0]
+
+
+def test_n4_water_balance_identity_bounded_residual_and_non_crossing_quantiles():
+    torch = pytest.importorskip("torch")
+    from src.v4.experiment import DEFAULTS, N4_CANDIDATES
+    from src.v4.nets import MEDIAN, QUANTILES, build
+    torch.manual_seed(0)
+    args = (torch.randn(8, 30, 22) * 3, torch.randn(8, 1), torch.tensor([0, 1, 2, 3, 4, 5, 0, 1]), torch.randn(8, 30, 3))
+    strict = build("n4", 22, 1, 6, 30, hidden=16, r_max=0.0)
+    o = strict(*args)
+    wb = torch.cumsum(o["inflow"] - o["release"] - o["loss"], dim=1)
+    assert torch.allclose(o["traj"], wb, atol=1e-6)                       # exact accounting identity
+    assert (o["release"] >= 0).all() and (o["loss"] >= 0).all()
+    assert torch.allclose(o["cum_in"], o["inflow"].sum(1)) and torch.allclose(o["cum_out"], o["release"].sum(1))
+    for m in (strict, build("n4", 22, 1, 6, 30, hidden=16, r_max=0.5), build("n4", 22, 1, 6, 30, hidden=16, mode="direct")):
+        o = m(*args)
+        assert o["q"].shape == (8, len(QUANTILES)) and o["traj"].shape == (8, 30)
+        assert (o["q"][:, 1:] >= o["q"][:, :-1]).all()
+        assert torch.equal(o["q"][:, MEDIAN], o["traj"][:, -1])           # the median IS the 30-day change
+    o = build("n4", 22, 1, 6, 30, hidden=16, r_max=0.5)(*args)
+    gap = o["traj"] - torch.cumsum(o["inflow"] - o["release"] - o["loss"], dim=1)
+    assert gap.abs().max() <= 0.5 / 10 + 1e-6                             # |r| <= r_max (in 10 pp units)
+    assert "cum_in" not in build("n4", 22, 1, 6, 30, hidden=16, mode="direct")(*args)
+    for name, cfg in N4_CANDIDATES.items():                               # the experiment's own settings build
+        m = build("n4", 22, 1, 6, 30, n_future=3, r_max=cfg["r_max"], mode=cfg["mode"], **DEFAULTS)
+        assert m(*args)["q"].shape == (8, len(QUANTILES)), name
+    with pytest.raises(ValueError):
+        build("n4", 22, 1, 6, 30, mode="mass_conserving")
+
+
+def test_n4_loss_respects_label_masks_and_penalises_infeasible_levels():
+    torch = pytest.importorskip("torch")
+    from src.v4.train import Y_SCALE, n4_loss
+    b, h = 2, 30
+    traj = torch.zeros(b, h)
+    out = {"q": torch.zeros(b, 9), "traj": traj, "cum_in": torch.tensor([1.0, 5.0]), "cum_out": torch.zeros(b),
+           "residual": torch.full((b, h), 0.02)}
+    tgt = {"y30": torch.zeros(b), "traj": torch.full((b, h), 20.0), "traj_mask": torch.zeros(b, h, dtype=torch.bool),
+           "cum_in": torch.tensor([10.0, 0.0]), "cum_in_ok": torch.tensor([True, False]),
+           "cum_out": torch.zeros(b), "cum_out_ok": torch.tensor([True, True]), "s0_pct": torch.tensor([50.0, 50.0])}
+    w = {"quantile": 1, "storage": 1, "inflow": 1, "outflow": 1, "feasible": 1, "residual": 1}
+    total, t = n4_loss(out, tgt, w)
+    assert float(t["storage"]) == 0.0                         # no storage label -> no trajectory loss
+    assert float(t["inflow"]) == pytest.approx(0.0)           # row 0: 1.0 vs 10 pp / Y_SCALE; row 1 masked out
+    assert float(t["feasible"]) == 0.0 and float(t["residual"]) == pytest.approx(0.02)
+    tgt["traj_mask"][0, :] = True
+    out["traj"] = torch.full((b, h), 6.0)                     # level 50 + 60 = 110% of capacity
+    _, t = n4_loss(out, tgt, w)
+    assert float(t["storage"]) == pytest.approx(abs(6.0 - 20.0 / Y_SCALE))
+    assert float(t["feasible"]) == pytest.approx(10.0 / Y_SCALE)
+    direct = {"q": out["q"], "traj": out["traj"]}
+    _, t = n4_loss(direct, tgt, w)
+    assert set(t) == {"quantile", "storage", "feasible"}
+
+
+def test_n4_training_is_seeded_reduces_loss_and_returns_components():
+    pytest.importorskip("torch")
+    from src.v4.experiment import N4_BASE
+    from src.v4.nets import QUANTILES, build
+    from src.v4.sequences import N_STATIC
+    from src.v4.train import fit_n4, predict_n4, set_seed
+    daily, snow, power, flows = synthetic_inputs(start="2003-01-01", days=1500)
+    p = build_panel(daily, snow, power, flows, breaks={}, start=pd.Timestamp("2003-01-01"),
+                    end=pd.Timestamp("2003-01-01") + pd.Timedelta(days=1500), stations=ST)
+    d = seqdata(p, lmax=30)
+    fit_idx, val_idx = fold_split(d.samples, 2007, stride=2)
+    runs = []
+    for _ in range(2):
+        set_seed(4)
+        m = build("n4", d.n_inputs, N_STATIC, len(ST), 30, n_future=d.n_future, hidden=16)
+        info = fit_n4(m, d, fit_idx, val_idx, 30, N4_BASE, seed=4, max_epochs=4, patience=10, batch=64)
+        runs.append((info, predict_n4(m, d, val_idx[:20], 30, parts=True)))
+    (a, (qa, ca)), (b, (qb, _)) = runs
+    assert a["curves"]["train_loss"] == b["curves"]["train_loss"] and np.allclose(qa, qb)
+    assert a["curves"]["train_loss"][-1] < a["curves"]["train_loss"][0]
+    assert a["best_val_pinball"] == pytest.approx(min(a["curves"]["val_pinball"]))
+    assert qa.shape == (20, len(QUANTILES)) and set(ca) == {"cum_in", "cum_out", "cum_loss", "residual_30"}
+    assert (ca["cum_out"] >= 0).all() and (ca["cum_loss"] >= 0).all() and (np.abs(ca["residual_30"]) <= 1.0 + 1e-5).all()

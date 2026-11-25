@@ -16,7 +16,7 @@ Selected by the predetermined rule (lowest pooled MAE on the Monday rows of tuni
 | Model | Pooled MAE (pp) |
 |---|---|
 | N2 shared GRU (3-seed ensemble) | 3.146 |
-| HGB (frozen v2 config) | 3.160 |
+| HGB SWE no weather (per-fold refit, frozen v2 config) | 3.160 |
 | N1 shared LSTM (3-seed ensemble) | 3.224 |
 | N3 TCN (3-seed ensemble) | 3.321 |
 | Ridge autoregression | 3.846 |
@@ -46,7 +46,7 @@ Selected by the predetermined rule (lowest pooled MAE on the Monday rows of tuni
 
 ### MAE by reservoir (pp)
 
-| Reservoir | N2 shared GRU (3-seed ensemble) | HGB (frozen v2 config) | N1 shared LSTM (3-seed ensemble) | N3 TCN (3-seed ensemble) | Ridge autoregression | Smoothed DOY seasonal |
+| Reservoir | N2 shared GRU (3-seed ensemble) | HGB SWE no weather (per-fold refit, frozen v2 config) | N1 shared LSTM (3-seed ensemble) | N3 TCN (3-seed ensemble) | Ridge autoregression | Smoothed DOY seasonal |
 |---|---|---|---|---|---|---|
 | DNP | 2.332 | 2.251 | 2.354 | 2.383 | 2.938 | 3.125 |
 | EXC | 3.434 | 3.435 | 3.418 | 3.531 | 4.061 | 4.602 |
@@ -57,7 +57,7 @@ Selected by the predetermined rule (lowest pooled MAE on the Monday rows of tuni
 
 ### MAE by water year (pp)
 
-| Water year | N2 shared GRU (3-seed ensemble) | HGB (frozen v2 config) | N1 shared LSTM (3-seed ensemble) | N3 TCN (3-seed ensemble) | Ridge autoregression | Smoothed DOY seasonal |
+| Water year | N2 shared GRU (3-seed ensemble) | HGB SWE no weather (per-fold refit, frozen v2 config) | N1 shared LSTM (3-seed ensemble) | N3 TCN (3-seed ensemble) | Ridge autoregression | Smoothed DOY seasonal |
 |---|---|---|---|---|---|---|
 | 2016 | 3.249 | 2.873 | 3.325 | 3.538 | 3.514 | 4.149 |
 | 2017 | 5.621 | 5.234 | 5.727 | 5.815 | 6.223 | 6.772 |
@@ -70,7 +70,7 @@ Selected by the predetermined rule (lowest pooled MAE on the Monday rows of tuni
 
 ### MAE by season (pp)
 
-| Season | N2 shared GRU (3-seed ensemble) | HGB (frozen v2 config) | N1 shared LSTM (3-seed ensemble) | N3 TCN (3-seed ensemble) | Ridge autoregression | Smoothed DOY seasonal |
+| Season | N2 shared GRU (3-seed ensemble) | HGB SWE no weather (per-fold refit, frozen v2 config) | N1 shared LSTM (3-seed ensemble) | N3 TCN (3-seed ensemble) | Ridge autoregression | Smoothed DOY seasonal |
 |---|---|---|---|---|---|---|
 | DJF | 5.330 | 5.350 | 5.462 | 5.598 | 6.118 | 6.451 |
 | JJA | 1.678 | 1.518 | 1.683 | 1.744 | 2.421 | 2.992 |
@@ -79,7 +79,7 @@ Selected by the predetermined rule (lowest pooled MAE on the Monday rows of tuni
 
 ### MAE by water-year type (Sacramento or San Joaquin index, by reservoir) (pp)
 
-| Water-year type | N2 shared GRU (3-seed ensemble) | HGB (frozen v2 config) | N1 shared LSTM (3-seed ensemble) | N3 TCN (3-seed ensemble) | Ridge autoregression | Smoothed DOY seasonal |
+| Water-year type | N2 shared GRU (3-seed ensemble) | HGB SWE no weather (per-fold refit, frozen v2 config) | N1 shared LSTM (3-seed ensemble) | N3 TCN (3-seed ensemble) | Ridge autoregression | Smoothed DOY seasonal |
 |---|---|---|---|---|---|---|
 | BN | 3.343 | 3.151 | 3.335 | 3.547 | 3.891 | 4.017 |
 | C | 2.029 | 2.848 | 2.150 | 2.326 | 2.749 | 3.281 |
@@ -88,7 +88,7 @@ Selected by the predetermined rule (lowest pooled MAE on the Monday rows of tuni
 
 ### MAE by regime (observed 30-day change) (pp)
 
-| Regime | N2 shared GRU (3-seed ensemble) | HGB (frozen v2 config) | N1 shared LSTM (3-seed ensemble) | N3 TCN (3-seed ensemble) | Ridge autoregression | Smoothed DOY seasonal |
+| Regime | N2 shared GRU (3-seed ensemble) | HGB SWE no weather (per-fold refit, frozen v2 config) | N1 shared LSTM (3-seed ensemble) | N3 TCN (3-seed ensemble) | Ridge autoregression | Smoothed DOY seasonal |
 |---|---|---|---|---|---|---|
 | other | 2.014 | 2.240 | 2.046 | 2.099 | 2.667 | 2.843 |
 | rapid drawdown (<= -10 pp) | 4.705 | 4.622 | 5.149 | 5.598 | 6.445 | 7.006 |
@@ -180,8 +180,8 @@ Total wall time for the stage: 40.8 minutes.
 | Model | Pooled MAE (pp) |
 |---|---|
 | N2 shared GRU (3-seed ensemble) | 3.146 |
-| HGB (frozen v2 config) | 3.160 |
-| HGB (frozen v2 config) + recent-flow features | 3.164 |
+| HGB SWE no weather (per-fold refit, frozen v2 config) | 3.160 |
+| HGB SWE no weather refit + recent-flow features | 3.164 |
 | N1 shared LSTM (3-seed ensemble) | 3.224 |
 | N1 shared LSTM without flow inputs (3-seed ensemble) | 3.567 |
 
@@ -193,3 +193,253 @@ Per-seed MAE, LSTM without flows: 3.674, 3.645, 3.544. Flow features added to HG
 | lstm_noflow_ens vs hgb_v2 | +0.407 | [+0.173, +0.616] | [+0.161, +0.635] | [+0.119, +0.678] | second better |
 | hgb_v2_flows vs hgb_v2 | +0.004 | [-0.050, +0.063] | [-0.058, +0.070] | [-0.064, +0.075] | not established |
 | lstm_ens vs lstm_noflow_ens | -0.343 | [-0.431, -0.253] | [-0.444, -0.247] | [-0.453, -0.250] | first better |
+## N4 tuning (tuning folds WY2012-WY2015, 1248 identical Monday rows, seeds 0, 1, 2)
+
+Rule (lowest 3-seed-ensemble MAE on the Monday rows of tuning folds WY2012-2015; step 1 among the water-balance candidates at 30 days, step 2 the step-1 winner at 30, 90 and 365 days). Selected: **wb_noaux, 30 days**.
+
+| Model | Pooled MAE (pp) |
+|---|---|
+| N1 shared LSTM, 30 days (3-seed ensemble) | 2.213 |
+| N4 direct-head ablation, 30 days (3-seed ensemble) | 2.229 |
+| N4 wb_noaux, 30 days (3-seed ensemble) | 2.264 |
+| N4 wb_noaux, 365 days (3-seed ensemble) | 2.270 |
+| N4 wb_noaux, 90 days (3-seed ensemble) | 2.301 |
+| N4 wb_balanced, 30 days (3-seed ensemble) | 2.403 |
+| N4 wb_strict, 30 days (3-seed ensemble) | 2.414 |
+| N4 wb_primary, 30 days (3-seed ensemble) | 2.431 |
+| HGB SWE no weather (per-fold refit, frozen v2 config) | 2.520 |
+| Ridge autoregression | 3.162 |
+| Smoothed DOY seasonal | 3.263 |
+
+### Step 1, loss-weight candidates at 30 days (3-seed-ensemble MAE, pp)
+
+| Candidate | MAE (pp) | Eligible as N4 |
+|---|---|---|
+| direct | 2.229 | no (ablation) |
+| wb_noaux | 2.264 | yes |
+| wb_balanced | 2.403 | yes |
+| wb_strict | 2.414 | yes |
+| wb_primary | 2.431 | yes |
+
+### Step 2, history length for wb_noaux (3-seed-ensemble MAE, pp)
+
+| History (days) | MAE (pp) |
+|---|---|
+| 30 | 2.264 |
+| 90 | 2.301 |
+| 365 | 2.270 |
+
+### Seed variability (per-seed MAE, pp)
+
+| Model | Per-seed | Mean | SD |
+|---|---|---|---|
+| N1 shared LSTM, 30 days (3-seed ensemble) | 2.224, 2.199, 2.432 | 2.285 | 0.128 |
+| N4 wb_balanced, 30 days (3-seed ensemble) | 2.474, 2.432, 2.549 | 2.485 | 0.060 |
+| N4 wb_primary, 30 days (3-seed ensemble) | 2.483, 2.301, 2.803 | 2.529 | 0.254 |
+| N4 wb_strict, 30 days (3-seed ensemble) | 2.483, 2.528, 2.477 | 2.496 | 0.028 |
+| N4 wb_noaux, 30 days (3-seed ensemble) | 2.362, 2.365, 2.278 | 2.335 | 0.049 |
+| N4 direct-head ablation, 30 days (3-seed ensemble) | 2.270, 2.311, 2.321 | 2.300 | 0.027 |
+| N4 wb_noaux, 90 days (3-seed ensemble) | 2.531, 2.312, 2.279 | 2.374 | 0.137 |
+| N4 wb_noaux, 365 days (3-seed ensemble) | 2.442, 2.290, 2.283 | 2.338 | 0.090 |
+
+### MAE by tuning fold (pp)
+
+| Water year | HGB SWE no weather (per-fold refit, frozen v2 config) | N1 shared LSTM, 30 days (3-seed ensemble) | N4 wb_balanced, 30 days (3-seed ensemble) | N4 wb_primary, 30 days (3-seed ensemble) | N4 wb_strict, 30 days (3-seed ensemble) | N4 wb_noaux, 30 days (3-seed ensemble) | N4 direct-head ablation, 30 days (3-seed ensemble) | N4 wb_noaux, 90 days (3-seed ensemble) | N4 wb_noaux, 365 days (3-seed ensemble) |
+|---|---|---|---|---|---|---|---|---|---|
+| 2012 | 3.063 | 2.737 | 3.132 | 3.452 | 3.227 | 2.805 | 2.828 | 2.733 | 2.792 |
+| 2013 | 2.313 | 2.279 | 2.326 | 2.364 | 2.349 | 2.364 | 2.182 | 2.447 | 2.410 |
+| 2014 | 2.400 | 1.754 | 1.870 | 1.700 | 1.707 | 1.673 | 1.647 | 1.693 | 1.684 |
+| 2015 | 2.316 | 2.088 | 2.295 | 2.226 | 2.383 | 2.221 | 2.266 | 2.333 | 2.196 |
+
+### Water-balance components on the evaluation rows (pp, seed ensemble)
+
+The inflow and release labels are operator-computed CDEC sensors 76 and 23 (private; aggregates only).
+
+| Model | Mean abs r(30) | p95 abs r(30) | Mean 30-day loss | Cumulative inflow MAE | Cumulative release MAE |
+|---|---|---|---|---|---|
+| N4 wb_balanced, 30 days (3-seed ensemble) | 0.006 | 0.016 | 0.236 | 2.09 | 1.33 |
+| N4 wb_primary, 30 days (3-seed ensemble) | 0.004 | 0.015 | 0.252 | 2.17 | 1.43 |
+| N4 wb_strict, 30 days (3-seed ensemble) | 0.000 | 0.000 | 0.230 | 2.12 | 1.29 |
+| N4 wb_noaux, 30 days (3-seed ensemble) | 0.002 | 0.004 | 0.418 | 6.69 | 6.15 |
+| N4 wb_noaux, 90 days (3-seed ensemble) | 0.002 | 0.004 | 0.417 | 6.73 | 6.14 |
+| N4 wb_noaux, 365 days (3-seed ensemble) | 0.002 | 0.004 | 0.419 | 6.71 | 6.17 |
+## N4 confirmation (folds WY2016-WY2023, 2500 identical Monday rows, history 30 days, seeds 0, 1, 2)
+
+Selected on tuning folds: **wb_noaux, 30 days**. HGB is the per-fold refit of the frozen v2 "HGB SWE no weather" configuration, not the frozen artifact.
+
+| Model | Pooled MAE (pp) |
+|---|---|
+| N4 wb_noaux (3-seed ensemble) | 3.084 |
+| N4 direct-head ablation (3-seed ensemble) | 3.092 |
+| N2 shared GRU (3-seed ensemble) | 3.146 |
+| N4 wb_strict (3-seed ensemble) | 3.155 |
+| HGB SWE no weather (per-fold refit, frozen v2 config) | 3.160 |
+| N1 shared LSTM (3-seed ensemble) | 3.224 |
+| N3 TCN (3-seed ensemble) | 3.321 |
+| Ridge autoregression | 3.846 |
+| Smoothed DOY seasonal | 4.108 |
+| Monthly seasonal | 4.209 |
+| 30-day trend | 5.167 |
+| Persistence | 5.761 |
+
+### Seed variability (per-seed MAE, pp)
+
+| Model | Per-seed | Mean | SD |
+|---|---|---|---|
+| N4 wb_noaux (3-seed ensemble) | 3.112, 3.221, 3.146 | 3.160 | 0.055 |
+| N4 wb_strict (3-seed ensemble) | 3.278, 3.259, 3.203 | 3.246 | 0.039 |
+| N4 direct-head ablation (3-seed ensemble) | 3.170, 3.211, 3.198 | 3.193 | 0.021 |
+
+### Paired differences (moving-block bootstrap over origin dates; negative = first model better)
+
+| Comparison (first vs second) | MAE difference (pp) | 95% CI, 5 wk | 95% CI, 9 wk | 95% CI, 13 wk | Verdict |
+|---|---|---|---|---|---|
+| N4 wb_noaux (3-seed ensemble) vs HGB SWE no weather (per-fold refit, frozen v2 config) | -0.076 | [-0.298, +0.115] | [-0.333, +0.131] | [-0.386, +0.158] | not established |
+| N4 wb_noaux (3-seed ensemble) vs Smoothed DOY seasonal | -1.024 | [-1.248, -0.808] | [-1.285, -0.786] | [-1.304, -0.789] | supported (first better) |
+| N4 wb_noaux (3-seed ensemble) vs N1 shared LSTM (3-seed ensemble) | -0.140 | [-0.238, -0.042] | [-0.243, -0.047] | [-0.235, -0.060] | supported (first better) |
+| N4 wb_noaux (3-seed ensemble) vs N2 shared GRU (3-seed ensemble) | -0.062 | [-0.141, +0.020] | [-0.139, +0.018] | [-0.133, +0.008] | not established |
+| N4 wb_strict (3-seed ensemble) vs HGB SWE no weather (per-fold refit, frozen v2 config) | -0.004 | [-0.232, +0.207] | [-0.261, +0.206] | [-0.308, +0.232] | not established |
+| N4 direct-head ablation (3-seed ensemble) vs HGB SWE no weather (per-fold refit, frozen v2 config) | -0.068 | [-0.302, +0.138] | [-0.338, +0.155] | [-0.391, +0.180] | not established |
+| N4 wb_noaux (3-seed ensemble) vs N4 wb_strict (3-seed ensemble) | -0.072 | [-0.153, +0.005] | [-0.156, +0.008] | [-0.155, +0.001] | not established |
+| N4 wb_noaux (3-seed ensemble) vs N4 direct-head ablation (3-seed ensemble) | -0.008 | [-0.088, +0.063] | [-0.090, +0.062] | [-0.093, +0.067] | not established |
+
+### MAE by reservoir (pp)
+
+| Reservoir | HGB SWE no weather (per-fold refit, frozen v2 config) | Smoothed DOY seasonal | N2 shared GRU (3-seed ensemble) | N1 shared LSTM (3-seed ensemble) | N4 wb_noaux (3-seed ensemble) | N4 wb_strict (3-seed ensemble) | N4 direct-head ablation (3-seed ensemble) |
+|---|---|---|---|---|---|---|---|
+| DNP | 2.251 | 3.125 | 2.332 | 2.354 | 2.242 | 2.310 | 2.137 |
+| EXC | 3.435 | 4.602 | 3.434 | 3.418 | 3.325 | 3.332 | 3.355 |
+| FOL | 4.992 | 6.080 | 4.731 | 4.944 | 4.531 | 4.636 | 4.753 |
+| NML | 1.668 | 2.704 | 1.994 | 2.053 | 1.955 | 1.998 | 1.930 |
+| ORO | 3.652 | 4.586 | 3.555 | 3.650 | 3.661 | 3.689 | 3.595 |
+| SHA | 2.960 | 3.551 | 2.828 | 2.922 | 2.788 | 2.966 | 2.780 |
+
+### MAE by water year (pp)
+
+| Water year | HGB SWE no weather (per-fold refit, frozen v2 config) | Smoothed DOY seasonal | N2 shared GRU (3-seed ensemble) | N1 shared LSTM (3-seed ensemble) | N4 wb_noaux (3-seed ensemble) | N4 wb_strict (3-seed ensemble) | N4 direct-head ablation (3-seed ensemble) |
+|---|---|---|---|---|---|---|---|
+| 2016 | 2.873 | 4.149 | 3.249 | 3.325 | 3.218 | 3.516 | 3.211 |
+| 2017 | 5.234 | 6.772 | 5.621 | 5.727 | 5.553 | 5.466 | 5.612 |
+| 2018 | 2.606 | 3.120 | 2.627 | 2.585 | 2.559 | 2.570 | 2.814 |
+| 2019 | 3.102 | 3.875 | 3.521 | 3.489 | 3.272 | 3.420 | 3.346 |
+| 2020 | 1.871 | 2.816 | 1.783 | 1.903 | 1.818 | 1.916 | 1.870 |
+| 2021 | 2.888 | 3.404 | 1.656 | 1.782 | 1.538 | 1.562 | 1.462 |
+| 2022 | 2.808 | 3.158 | 2.400 | 2.517 | 2.409 | 2.488 | 2.314 |
+| 2023 | 3.893 | 5.569 | 4.292 | 4.448 | 4.292 | 4.292 | 4.091 |
+
+### MAE by season (pp)
+
+| Season | HGB SWE no weather (per-fold refit, frozen v2 config) | Smoothed DOY seasonal | N2 shared GRU (3-seed ensemble) | N1 shared LSTM (3-seed ensemble) | N4 wb_noaux (3-seed ensemble) | N4 wb_strict (3-seed ensemble) | N4 direct-head ablation (3-seed ensemble) |
+|---|---|---|---|---|---|---|---|
+| DJF | 5.350 | 6.451 | 5.330 | 5.462 | 5.271 | 5.503 | 5.295 |
+| JJA | 1.518 | 2.992 | 1.678 | 1.683 | 1.624 | 1.631 | 1.739 |
+| MAM | 3.972 | 4.800 | 3.752 | 3.909 | 3.719 | 3.718 | 3.579 |
+| SON | 1.827 | 2.215 | 1.851 | 1.871 | 1.749 | 1.801 | 1.782 |
+
+### MAE by water-year type (Sacramento or San Joaquin index, by reservoir) (pp)
+
+| Water-year type | HGB SWE no weather (per-fold refit, frozen v2 config) | Smoothed DOY seasonal | N2 shared GRU (3-seed ensemble) | N1 shared LSTM (3-seed ensemble) | N4 wb_noaux (3-seed ensemble) | N4 wb_strict (3-seed ensemble) | N4 direct-head ablation (3-seed ensemble) |
+|---|---|---|---|---|---|---|---|
+| BN | 3.151 | 4.017 | 3.343 | 3.335 | 3.248 | 3.382 | 3.469 |
+| C | 2.848 | 3.281 | 2.029 | 2.150 | 1.974 | 2.026 | 1.889 |
+| D | 1.748 | 2.707 | 1.764 | 1.873 | 1.816 | 1.953 | 1.794 |
+| W | 4.070 | 5.396 | 4.472 | 4.548 | 4.365 | 4.387 | 4.343 |
+
+### MAE by regime (observed 30-day change) (pp)
+
+| Regime | HGB SWE no weather (per-fold refit, frozen v2 config) | Smoothed DOY seasonal | N2 shared GRU (3-seed ensemble) | N1 shared LSTM (3-seed ensemble) | N4 wb_noaux (3-seed ensemble) | N4 wb_strict (3-seed ensemble) | N4 direct-head ablation (3-seed ensemble) |
+|---|---|---|---|---|---|---|---|
+| other | 2.240 | 2.843 | 2.014 | 2.046 | 2.030 | 2.064 | 1.968 |
+| rapid drawdown (<= -10 pp) | 4.622 | 7.006 | 4.705 | 5.149 | 4.549 | 4.467 | 5.223 |
+| rapid fill (>= +10 pp) | 9.238 | 12.026 | 10.743 | 10.977 | 10.147 | 10.575 | 10.341 |
+
+Regime counts: {'other': 2079, 'rapid fill (>= +10 pp)': 281, 'rapid drawdown (<= -10 pp)': 140}
+
+
+### Probabilistic output, N4 wb_noaux (3-seed ensemble)
+
+| Nominal | Coverage | Mean width (pp) |
+|---|---|---|
+| 50% | 0.430 | 3.41 |
+| 80% | 0.732 | 7.40 |
+| 90% | 0.840 | 10.70 |
+| 95% | 0.897 | 14.28 |
+
+Mean pinball loss 0.856 pp; approximate CRPS 1.712 pp.
+
+| Reservoir | 90% coverage | 90% mean width (pp) | Pinball (pp) |
+|---|---|---|---|
+| DNP | 0.837 | 7.68 | 0.641 |
+| EXC | 0.823 | 10.27 | 1.026 |
+| FOL | 0.849 | 16.37 | 1.179 |
+| NML | 0.837 | 6.39 | 0.587 |
+| ORO | 0.812 | 12.31 | 1.005 |
+| SHA | 0.882 | 11.21 | 0.698 |
+
+### Probabilistic output, N4 wb_strict (3-seed ensemble)
+
+| Nominal | Coverage | Mean width (pp) |
+|---|---|---|
+| 50% | 0.406 | 3.42 |
+| 80% | 0.714 | 7.55 |
+| 90% | 0.838 | 10.61 |
+| 95% | 0.908 | 14.28 |
+
+Mean pinball loss 0.858 pp; approximate CRPS 1.716 pp.
+
+| Reservoir | 90% coverage | 90% mean width (pp) | Pinball (pp) |
+|---|---|---|---|
+| DNP | 0.863 | 8.01 | 0.607 |
+| EXC | 0.837 | 9.76 | 0.976 |
+| FOL | 0.863 | 17.23 | 1.205 |
+| NML | 0.803 | 5.90 | 0.609 |
+| ORO | 0.793 | 11.49 | 1.003 |
+| SHA | 0.866 | 11.29 | 0.747 |
+
+### Probabilistic output, N4 direct-head ablation (3-seed ensemble)
+
+| Nominal | Coverage | Mean width (pp) |
+|---|---|---|
+| 50% | 0.486 | 3.89 |
+| 80% | 0.783 | 8.42 |
+| 90% | 0.873 | 12.18 |
+| 95% | 0.925 | 16.16 |
+
+Mean pinball loss 0.851 pp; approximate CRPS 1.702 pp.
+
+| Reservoir | 90% coverage | 90% mean width (pp) | Pinball (pp) |
+|---|---|---|---|
+| DNP | 0.875 | 9.62 | 0.613 |
+| EXC | 0.868 | 12.07 | 1.008 |
+| FOL | 0.859 | 17.39 | 1.211 |
+| NML | 0.878 | 8.59 | 0.582 |
+| ORO | 0.856 | 13.09 | 0.980 |
+| SHA | 0.904 | 12.34 | 0.711 |
+
+### Robustness: source removed at inference only (no source-dropout training), ensemble MAE (pp)
+
+| Model | All inputs | No flows | No snow | No weather |
+|---|---|---|---|---|
+| N4 wb_noaux (3-seed ensemble) | 3.084 | 3.864 | 3.383 | 3.575 |
+| N4 wb_strict (3-seed ensemble) | 3.155 | 4.007 | 3.422 | 3.361 |
+| N4 direct-head ablation (3-seed ensemble) | 3.092 | 3.898 | 3.391 | 3.370 |
+
+### Water-balance components on the evaluation rows (pp, seed ensemble)
+
+The inflow and release labels are operator-computed CDEC sensors 76 and 23 (private; aggregates only).
+
+| Model | Mean abs r(30) | p95 abs r(30) | Mean 30-day loss | Cumulative inflow MAE | Cumulative release MAE |
+|---|---|---|---|---|---|
+| N4 wb_noaux (3-seed ensemble) | 0.002 | 0.009 | 0.419 | 8.97 | 8.56 |
+| N4 wb_strict (3-seed ensemble) | 0.000 | 0.000 | 0.257 | 4.00 | 2.96 |
+
+### Compute (CPU, 8 threads)
+
+| Model | Parameters | Mean train seconds per fold-seed | Mean best epoch |
+|---|---|---|---|
+| N4 wb_noaux (3-seed ensemble) | 48036 | 23.6 | 8.4 |
+| N4 wb_strict (3-seed ensemble) | 48036 | 25.1 | 8.9 |
+| N4 direct-head ablation (3-seed ensemble) | 47841 | 23.2 | 8.0 |
+
+Total wall time for the stage: 29.3 minutes.
+
