@@ -1,0 +1,183 @@
+{
+ "inputs_sha256": {
+  "data/processed/daily_joined.csv": "d5209a23116543b6a340876b4522db49f7e9bb14da1de76e24a3bcba1d29a394",
+  "data/v3/private/snow_index_v3.csv": "4b5dc29223e0b67a3c80613c9b1f023b714f24b91c81b1007b8da2f50c489abd",
+  "data/v3/public/power_daily.csv": "eff5f464fbc42ac19676aa532f09974687932680b82b7a8cdd5e74a75be831cf",
+  "data/v4/flows_daily.csv": "c45aa0625c42b15af6e6629dce2a1ceff60f2aa214ee7d62dabe97266f17122c",
+  "data/v5/flows_daily_2024_2026.csv": "d6d9f95b3154dcc7de19050b66251be9416a52e3ccfa85d0d690305c5fa515bf",
+  "data/v3/gefs_basin_precip.csv": "3700c3cae99d52973d94c0d016905f5ad5e8825c1f7152199660add778b752f4",
+  "data/live/2026-11-22/fetch_log.jsonl": "b984d7f9529074b00b4a5e93010cd7b14f88b535107cbc3acfa458d4216a7b03",
+  "data/series_breaks.csv": "84b8f97202f8111a5ec1a1366df8a4ed1630fb3cc9614f43dcc613d00bf00e3d",
+  "data/capacity_history.csv": "9efe68d16a6273aee9f9b6fb01571fe78a45d87cfd8259f58afedc5eab8f0256"
+ },
+ "outputs_sha256": {
+  "data/v5/daily_panel.parquet": "b52f73a5b1dec96e465493065122a215fc65348fac9e1806e2ef902c6a9407e7",
+  "data/v5/features_daily.parquet": "ff7d053b1b0762fa7a87c83709c33069595e692286827246853040c086244f8a"
+ },
+ "panel_rows": 56730,
+ "panel_period": [
+  "2001-01-01",
+  "2026-11-20"
+ ],
+ "checks": {
+  "v4_panel_equal": {
+   "rows": 50400,
+   "columns": {
+    "seg": {
+     "nan_mismatch": 0,
+     "max_abs_diff": 0.0
+    },
+    "storage_af": {
+     "nan_mismatch": 0,
+     "max_abs_diff": 0.0
+    },
+    "capacity_af": {
+     "nan_mismatch": 0,
+     "max_abs_diff": 0.0
+    },
+    "swe_in": {
+     "nan_mismatch": 0,
+     "max_abs_diff": 0.0
+    },
+    "rain_mm": {
+     "nan_mismatch": 0,
+     "max_abs_diff": 0.0
+    },
+    "temp_c": {
+     "nan_mismatch": 0,
+     "max_abs_diff": 0.0
+    },
+    "rh_pct": {
+     "nan_mismatch": 0,
+     "max_abs_diff": 0.0
+    },
+    "rain_box_mm": {
+     "nan_mismatch": 0,
+     "max_abs_diff": 0.0
+    },
+    "temp_box_c": {
+     "nan_mismatch": 0,
+     "max_abs_diff": 0.0
+    },
+    "rh_box_pct": {
+     "nan_mismatch": 0,
+     "max_abs_diff": 0.0
+    },
+    "inflow_cfs": {
+     "nan_mismatch": 0,
+     "max_abs_diff": 0.0
+    },
+    "outflow_cfs": {
+     "nan_mismatch": 0,
+     "max_abs_diff": 0.0
+    }
+   },
+   "identical": true
+  },
+  "v3_weekly_rows": {
+   "v3": 7968,
+   "v5_v2_rows": 7968,
+   "only_v5": 0,
+   "only_v3": 0
+  },
+  "v3_weekly_max_abs_diff": {
+   "storage_pct": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 1.4210854715202004e-14
+   },
+   "prev7_pct": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 1.7763568394002505e-15
+   },
+   "prev30_pct": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 3.552713678800501e-15
+   },
+   "prev60_pct": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 7.105427357601002e-15
+   },
+   "swe_basin_in": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 0.0
+   },
+   "swe_change_14d_in": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 8.881784197001252e-15
+   },
+   "rain_7d_mm": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 2.842170943040401e-14
+   },
+   "rain_30d_mm": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 5.684341886080802e-14
+   },
+   "temp_30d_c": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 3.552713678800501e-15
+   },
+   "humidity_30d_pct": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 1.4210854715202004e-14
+   },
+   "rain_7d_mm_box": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 2.842170943040401e-14
+   },
+   "rain_30d_mm_box": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 5.684341886080802e-14
+   },
+   "temp_30d_c_box": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 3.552713678800501e-15
+   },
+   "humidity_30d_pct_box": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 1.4210854715202004e-14
+   },
+   "gefs_p_d1_7_mm": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 0.0
+   },
+   "gefs_p_d8_16_mm": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 0.0
+   },
+   "season_sin": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 1.1102230246251565e-16
+   },
+   "season_cos": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 1.1102230246251565e-16
+   },
+   "target_delta_pp": {
+    "nan_mismatch": 0,
+    "max_abs_diff": 3.552713678800501e-15
+   }
+  },
+  "monday_rows_use_v3_csv_values": [
+   "storage_pct",
+   "prev7_pct",
+   "prev30_pct",
+   "prev60_pct",
+   "swe_basin_in",
+   "swe_change_14d_in",
+   "rain_7d_mm",
+   "rain_30d_mm",
+   "temp_30d_c",
+   "humidity_30d_pct",
+   "rain_7d_mm_box",
+   "rain_30d_mm_box",
+   "temp_30d_c_box",
+   "humidity_30d_pct_box",
+   "gefs_p_d1_7_mm",
+   "gefs_p_d8_16_mm",
+   "season_sin",
+   "season_cos",
+   "target_delta_pp"
+  ]
+ }
+}

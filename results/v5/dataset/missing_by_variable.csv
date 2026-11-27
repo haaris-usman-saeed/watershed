@@ -1,0 +1,111 @@
+panel,variable,reservoir_days,observed,missing,observed_share
+full panel 2001-01-01..2026-11-20,storage_af,56730,56649,81,0.9986
+full panel 2001-01-01..2026-11-20,swe_in,56730,55705,1025,0.9819
+full panel 2001-01-01..2026-11-20,rain_mm,56730,56724,6,0.9999
+full panel 2001-01-01..2026-11-20,temp_c,56730,56724,6,0.9999
+full panel 2001-01-01..2026-11-20,rh_pct,56730,56724,6,0.9999
+full panel 2001-01-01..2026-11-20,rain_box_mm,56730,56724,6,0.9999
+full panel 2001-01-01..2026-11-20,temp_box_c,56730,56724,6,0.9999
+full panel 2001-01-01..2026-11-20,rh_box_pct,56730,56724,6,0.9999
+full panel 2001-01-01..2026-11-20,inflow_cfs,56730,55723,1007,0.9822
+full panel 2001-01-01..2026-11-20,outflow_cfs,56730,54981,1749,0.9692
+full panel 2001-01-01..2026-11-20,gefs_p_d1_7_mm,56730,54924,1806,0.9682
+development panel 2001-01-01..2023-12-31,storage_af,50400,50325,75,0.9985
+development panel 2001-01-01..2023-12-31,swe_in,50400,49391,1009,0.98
+development panel 2001-01-01..2023-12-31,rain_mm,50400,50400,0,1.0
+development panel 2001-01-01..2023-12-31,temp_c,50400,50400,0,1.0
+development panel 2001-01-01..2023-12-31,rh_pct,50400,50400,0,1.0
+development panel 2001-01-01..2023-12-31,rain_box_mm,50400,50400,0,1.0
+development panel 2001-01-01..2023-12-31,temp_box_c,50400,50400,0,1.0
+development panel 2001-01-01..2023-12-31,rh_box_pct,50400,50400,0,1.0
+development panel 2001-01-01..2023-12-31,inflow_cfs,50400,49430,970,0.9808
+development panel 2001-01-01..2023-12-31,outflow_cfs,50400,48671,1729,0.9657
+development panel 2001-01-01..2023-12-31,gefs_p_d1_7_mm,50400,48594,1806,0.9642
+"Monday rows, tuning WY2012-2015",storage_pct,1248,1248,0,1.0
+"Monday rows, tuning WY2012-2015",prev7_pct,1248,1248,0,1.0
+"Monday rows, tuning WY2012-2015",prev30_pct,1248,1248,0,1.0
+"Monday rows, tuning WY2012-2015",prev60_pct,1248,1248,0,1.0
+"Monday rows, tuning WY2012-2015",swe_basin_in,1248,1223,25,0.98
+"Monday rows, tuning WY2012-2015",swe_change_14d_in,1248,1221,27,0.9784
+"Monday rows, tuning WY2012-2015",rain_7d_mm,1248,1248,0,1.0
+"Monday rows, tuning WY2012-2015",rain_30d_mm,1248,1248,0,1.0
+"Monday rows, tuning WY2012-2015",temp_30d_c,1248,1248,0,1.0
+"Monday rows, tuning WY2012-2015",humidity_30d_pct,1248,1248,0,1.0
+"Monday rows, tuning WY2012-2015",rain_7d_mm_box,1248,1248,0,1.0
+"Monday rows, tuning WY2012-2015",rain_30d_mm_box,1248,1248,0,1.0
+"Monday rows, tuning WY2012-2015",temp_30d_c_box,1248,1248,0,1.0
+"Monday rows, tuning WY2012-2015",humidity_30d_pct_box,1248,1248,0,1.0
+"Monday rows, tuning WY2012-2015",gefs_p_d1_7_mm,1248,1248,0,1.0
+"Monday rows, tuning WY2012-2015",gefs_p_d8_16_mm,1248,1248,0,1.0
+"Monday rows, tuning WY2012-2015",inflow_7d_pp,1248,1218,30,0.976
+"Monday rows, tuning WY2012-2015",inflow_30d_pp,1248,1134,114,0.9087
+"Monday rows, tuning WY2012-2015",outflow_7d_pp,1248,1223,25,0.98
+"Monday rows, tuning WY2012-2015",outflow_30d_pp,1248,1150,98,0.9215
+"Monday rows, tuning WY2012-2015",season_sin,1248,1248,0,1.0
+"Monday rows, tuning WY2012-2015",season_cos,1248,1248,0,1.0
+"Monday rows, confirmation WY2016-2023",storage_pct,2500,2500,0,1.0
+"Monday rows, confirmation WY2016-2023",prev7_pct,2500,2500,0,1.0
+"Monday rows, confirmation WY2016-2023",prev30_pct,2500,2500,0,1.0
+"Monday rows, confirmation WY2016-2023",prev60_pct,2500,2500,0,1.0
+"Monday rows, confirmation WY2016-2023",swe_basin_in,2500,2390,110,0.956
+"Monday rows, confirmation WY2016-2023",swe_change_14d_in,2500,2378,122,0.9512
+"Monday rows, confirmation WY2016-2023",rain_7d_mm,2500,2500,0,1.0
+"Monday rows, confirmation WY2016-2023",rain_30d_mm,2500,2500,0,1.0
+"Monday rows, confirmation WY2016-2023",temp_30d_c,2500,2500,0,1.0
+"Monday rows, confirmation WY2016-2023",humidity_30d_pct,2500,2500,0,1.0
+"Monday rows, confirmation WY2016-2023",rain_7d_mm_box,2500,2500,0,1.0
+"Monday rows, confirmation WY2016-2023",rain_30d_mm_box,2500,2500,0,1.0
+"Monday rows, confirmation WY2016-2023",temp_30d_c_box,2500,2500,0,1.0
+"Monday rows, confirmation WY2016-2023",humidity_30d_pct_box,2500,2500,0,1.0
+"Monday rows, confirmation WY2016-2023",gefs_p_d1_7_mm,2500,2248,252,0.8992
+"Monday rows, confirmation WY2016-2023",gefs_p_d8_16_mm,2500,2248,252,0.8992
+"Monday rows, confirmation WY2016-2023",inflow_7d_pp,2500,2456,44,0.9824
+"Monday rows, confirmation WY2016-2023",inflow_30d_pp,2500,2339,161,0.9356
+"Monday rows, confirmation WY2016-2023",outflow_7d_pp,2500,2476,24,0.9904
+"Monday rows, confirmation WY2016-2023",outflow_30d_pp,2500,2411,89,0.9644
+"Monday rows, confirmation WY2016-2023",season_sin,2500,2500,0,1.0
+"Monday rows, confirmation WY2016-2023",season_cos,2500,2500,0,1.0
+"Monday rows, HELD",storage_pct,593,593,0,1.0
+"Monday rows, HELD",prev7_pct,593,593,0,1.0
+"Monday rows, HELD",prev30_pct,593,593,0,1.0
+"Monday rows, HELD",prev60_pct,593,593,0,1.0
+"Monday rows, HELD",swe_basin_in,593,593,0,1.0
+"Monday rows, HELD",swe_change_14d_in,593,593,0,1.0
+"Monday rows, HELD",rain_7d_mm,593,593,0,1.0
+"Monday rows, HELD",rain_30d_mm,593,593,0,1.0
+"Monday rows, HELD",temp_30d_c,593,593,0,1.0
+"Monday rows, HELD",humidity_30d_pct,593,593,0,1.0
+"Monday rows, HELD",rain_7d_mm_box,593,593,0,1.0
+"Monday rows, HELD",rain_30d_mm_box,593,593,0,1.0
+"Monday rows, HELD",temp_30d_c_box,593,593,0,1.0
+"Monday rows, HELD",humidity_30d_pct_box,593,593,0,1.0
+"Monday rows, HELD",gefs_p_d1_7_mm,593,593,0,1.0
+"Monday rows, HELD",gefs_p_d8_16_mm,593,593,0,1.0
+"Monday rows, HELD",inflow_7d_pp,593,570,23,0.9612
+"Monday rows, HELD",inflow_30d_pp,593,504,89,0.8499
+"Monday rows, HELD",outflow_7d_pp,593,580,13,0.9781
+"Monday rows, HELD",outflow_30d_pp,593,534,59,0.9005
+"Monday rows, HELD",season_sin,593,593,0,1.0
+"Monday rows, HELD",season_cos,593,593,0,1.0
+"Monday rows, T26",storage_pct,251,251,0,1.0
+"Monday rows, T26",prev7_pct,251,251,0,1.0
+"Monday rows, T26",prev30_pct,251,251,0,1.0
+"Monday rows, T26",prev60_pct,251,251,0,1.0
+"Monday rows, T26",swe_basin_in,251,251,0,1.0
+"Monday rows, T26",swe_change_14d_in,251,251,0,1.0
+"Monday rows, T26",rain_7d_mm,251,251,0,1.0
+"Monday rows, T26",rain_30d_mm,251,251,0,1.0
+"Monday rows, T26",temp_30d_c,251,251,0,1.0
+"Monday rows, T26",humidity_30d_pct,251,251,0,1.0
+"Monday rows, T26",rain_7d_mm_box,251,251,0,1.0
+"Monday rows, T26",rain_30d_mm_box,251,251,0,1.0
+"Monday rows, T26",temp_30d_c_box,251,251,0,1.0
+"Monday rows, T26",humidity_30d_pct_box,251,251,0,1.0
+"Monday rows, T26",gefs_p_d1_7_mm,251,251,0,1.0
+"Monday rows, T26",gefs_p_d8_16_mm,251,251,0,1.0
+"Monday rows, T26",inflow_7d_pp,251,239,12,0.9522
+"Monday rows, T26",inflow_30d_pp,251,204,47,0.8127
+"Monday rows, T26",outflow_7d_pp,251,243,8,0.9681
+"Monday rows, T26",outflow_30d_pp,251,219,32,0.8725
+"Monday rows, T26",season_sin,251,251,0,1.0
+"Monday rows, T26",season_cos,251,251,0,1.0

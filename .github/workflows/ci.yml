@@ -41,7 +41,7 @@ jobs:
         run: |
           test -z "$(git ls-files data/raw | grep -v '^data/raw/.gitkeep$')"
           test -z "$(git ls-files data/processed outputs dist | grep -v '.gitkeep$')"
-          test -z "$(git ls-files data/live forecasts models data/v3 data/v4 data/prospective | grep -v '.gitkeep$')"
+          test -z "$(git ls-files data/live forecasts models data/v3 data/v4 data/v5 data/prospective | grep -v '.gitkeep$')"
       - name: Every published file is listed, checksum-intact and allowed by the release policy
         run: python -m src.v3_release --check
       - name: Synthetic forecast fixture is reproducible and valid

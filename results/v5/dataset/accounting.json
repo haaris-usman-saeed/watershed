@@ -1,0 +1,212 @@
+{
+ "terms": "- reservoir-day: one calendar row of the daily panel (observed or not);\n- Monday row: a v2 evaluation/training row (Monday origin with storage, dam weather and target present);\n- labelled daily origin: a reservoir-day whose 30-day target exists (same series segment, both storage values observed);\n- sampled training sequence: a labelled daily origin in a network's fitting set (every 2nd day) or early-stopping set;\n- independent outcomes: 30-day targets overlap (Monday rows share 23 of 30 days with the next week's), so the number of\n  non-overlapping 30-day windows per reservoir is reported as a rough upper bound on independent information.",
+ "reservoir_days": {
+  "full_panel": 56730,
+  "development_panel": 50400,
+  "period_full": [
+   "2001-01-01",
+   "2026-11-20"
+  ],
+  "period_development": [
+   "2001-01-01",
+   "2023-12-31"
+  ]
+ },
+ "monday_rows": {
+  "all_v2_rows": 7968,
+  "development_target_before_2024": 7076,
+  "by_population": {
+   "WY2012": 307,
+   "WY2013": 318,
+   "WY2014": 311,
+   "WY2015": 312,
+   "WY2016": 312,
+   "WY2017": 312,
+   "WY2018": 312,
+   "WY2019": 318,
+   "WY2020": 311,
+   "WY2021": 311,
+   "WY2022": 312,
+   "WY2023": 312,
+   "HELD": 593,
+   "T26": 251
+  },
+  "unused_gap_rows": 48,
+  "gap_rule": "Monday rows whose 30-day target crosses a population boundary (Dec 2023 -> 2024, Dec 2025 -> 2026) belong to no population",
+  "all_mondays_in_panel": 8106
+ },
+ "labelled_daily_origins": {
+  "full_panel": 56363,
+  "development_target_before_2024": 50074,
+  "sequence_samples_development": 50074,
+  "sequence_samples_full": 56363
+ },
+ "gefs": {
+  "monday_rows_available_share": 0.9677,
+  "labelled_daily_origins_available_share": 0.968,
+  "daily_age_distribution": {
+   "0": 7805,
+   "1": 7798,
+   "2": 7793,
+   "3": 7784,
+   "4": 7788,
+   "5": 7796,
+   "6": 7795
+  },
+  "gap": "no GEFSv12 product for 2020-01-06..2020-09-21; 4 late-published operational cycles excluded (v3 rule)",
+  "source_rule": "reforecast 2001-2019 (retrospective), operational from 2020-09-28"
+ },
+ "flows": {
+  "2001-2023": {
+   "inflow_share": 0.9808,
+   "outflow_share": 0.9657
+  },
+  "2024-2026": {
+   "inflow_share": 0.9942,
+   "outflow_share": 0.9968
+  },
+  "source": "CDEC sensors 76/23: 2001-2023 v4 download (2026-11-24), 2024-01-01..2026-11-20 v5 download (2026-11-27)"
+ },
+ "common_availability": {
+  "tuning WY2012-2015": {
+   "rows": 1248,
+   "gefs_available": 1248,
+   "flows_complete": 1129,
+   "all_inputs_observed": 1102
+  },
+  "confirmation WY2016-2023": {
+   "rows": 2500,
+   "gefs_available": 2248,
+   "flows_complete": 2331,
+   "all_inputs_observed": 1972
+  },
+  "HELD": {
+   "rows": 593,
+   "gefs_available": 593,
+   "flows_complete": 500,
+   "all_inputs_observed": 500
+  },
+  "T26": {
+   "rows": 251,
+   "gefs_available": 251,
+   "flows_complete": 204,
+   "all_inputs_observed": 204
+  }
+ },
+ "variables": {
+  "raw_daily": [
+   "storage_af",
+   "capacity_af",
+   "swe_in",
+   "rain_mm",
+   "temp_c",
+   "rh_pct",
+   "rain_box_mm",
+   "temp_box_c",
+   "rh_box_pct",
+   "inflow_cfs",
+   "outflow_cfs"
+  ],
+  "raw_weekly_forecast": [
+   "gefs_p_d1_7_mm",
+   "gefs_p_d8_16_mm"
+  ],
+  "n_raw": 13,
+  "tabular_engineered": [
+   "storage_pct",
+   "prev7_pct",
+   "prev30_pct",
+   "prev60_pct",
+   "swe_basin_in",
+   "swe_change_14d_in",
+   "swe_anom_in",
+   "rain_7d_mm",
+   "rain_30d_mm",
+   "temp_30d_c",
+   "humidity_30d_pct",
+   "rain_7d_mm_box",
+   "rain_30d_mm_box",
+   "temp_30d_c_box",
+   "humidity_30d_pct_box",
+   "gefs_p_d1_7_mm",
+   "gefs_p_d8_16_mm",
+   "inflow_7d_pp",
+   "inflow_30d_pp",
+   "outflow_7d_pp",
+   "outflow_30d_pp",
+   "season_sin",
+   "season_cos",
+   "station_DNP",
+   "station_EXC",
+   "station_FOL",
+   "station_NML",
+   "station_ORO",
+   "station_SHA"
+  ],
+  "n_tabular_engineered": 29,
+  "daily_tabular_extra": [
+   "gefs_age_days"
+  ],
+  "network_per_step": "10 scaled channels x value*mask, 10 masks, doy sin/cos = 22",
+  "network_static": "log capacity (+ 4 GEFS static inputs in Experiment A)",
+  "network_decoder_n4": "doy sin/cos of each future day + lead k/30 = 3"
+ },
+ "coverage": {
+  "tuning WY2012-2015": {
+   "origins": [
+    "2011-10-03",
+    "2015-09-28"
+   ],
+   "targets": [
+    "2011-11-02",
+    "2015-10-28"
+   ],
+   "monday_rows": 1248,
+   "distinct_origin_dates": 209,
+   "non_overlapping_30d_windows_per_reservoir_approx": 48.6,
+   "non_overlapping_30d_windows_total_approx": 291
+  },
+  "confirmation WY2016-2023": {
+   "origins": [
+    "2015-10-05",
+    "2023-09-25"
+   ],
+   "targets": [
+    "2015-11-04",
+    "2023-10-25"
+   ],
+   "monday_rows": 2500,
+   "distinct_origin_dates": 417,
+   "non_overlapping_30d_windows_per_reservoir_approx": 97.1,
+   "non_overlapping_30d_windows_total_approx": 583
+  },
+  "HELD": {
+   "origins": [
+    "2024-01-01",
+    "2025-12-01"
+   ],
+   "targets": [
+    "2024-01-31",
+    "2025-12-31"
+   ],
+   "monday_rows": 593,
+   "distinct_origin_dates": 101,
+   "non_overlapping_30d_windows_per_reservoir_approx": 23.4,
+   "non_overlapping_30d_windows_total_approx": 140
+  },
+  "T26": {
+   "origins": [
+    "2026-01-05",
+    "2026-10-19"
+   ],
+   "targets": [
+    "2026-02-04",
+    "2026-11-18"
+   ],
+   "monday_rows": 251,
+   "distinct_origin_dates": 42,
+   "non_overlapping_30d_windows_per_reservoir_approx": 9.6,
+   "non_overlapping_30d_windows_total_approx": 58
+  }
+ }
+}
