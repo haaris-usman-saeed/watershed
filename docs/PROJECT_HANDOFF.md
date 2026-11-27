@@ -91,9 +91,9 @@ Notes on these results:
 | Model bundle | Uploaded as a **pre-release** | Tag `models-2026-11-22`; GitHub's digest equals the pinned SHA-256; publicly downloadable |
 | Public website | **Unverified** | No public URL is recorded anywhere in the repository. The acceptance check has not been run, either before or after PR #16 changed the pages. |
 | Website forecast model | Generate Forecast runs only HGB[S,N,C,R] · frozen v2 artifact (owner decision 2026-11-27, PR #16). v3 Models B, B2 and C are no longer shown on the site; `src/official.py` still issues all four | `app/view_forecast_v3.py`, `ForecastService(model_keys=("A",))` |
-| Model playground | New page (PR #16): the other nine study models against the HGB on past windows only, read from tracked `results/v5` aggregates. Per-row replays need the private prediction file, and on a public deployment omit the five flow-using models | `app/view_playground.py`, `src/v5/playground.py` |
+| Model playground | New page (PR #16): the other nine study models against the HGB on past windows only, read from tracked `results/v5` aggregates. Per-row replays read the tracked export `results/v5/playground/retro_predictions.csv` (no flow, weather or snow values) | `app/view_playground.py`, `src/v5/playground.py` |
 | v4 N4 and v5 benchmark | Merged as research (PRs #14, #15); nothing frozen, nothing makes live forecasts. v5 results on 2024–2025 and 2026 are post-hoc | `docs/v4/RESULTS_N4.md`, `docs/v5/RESULTS.md` |
-| CDEC publication permission | Owner-reported, **not archived** | `docs/DATA_PUBLICATION_AUDIT.md` §7; `docs/permissions/` does not exist |
+| CDEC publication permission | Owner-reported, **not archived**: storage and snow (2026-11-22); inflow and outflow for derived products and display, not raw (2026-11-27, policy `2026-11-27.1`) | `docs/DATA_PUBLICATION_AUDIT.md` §7 and §8; `docs/permissions/` does not exist |
 | Licence and citation | **None** | No `LICENSE`, no `CITATION.cff` |
 | Prospective scoring protocol | **In effect:** v1.0, merged 2026-11-24 09:37 UTC (`e79c54b`), before the first target date | `docs/prospective/PROTOCOL.md`; its hashes are verified by `src/prospective.py` |
 | Official weekly issuance | None yet. The command `src/official.py` is merged (PR #12; [ISSUING.md](prospective/ISSUING.md)). Issuing needs the owner's GitHub records repository and token, set in the issuing machine's shell | `docs/prospective/official_ledger.jsonl` (empty) |
@@ -391,14 +391,13 @@ The docs-consistency PR (2026-11-24) fixed the stale publication and deployment 
 ## 14. Owner-only actions and missing items
 
 - Public Streamlit URL, plus access to the app's logs or settings (or screenshots of them).
-- The written CDEC/DWR/operator permission, archived under `docs/permissions/` (sender, date, scope, conditions). If it has conditions, update the policy and attribution text to match.
+- The written CDEC/DWR/operator permission, archived under `docs/permissions/` (sender, date, scope, conditions), covering storage and snow (§7) and inflow and outflow (§8). If it has conditions, update the policy and attribution text to match.
 - Licence choice for the code and the data, and the author list for `CITATION.cff`.
 - Persistent forecast records: create the GitHub records repository, protect its branch, and add a fine-grained token limited to it to the Streamlit secrets (`docs/v3/DEPLOYMENT.md`, "Persistent records in a GitHub repository").
 - Whether the bundle release should stay a pre-release.
 - Whether the NASA POWER notification email has been sent.
 - Approval for any change under `app.py`, `app/` or `.streamlit/`.
 - Whether to adopt the v5 draft prospective protocol (`docs/v5/PROSPECTIVE_PROTOCOL_DRAFT.md`) and which candidates (for example HGB v5 and N4) to freeze for prospective scoring.
-- Whether to clear CDEC flow sensors 76 and 23 in `config/data_release_policy.json`. Only per-row playground replays of the five flow-using models need it; nothing else depends on it.
 - A backup of the trusted build machine (section 15).
 
 ## 15. Assets that exist only on the trusted build machine

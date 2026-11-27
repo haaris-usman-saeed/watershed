@@ -534,3 +534,16 @@ Owner's request: the site's forecasts use only the HGB, and the other nine study
   - fixture unchanged.
 - **Public website:** still unverified. No URL is recorded, and the acceptance check (`docs/v3/LAUNCH_AND_MERGE.md` §4, now updated for the HGB-only page and the playground) has not been run.
 - `docs/PROJECT_HANDOFF.md` "Current state", history, architecture, live service, deployment, priorities and owner items are updated to match.
+
+### 2026-11-27: Model playground replays published (branch `web/playground-replays`, not committed)
+
+- **Owner's instruction:** "include these we have permission", about the playground's per-row replays.
+- **Policy `2026-11-27.1`:** adds `cdec_inflow_sensor76` and `cdec_outflow_sensor23` with `publish_derived` and `public_display` set to true. `publish_raw` is false, because no raw flow data is published. The record is in `docs/DATA_PUBLICATION_AUDIT.md` §8: owner-reported, not archived, correspondence not seen by the agent.
+- **New tracked file:** `results/v5/playground/retro_predictions.csv`, 3,344 rows:
+  - confirmation 2,500, 2024–2025 593, 2026 251;
+  - written by `python -m src.v5.playground --export` from the private predictions;
+  - its manifest records the SHA-256 of the file and of its source;
+  - it contains predictions, the observed change and storage percentage only.
+- **Faithfulness check:** every model's MAE recomputed from the file equals the tracked metric to within 2e-4.
+- **Playground:** reads the tracked file first, so replays work on a deployment without private data. The policy gate still withholds any model whose sources are not cleared.
+- **Unchanged:** no model, frozen file, issued record or public release changed. `src/v5/flows_ext.py` and `src/v4/flows.py` still say in their docstrings that flows are not covered by the policy. They are left as written because the v5 manifests hash `src/v5` code.

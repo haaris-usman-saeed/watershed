@@ -1,5 +1,5 @@
 {
-  "policy_version": "2026-11-22.2",
+  "policy_version": "2026-11-27.1",
   "evidence": "docs/DATA_PUBLICATION_AUDIT.md",
   "changed_only_by": "project owner",
   "sources": {
@@ -39,6 +39,24 @@
       "publish_derived": true,
       "public_display": true,
       "attribution": "NOAA GEFSv12 reforecast (Guan et al. 2022, Monthly Weather Review, doi:10.1175/MWR-D-21-0245.1), via the NOAA Open Data Dissemination program on AWS. Retrospective forecasts, not issued in real time. Derived by WatershedShift; no NOAA endorsement is implied."
+    },
+    "cdec_inflow_sensor76": {
+      "status": "permitted for derived products and display (owner-reported authorization, 2026-11-27)",
+      "publish_raw": false,
+      "publish_derived": true,
+      "public_display": true,
+      "attribution": "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied.",
+      "authorization": "docs/DATA_PUBLICATION_AUDIT.md section 8",
+      "note": "CDEC daily reservoir inflow. Raw inflow files are not published: the owner's statement covered the playground's per-row predictions, not raw flow data."
+    },
+    "cdec_outflow_sensor23": {
+      "status": "permitted for derived products and display (owner-reported authorization, 2026-11-27)",
+      "publish_raw": false,
+      "publish_derived": true,
+      "public_display": true,
+      "attribution": "Data from the California Data Exchange Center (CDEC), California Department of Water Resources (https://cdec.water.ca.gov). Reservoir records relayed by CDEC originate with the reservoir operators (US Bureau of Reclamation, California DWR, Merced Irrigation District and the Don Pedro operators). Values are provisional and subject to revision; no endorsement by DWR or the operators is implied.",
+      "authorization": "docs/DATA_PUBLICATION_AUDIT.md section 8",
+      "note": "CDEC daily reservoir outflow. Raw outflow files are not published: the owner's statement covered the playground's per-row predictions, not raw flow data."
     }
   }
 }
