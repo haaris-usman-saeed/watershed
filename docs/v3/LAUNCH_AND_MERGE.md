@@ -58,11 +58,12 @@ Rebuilding models gives a new bundle and a new SHA-256.
 ## 4. Acceptance check on the public URL
 
 1. Open **30-Day Forecast**, pick each reservoir and press **Generate Forecast**.
-2. Expect all four models to be available, with:
-   - source status "ok";
+2. Since PR #16 (2026-11-27) the page runs only the frozen v2 HGB (Model A). Expect it to be available, with:
+   - CDEC as the only source, with status "ok";
    - the origin a Monday;
    - the target exactly 30 days later;
    - days remaining counted from the issue time.
 3. Press Generate Forecast again: the sources should be shown as "(cached)".
 4. Open the page on a phone: the cards stack and the tables scroll horizontally.
-5. **Only then** describe the public site as producing live forecasts.
+5. Open **Model playground**: the tables and charts render for each window. Per-row replays are expected to say they are not available on a deployment without the private prediction file.
+6. **Only then** describe the public site as producing live forecasts.

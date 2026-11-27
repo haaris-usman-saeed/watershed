@@ -518,3 +518,19 @@ Owner's request: the site's forecasts use only the HGB, and the other nine study
 - **Owner decision recorded:** v4/v5 models may appear in the retrospective playground only. None makes live forecasts.
 - **Tests:** `tests/test_playground.py` (18) and updated `tests/test_forecast_page.py`. Full suite: 198 passed, 5 skipped. Contract, frozen-hash, `v3_release --check` and fixture checks all OK.
 - **Merge dependency:** the playground reads `results/v5/`, which arrives with PR #15 (stacked on PR #14). This branch is cut from `research/v5-benchmark`.
+
+### 2026-11-27: PRs #14, #15 and #16 merged; handoff updated (branch `docs/status-after-14-15-16`)
+
+- The owner authorized all three merges. Merge commits:
+  - PR #14 (v4 N4): `91d8242`, 22:47 UTC;
+  - PR #15 (v5 benchmark), retargeted from `research/v4-n4` to `main` before merging: `cb62c75`, 22:54 UTC;
+  - PR #16 (website: frozen v2 HGB only, Model playground, straight-line guide): `a29b876`, 23:00 UTC.
+- **CI on `main`:** run 46079939246 passed on `a29b876`.
+- **Locally on `main`:**
+  - 201 passed, 5 skipped;
+  - contract OK;
+  - frozen v2 hashes OK, and all 12 v3 code hashes plus the plan hash match;
+  - `v3_release --check` OK;
+  - fixture unchanged.
+- **Public website:** still unverified. No URL is recorded, and the acceptance check (`docs/v3/LAUNCH_AND_MERGE.md` §4, now updated for the HGB-only page and the playground) has not been run.
+- `docs/PROJECT_HANDOFF.md` "Current state", history, architecture, live service, deployment, priorities and owner items are updated to match.
