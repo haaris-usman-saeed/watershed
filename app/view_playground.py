@@ -32,24 +32,47 @@ def _f(x, d=3, sign=False):
     return (f"{x:+.{d}f}" if sign and x != 0 else f"{x:.{d}f}").replace("-", "−")
 
 
+# Every cached loader takes a `stamp` of the files it reads (name, modification time, size). st.cache_data keeps results
+# for the life of the server process, so without it a result cached before a deploy (for example "replays not
+# available" before the per-row file existed) would keep being served after the new files arrive.
+
+def _file_stamp(path):
+    try:
+        s = path.stat()
+    except FileNotFoundError:
+        return f"{path.name}:absent"
+    return f"{path.name}:{s.st_mtime_ns}:{s.st_size}"
+
+
+def _results_stamp():
+    pg = _pg()
+    files = sorted(pg.METRICS.glob("*.csv")) + [pg.STATS]
+    return "|".join(_file_stamp(f) for f in files)
+
+
+def _rows_stamp():
+    pg = _pg()
+    return "|".join(_file_stamp(f) for f in (pg.PUBLISHED, pg.PREDS))
+
+
 @st.cache_data(show_spinner=False)
-def _summary(window):
+def _summary(window, stamp):
     return _pg().summary(window)
 
 
 @st.cache_data(show_spinner=False)
-def _breakdown(window, by):
+def _breakdown(window, by, stamp):
     return _pg().breakdown(window, by)
 
 
 @st.cache_data(show_spinner=False)
-def _comparisons(window, number):
+def _comparisons(window, number, stamp):
     pg = _pg()
     return pg.comparisons(window, pg.by_number(number))
 
 
 @st.cache_data(show_spinner="Reading per-row predictions")
-def _rows(window, mode):
+def _rows(window, mode, stamp):
     return _pg().rows(window, mode=mode)
 
 
@@ -180,7 +203,7 @@ def render():
     pick, main = pg.by_number(pick_number), pg.by_number(pg.MAIN_NUMBER)
     st.caption(pg.WINDOWS[window]["status"] + " " + pg.main_note(window))
     try:
-        s = _summary(window)
+        s = _summary(window, _results_stamp())
     except (FileNotFoundError, ValueError) as exc:
         st.markdown(f'<div class="ws-empty"><h4>Playground results are not on this deployment</h4><p>{ui.esc(str(exc))}'
                     f'</p></div>', unsafe_allow_html=True)
@@ -206,7 +229,7 @@ def render():
               ("Compared with", ui.esc(f"{pg.spec(main, window)} (run {pg.run_id(main, window)})"))])
 
     st.markdown("### Paired tests")
-    c = _comparisons(window, pick_number)
+    c = _comparisons(window, pick_number, _results_stamp())
     if c.empty:
         st.caption("No paired test with this model first was run in this window. An MAE difference without a test is "
                    "not evidence that one model is better.")
@@ -228,11 +251,11 @@ def render():
 
     st.markdown("## Where the errors are")
     try:
-        bd = _breakdown(window, "station_id")
+        bd = _breakdown(window, "station_id", _results_stamp())
         bd = bd[bd.number.isin([pick_number, pg.MAIN_NUMBER])]
         ui.show_chart(reservoir_figure(bd, pick, main["name"]), key=f"pg_res_{window}_{pick_number}")
         st.caption("MAE by reservoir. Hover a bar for its bias and row count.")
-        reg, wy = _breakdown(window, "regime"), _breakdown(window, "wy_class")
+        reg, wy = _breakdown(window, "regime", _results_stamp()), _breakdown(window, "wy_class", _results_stamp())
         ui.show_table(regime_table(reg, wy, [main["name"], pick["name"]]))
         st.caption("MAE in pp (rows in brackets) by what actually happened: rapid fill (rose by 10 pp or more), rapid "
                    "drawdown (fell by 10 pp or more), other; and by water-year class.")
@@ -241,7 +264,7 @@ def render():
 
     st.markdown("## Replay a past 30-day forecast")
     from src.v3_service import deployment_mode
-    fr, hidden = _rows(window, deployment_mode())
+    fr, hidden = _rows(window, deployment_mode(), _rows_stamp())
     if fr is None:
         ui.callout("Replays are not available here", ui.esc(hidden.get("all", "")) + " The tables and charts above come "
                    "from tracked aggregate files and are complete without them.", "note")
