@@ -1,6 +1,8 @@
 # Flagship design: shared physics-informed encoder-decoder LSTM (proposal)
 
-**Status: proposed, not yet implemented or evaluated.** It builds on the working shared LSTM and GRU (N1/N2) in `src/v4/nets.py`. It is justified by the flow audit (`FLOW_DATA.md`): daily inflow and outflow are available at all six reservoirs, and close the 30-day water balance to within 0.04–0.33 pp.
+**Status (2026-11-25): implemented as N4, `WaterBalanceED` in `src/v4/nets.py`, with its loss in `src/v4/train.py`.** The first build and its candidate set are fixed in [N4_PLAN.md](N4_PLAN.md); development results are in [RESULTS_N4.md](RESULTS_N4.md). Not built yet: GEFS in the decoder, feasibility by projection, static basin attributes and the operations inputs marked "planned" below. The rest of this page is the original design.
+
+It builds on the working shared LSTM and GRU (N1/N2) in `src/v4/nets.py`. It is justified by the flow audit (`FLOW_DATA.md`): daily inflow and outflow are available at all six reservoirs, and close the 30-day water balance to within 0.04–0.33 pp.
 
 ## Inputs, by what is known at the issue time
 

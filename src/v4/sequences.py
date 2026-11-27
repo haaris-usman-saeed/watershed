@@ -14,6 +14,10 @@ Targets for origin t, all in percentage points of the capacity in force at t (th
 - y30:   100 * (S[t+30] - S[t]) / cap[t]   (exact calendar day; same segment; else no sample)
 - traj:  100 * (S[t+k] - S[t]) / cap[t] for k = 1..30, with a mask
 - cum_in, cum_out: 100 * sum over days t+1..t+30 of flow (AF) / cap[t], with masks (auxiliary labels only)
+- s0_pct: 100 * S[t] / cap[t], the storage level at the origin (known at t; used for N4's feasibility penalty)
+
+Known-future decoder inputs (N4) for days t+1..t+30 are calendar only: day-of-year sine and cosine and the lead
+time k/30. No observation after t is ever a decoder input.
 
 Folds: for development water year W (Oct 1 of W-1 .. Sep 30 of W), training samples have target_date before
 Oct 1 of W-1 (the v2 rule, so every training outcome is observed before the fold starts). Of those, origins in
@@ -39,6 +43,7 @@ CHANNELS = [("storage_pct", 0, "storage"), ("inflow_pp", 0, "flow"), ("outflow_p
             ("rain_box_mm", WEATHER_LAG, "weather_box"), ("temp_box_c", WEATHER_LAG, "weather_box"),
             ("rh_box_pct", WEATHER_LAG, "weather_box")]
 KNOWN = ["doy_sin", "doy_cos"]
+FUTURE = KNOWN + ["lead"]
 N_STATIC = 1
 
 
@@ -90,6 +95,7 @@ class SequenceData:
         self.known = np.vstack(known).astype(np.float32)
         self.offsets = offs
         self.samples = pd.concat(frames, ignore_index=True)
+        self._targets = None
 
     @staticmethod
     def _samples(st, si, dates, s_af, cap, seg, q_in, q_out, off):
@@ -107,7 +113,7 @@ class SequenceData:
                            "target_date": dates.to_numpy()[t + h], "y30": y30,
                            "cum_in": 100 * cin.sum(1) / cap[t], "cum_in_ok": np.isfinite(cin).all(1),
                            "cum_out": 100 * cout.sum(1) / cap[t], "cum_out_ok": np.isfinite(cout).all(1),
-                           "log_cap": np.log10(cap[t]) - 6.0})
+                           "s0_pct": 100 * s_af[t] / cap[t], "log_cap": np.log10(cap[t]) - 6.0})
         df["traj"] = list(np.where(traj_mask, traj, 0.0).astype(np.float32))
         df["traj_mask"] = list(traj_mask)
         return df[ok].reset_index(drop=True)
@@ -115,6 +121,35 @@ class SequenceData:
     @property
     def n_inputs(self):
         return 2 * len(CHANNELS) + len(KNOWN)
+
+    @property
+    def n_future(self):
+        return len(FUTURE)
+
+    def future(self, idx):
+        """Known-future decoder inputs for days t+1..t+HORIZON, [B, HORIZON, len(FUTURE)]: day-of-year sine and
+        cosine of each future day, and the lead time k/HORIZON. Calendar only; nothing observed after t."""
+        rows = self.samples.row.to_numpy()[np.asarray(idx)]
+        g = rows[:, None] + np.arange(1, HORIZON + 1)[None, :]
+        lead = np.broadcast_to((np.arange(1, HORIZON + 1, dtype=np.float32) / HORIZON)[None, :, None],
+                               (len(rows), HORIZON, 1))
+        return np.concatenate([self.known[g], lead], axis=2).astype(np.float32)
+
+    def targets(self, idx):
+        """Training labels for sample rows `idx` (pp of the capacity in force at t): y30; the daily trajectory and
+        its mask; cumulative 30-day inflow and outflow (0 where the window is incomplete) and their masks; s0_pct.
+        Labels are never inputs."""
+        if self._targets is None:
+            s = self.samples
+            self._targets = {
+                "y30": s.y30.to_numpy(np.float32),
+                "traj": np.stack(s.traj.to_numpy()).astype(np.float32).reshape(len(s), HORIZON),
+                "traj_mask": np.stack(s.traj_mask.to_numpy()).astype(bool).reshape(len(s), HORIZON),
+                "cum_in": np.nan_to_num(s.cum_in.to_numpy(np.float32)), "cum_in_ok": s.cum_in_ok.to_numpy(bool),
+                "cum_out": np.nan_to_num(s.cum_out.to_numpy(np.float32)), "cum_out_ok": s.cum_out_ok.to_numpy(bool),
+                "s0_pct": s.s0_pct.to_numpy(np.float32)}
+        i = np.asarray(idx)
+        return {k: v[i] for k, v in self._targets.items()}
 
     def batch(self, idx, length, drop_sources=(), rng=None, source_dropout=0.0):
         """Inputs for sample rows `idx` with history `length`: X [B, L, 2C+K] (values*mask, mask, known),
