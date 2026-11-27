@@ -559,3 +559,14 @@ Owner's request: the site's forecasts use only the HGB, and the other nine study
   - the phone layout (375 px) stacks the cards;
   - the Model playground renders. Replays show "not available" until PR #18 is merged and redeployed.
 - **Not checked:** app logs and settings, and whether forecast records persist on the host.
+
+### 2026-11-27: PR #18 merged; stale playground cache found on the live site (branch `fix/playground-cache-refresh`, not committed)
+
+- PR #18 merged as `cd4e278`. CI on `main` passed.
+- **Live site after the redeploy:**
+  - the 2026 window shows replays for all ten models, so the new code and file are deployed;
+  - the confirmation window still showed "Replays are not available here".
+- **Cause:** `st.cache_data` kept the result cached before the deploy. The cache key did not depend on the per-row file.
+- **Fix:** every playground loader's cache key now includes a stamp (name, mtime, size) of the files it reads.
+- **Tests:** a regression test reproduces the stale result in one process and fails without the fix. Full suite: 209 passed, 5 skipped.
+- **Until the fix is deployed,** rebooting the app from the Streamlit dashboard clears the cache.

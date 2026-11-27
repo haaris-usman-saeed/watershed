@@ -254,3 +254,40 @@ def test_playground_replays_render_in_public_mode_from_the_published_file(monkey
     at.button_group(key="pg_window").set_value("held").run()
     assert not at.exception, at.exception
 
+
+
+@needs_results
+@needs_published
+def test_replays_appear_after_the_file_arrives_without_a_server_restart(monkeypatch, tmp_path):
+    """Regression (live site, 2026-11-27): a "replays not available" result cached before the per-row file was deployed
+    kept being served afterwards. The cache key now includes the file's stamp."""
+    pytest.importorskip("streamlit")
+    from streamlit.testing.v1 import AppTest
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setenv("WATERSHED_DEPLOYMENT", "public")
+    real = pg.PUBLISHED
+    staged = tmp_path / "retro_predictions.csv"                     # not there yet, as before the deploy
+    monkeypatch.setattr(pg, "PREDS", tmp_path / "absent.parquet")
+    monkeypatch.setattr(pg, "PUBLISHED", staged)
+    at = AppTest.from_function(_playground, default_timeout=60)
+    at.run()
+    text = lambda: " ".join(m.value for m in at.markdown) + " " + " ".join(c.value for c in at.caption)  # noqa: E731
+    assert "Replays are not available here" in text()
+    staged.write_bytes(real.read_bytes())                           # the deploy brings the file; same process
+    at.run()
+    assert not at.exception, at.exception
+    assert "Replays are not available here" not in text() and "Replay a past 30-day forecast" in text()
+
+
+def test_file_stamp_changes_with_the_file(tmp_path):
+    import os
+    import sys
+    sys.path.insert(0, str(ROOT / "app"))
+    import view_playground
+    f = tmp_path / "x.csv"
+    assert view_playground._file_stamp(f).endswith(":absent")
+    f.write_text("a\n1\n")
+    s1 = view_playground._file_stamp(f)
+    f.write_text("a\n1\n2\n")
+    os.utime(f, ns=(1, 2))
+    assert view_playground._file_stamp(f) != s1
