@@ -244,7 +244,7 @@ def render():
                   "Storage, not water level: +5 pp means storage rises by 5% of documented capacity. They estimate net "
                   "storage under historically learned operating behaviour; planned releases, operating restrictions and "
                   "downstream demands are not simulated.")
-    live, issued = st.tabs(["Generate a forecast (Models A, B, B2, C)", "Issued record (frozen Model A)"])
+    live, issued = st.tabs(["Generate a forecast (HGB, frozen v2)", "Issued record (HGB, frozen v2)"])
     with live:
         try:
             import view_forecast_v3

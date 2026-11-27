@@ -1,30 +1,42 @@
-"""Interactive part of the 30-Day Forecast page: Generate Forecast with Models A, B, B2 and C.
+"""Interactive part of the 30-Day Forecast page: Generate Forecast with the frozen v2 HGB only.
 
-Calls src.v3_service.ForecastService in-process (one shared instance per server). The service
-caches upstream data for all visitors, coalesces identical requests, rate-limits upstream fetches,
-and refuses to show CDEC-derived values on a public deployment until rights are cleared.
+The site's forecasts come from one model: HGB[S,N,C,R] · frozen v2 artifact (the "HGB SWE no weather" model,
+scikit-learn HistGradientBoostingRegressor trained on targets before 2024-01-01). It is the only model with a
+preregistered, one-shot test result. The other study models are compared, retrospectively, on the Model playground
+page; none of them makes forecasts here.
+
+Calls src.v3_service.ForecastService in-process (one shared instance per server) with model_keys=("A",), so only
+CDEC storage and snowpack are fetched: no NASA POWER, no GEFS. The service caches upstream data for all visitors,
+coalesces identical requests, rate-limits upstream fetches, and refuses to show CDEC-derived values on a public
+deployment until rights are cleared.
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
 import json
 
-import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
 import ui_components as ui
 import ui_io
+import ui_nav
 from ui_theme import PALETTE as P, axis, finish, rgba
 
-MODEL_COLORS = {"A": P["model"], "B": P["temp"], "B2": P["trend"], "C": P["rain"]}
-MODEL_INPUTS = {
-    "A": "Storage now and its 7, 30 and 60-day changes; basin snowpack (t-1), its 14-day change and anomaly; season; reservoir.",
-    "B": "Model A inputs + NASA POWER rain (7 and 30 days), temperature and humidity (30 days) at the dam, ending 7 days before the origin.",
-    "B2": "Model A inputs + the same four weather measures averaged over the upstream box instead of the dam point.",
-    "C": "Model A inputs + GEFS forecast precipitation over the upstream box for days 1-7 and 8-16 (00Z cycle of the origin Monday). Nothing represents days 17-30.",
-}
+MAIN_KEY = "A"                                      # the service's key for the frozen v2 artifact
+MAIN_NAME = "HGB (frozen v2)"
+MAIN_SPEC = "HGB[S,N,C,R] · frozen v2 artifact"
+MAIN_FACTS = [
+    ("Model", "HGB[S,N,C,R] · frozen v2 artifact (the &ldquo;HGB SWE no weather&rdquo; model)"),
+    ("Estimator", "scikit-learn HistGradientBoostingRegressor"),
+    ("Inputs", "Storage now and its 7, 30 and 60-day changes; basin snowpack on the day before the origin, its 14-day "
+               "change and its anomaly; season; reservoir. No weather and no weather forecast."),
+    ("Hyperparameters", "Frozen: learning rate 0.03, 150 iterations, no depth limit, at least 30 samples per leaf, "
+                        "L2 1.0, random state 42"),
+    ("Training data", "Targets before 2024-01-01. This is the saved artifact, not a refit; it is never retrained."),
+    ("90% range", "Symmetric seasonal offsets from the model's own historical errors; future coverage is not "
+                  "established"),
+]
 
 
 @st.cache_resource(show_spinner=False)
@@ -33,7 +45,8 @@ def service():
     from src.v3_service import ForecastService
     # The service installs hash-pinned artifacts when configured, retries a failed installation (at most once a
     # minute) instead of keeping the failure until a restart, and reports the installation status to visitors.
-    return ForecastService(artifact_installer=ensure_artifacts)
+    # Only the frozen v2 HGB runs, so NASA POWER and GEFS are never fetched.
+    return ForecastService(artifact_installer=ensure_artifacts, model_keys=(MAIN_KEY,))
 
 
 @st.cache_resource(show_spinner=False)
@@ -42,14 +55,26 @@ def record_store():
     return RecordStore()
 
 
-def _perf():
-    """Historical performance from aggregate result files (tracked, publishable)."""
-    out = {}
-    for name, p in (("dev", "results/v3/development/summary.json"), ("final", "results/v3/final/metrics.json")):
-        f = ui_io.REPO_ROOT / p
-        if f.exists():
-            out[name] = json.loads(f.read_text())
-    return out
+def track_record(root=None):
+    """The main model's frozen test results, read from tracked aggregate files (never recomputed here)."""
+    root = root or ui_io.REPO_ROOT
+    rows = []
+    p2 = root / "results/v2/final/metrics.json"
+    if p2.exists():
+        m = json.loads(p2.read_text())
+        rows.append({"Test window": "2024-2025 (v2 test, preregistered, run once)", "Rows": f"{m['test_count']:,}",
+                     "MAE, this model": f"{m['ML']:.3f} pp",
+                     "MAE, smoothed seasonal baseline": f"{m['Smoothed DOY seasonal']:.3f} pp",
+                     "90% range coverage": f"{m['interval_90_coverage']:.3f}"})
+    p3 = root / "results/v3/final/metrics.json"
+    if p3.exists():
+        m = json.loads(p3.read_text())
+        a, doy = m["mae"].get("pred_A_frozen"), m["mae"].get("base_doy")
+        if a and doy:
+            rows.append({"Test window": "2026 (v3 test, preregistered, run once)", "Rows": f"{a['n']:,}",
+                         "MAE, this model": f"{a['mae']:.3f} pp",
+                         "MAE, smoothed seasonal baseline": f"{doy['mae']:.3f} pp", "90% range coverage": "n/a"})
+    return pd.DataFrame(rows)
 
 
 def _d(s, long=True):
@@ -73,17 +98,15 @@ def endpoint_figure(r, synthetic=False, height=430):
             fig.add_trace(go.Scatter(x=after.date, y=after.storage_pct, mode="lines+markers", name="Observed after the origin (not used)",
                                      line=dict(color=P["bone"], width=1.2, dash="dot"), marker=dict(size=4),
                                      hovertemplate="%{x|%b %d, %Y}<br>%{y:.1f}%<extra></extra>"))
-    avail = [k for k, m in r["models"].items() if m.get("available")]
-    for i, k in enumerate(avail):
-        m = r["models"][k]
-        x = t + pd.Timedelta(hours=(i - (len(avail) - 1) / 2) * 40)
+    m = r["models"].get(MAIN_KEY, {})
+    if m.get("available"):
         iv = m["interval"]
         fig.add_trace(go.Scatter(
-            x=[x], y=[m["projected_pct"]], mode="markers", name=f"Model {k}: day-30 estimate and 90% range",
-            marker=dict(size=11, symbol="diamond", color=MODEL_COLORS[k], line=dict(width=1, color=P["ink"])),
+            x=[t], y=[m["projected_pct"]], mode="markers", name=f"{MAIN_NAME}: day-30 estimate and 90% range",
+            marker=dict(size=11, symbol="diamond", color=P["model"], line=dict(width=1, color=P["ink"])),
             error_y=dict(type="data", symmetric=False, array=[iv["upper_projected_pct"] - m["projected_pct"]],
-                         arrayminus=[m["projected_pct"] - iv["lower_projected_pct"]], color=MODEL_COLORS[k], thickness=2, width=6),
-            hovertemplate=f"Model {k}<br>%{{x|%b %d, %Y}}<br>%{{y:.1f}}% (90%: {iv['lower_projected_pct']:.1f} to "
+                         arrayminus=[m["projected_pct"] - iv["lower_projected_pct"]], color=P["model"], thickness=2, width=6),
+            hovertemplate=f"{MAIN_NAME}<br>%{{x|%b %d, %Y}}<br>%{{y:.1f}}% (90%: {iv['lower_projected_pct']:.1f} to "
                           f"{iv['upper_projected_pct']:.1f})<extra></extra>"))
     fig.add_shape(type="line", x0=o, x1=o, y0=0, y1=1, xref="x", yref="paper", line=dict(color=P["model"], width=1, dash="dot"))
     fig.add_annotation(x=o, y=1, xref="x", yref="paper", text="Origin", showarrow=False, xanchor="left", yanchor="top",
@@ -94,109 +117,22 @@ def endpoint_figure(r, synthetic=False, height=430):
     return fig
 
 
-def weather_figures(r):
-    figs = []
-    wh = r.get("weather_history", {})
-    o = pd.Timestamp(r["origin_date"])
-    if wh.get("dam_point"):
-        s = pd.Series(wh["dam_point"], dtype=float)
-        s.index = pd.to_datetime(s.index)
-        used = (s.index <= o - pd.Timedelta(days=7)) & (s.index >= o - pd.Timedelta(days=36))
-        fig = go.Figure(go.Bar(x=s.index, y=s.values, marker_color=[P["rain"] if u else rgba(P["silt"], 0.35) for u in used],
-                               hovertemplate="%{x|%b %d}<br>%{y:.1f} mm<extra></extra>", name="Observed rain"))
-        fig.add_annotation(xref="paper", yref="paper", x=0, y=1.08, showarrow=False, xanchor="left",
-                           text="Observed precipitation at the dam (NASA POWER). Blue: days in Model B's window (ending 7 days before the origin)",
-                           font=dict(size=11, color=P["silt"]))
-        fig = finish(fig, False, 230, margin=dict(l=56, r=12, t=40, b=36), showlegend=False)
-        fig.update_yaxes(**axis(title=dict(text="mm/day")))
-        figs.append(fig)
-    c = r["models"].get("C", {})
-    if c.get("available"):
-        v = c["gefs"]["values"]
-        fig = go.Figure(go.Bar(x=["Days 1-7", "Days 8-16", "Days 17-30"], y=[v["gefs_p_d1_7_mm"], v["gefs_p_d8_16_mm"], 0],
-                               marker_color=[P["rain"], rgba(P["rain"], 0.6), rgba(P["silt"], 0.15)],
-                               text=[f"{v['gefs_p_d1_7_mm']:.0f} mm", f"{v['gefs_p_d8_16_mm']:.0f} mm", "not forecast"],
-                               textposition="outside", hoverinfo="skip"))
-        fig.add_annotation(xref="paper", yref="paper", x=0, y=1.12, showarrow=False, xanchor="left",
-                           text=f"Forecast precipitation over the upstream area: GEFS {c['gefs']['cycle']} control run "
-                                f"(published by {c['gefs']['published_utc_max']})", font=dict(size=11, color=P["silt"]))
-        fig = finish(fig, False, 230, margin=dict(l=56, r=12, t=44, b=36), showlegend=False)
-        fig.update_yaxes(**axis(title=dict(text="mm, basin mean")))
-        figs.append(fig)
-    return figs
-
-
 def detail_table(r):
-    """Every field per model, including models that could not run and why."""
-    ob, o = r["observed"], pd.Timestamp(r["origin_date"])
-    weather_src = {
-        "A": "none (CDEC storage and snow only)",
-        "B": f"NASA POWER at the dam, window ending {(o - pd.Timedelta(days=7)).date()}",
-        "B2": f"NASA POWER over the upstream area, window ending {(o - pd.Timedelta(days=7)).date()}",
-        "C": None}
-    rows = []
-    for k in ("A", "B", "B2", "C"):
-        m = r["models"].get(k, {})
-        if k == "C":
-            g = m.get("gefs") or {}
-            weather_src["C"] = (f"NOAA GEFSv12 {g.get('cycle')}, published {g.get('published_utc_max')}, days 1-16"
-                                if g else "NOAA GEFSv12 (not available)")
-        base = {"Model": k, "Status": "ok" if m.get("available") else "unavailable: " + "; ".join(m.get("reasons", [])),
-                "Observed storage": f"{ob['storage_pct']:.1f}% ({ob['storage_af']:,.0f} AF)",
-                "Origin": r["origin_date"], "Issued (UTC)": r["issued_utc"], "Target": r["target_date"],
-                "Days remaining": f"{r['days_remaining']:.1f}", "Storage obs. used": r["origin_date"],
-                "Snow obs. used": r["snow"]["swe_date"], "Weather source": weather_src[k],
-                "Trained on targets before": m.get("training_cutoff_exclusive", "")}
-        if m.get("available"):
-            iv = m["interval"]
-            base.update({"30-day change": f"{m['change_pp']:+.2f} pp ({m['change_af']:+,.0f} AF)",
-                         "Projected": f"{m['projected_pct']:.1f}% ({m['projected_af']:,.0f} AF)",
-                         "90% range": f"{iv['lower_change_pp']:+.1f} to {iv['upper_change_pp']:+.1f} pp; "
-                                      f"{iv['lower_projected_pct']:.1f}% to {iv['upper_projected_pct']:.1f}%"})
-        else:
-            base.update({"30-day change": "", "Projected": "", "90% range": ""})
-        rows.append(base)
-    cols = ["Model", "Status", "Observed storage", "30-day change", "Projected", "90% range", "Origin", "Issued (UTC)",
-            "Target", "Days remaining", "Storage obs. used", "Snow obs. used", "Weather source", "Trained on targets before"]
-    return pd.DataFrame(rows)[cols]
-
-
-def comparison_table(r, perf):
-    """Paired comparisons only: each model against Model A (v3 refit) on the same rows."""
-    rows = []
-    dev = perf.get("dev", {}).get("all_folds", {}).get("paired", {})
-    fin = perf.get("final", {}).get("paired", {})
-
-    def pair(src, k):
-        p = src.get(f"{k} vs A")
-        if not p:
-            return "n/a" if k != "A" else "reference"
-        return f"{p[f'mae_{k}']:.2f} vs {p['mae_A']:.2f} ({p['n']:,} rows)"
-
-    for k in ("A", "B", "B2", "C"):
-        m = r["models"].get(k, {})
-        rows.append({
-            "Model": k, "Inputs": MODEL_INPUTS[k],
-            "Available now": "yes" if m.get("available") else "no: " + "; ".join(m.get("reasons", []))[:140],
-            "30-day change": ui.fmt_pp(m["change_pp"], digits=1) if m.get("available") else "",
-            "90% range": f"{m['interval']['lower_change_pp']:+.1f} to {m['interval']['upper_change_pp']:+.1f} pp" if m.get("available") else "",
-            "Trained on targets before": m.get("training_cutoff_exclusive", ""),
-            "MAE vs Model A, development WY2008-2025": pair(dev, k) if dev else "not run",
-            "MAE vs Model A, 2026 test": pair(fin, k) if fin else "not run",
-        })
-    return pd.DataFrame(rows)
-
-
-def verdict_text(perf):
-    h = perf.get("final", {}).get("hypotheses")
-    if not h:
-        return "The preregistered 2026 comparison has not been run on this deployment."
-    names = {"H1": "C better than A", "H2": "B better than A", "H3": "B2 better than B"}
-    parts = [f"{names.get(k, k)}: {v['verdict']}" for k, v in h.items()]
-    sup = [k for k, v in h.items() if v["verdict"] == "supported"]
-    tail = ("No model is shown to be more accurate than another; the differences above are within sampling noise."
-            if not sup else "Only the supported comparisons above may be read as differences in accuracy.")
-    return "Preregistered 2026 test (95% block-bootstrap intervals, 5, 9 and 13 weeks): " + "; ".join(parts) + ". " + tail
+    """Every field of the forecast, or why the model could not run."""
+    ob, m = r["observed"], r["models"].get(MAIN_KEY, {})
+    row = {"Model": MAIN_SPEC, "Status": "ok" if m.get("available") else "unavailable: " + "; ".join(m.get("reasons", [])),
+           "Observed storage": f"{ob['storage_pct']:.1f}% ({ob['storage_af']:,.0f} AF)",
+           "30-day change": "", "Projected": "", "90% range": "",
+           "Origin": r["origin_date"], "Issued (UTC)": r["issued_utc"], "Target": r["target_date"],
+           "Days remaining": f"{r['days_remaining']:.1f}", "Storage obs. used": r["origin_date"],
+           "Snow obs. used": r["snow"]["swe_date"], "Trained on targets before": m.get("training_cutoff_exclusive", "")}
+    if m.get("available"):
+        iv = m["interval"]
+        row.update({"30-day change": f"{m['change_pp']:+.2f} pp ({m['change_af']:+,.0f} AF)",
+                    "Projected": f"{m['projected_pct']:.1f}% ({m['projected_af']:,.0f} AF)",
+                    "90% range": f"{iv['lower_change_pp']:+.1f} to {iv['upper_change_pp']:+.1f} pp; "
+                                 f"{iv['lower_projected_pct']:.1f}% to {iv['upper_projected_pct']:.1f}%"})
+    return pd.DataFrame([row])
 
 
 def render_interactive(b):
@@ -214,7 +150,7 @@ def render_interactive(b):
         go_btn = st.button("Generate Forecast", type="primary", key="v3_go", use_container_width=True)
     key = f"v3_result_{sid}"
     if go_btn:
-        with st.spinner("Retrieving CDEC observations, NASA POWER weather and the GEFS forecast, then running the models"):
+        with st.spinner("Retrieving the latest CDEC storage and snowpack, then running the model"):
             try:
                 st.session_state[key] = service().forecast(sid, force_refresh=force)
                 st.session_state.pop(f"{key}_err", None)
@@ -231,10 +167,9 @@ def render_interactive(b):
     r = st.session_state.get(key)
     if r is None:
         st.markdown(f'<div class="ws-empty"><h4>Select a reservoir and press Generate Forecast</h4><p>The server retrieves '
-                    f'the latest eligible CDEC storage and snowpack, recent NASA POWER weather and the latest usable NOAA GEFS '
-                    f'forecast, then runs Models A, B, B2 and C. Sources are shared between visitors and cached until newer '
-                    f'data can exist. Deployment mode: <code>{ui.esc(deployment_mode())}</code>.</p></div>',
-                    unsafe_allow_html=True)
+                    f'the latest eligible CDEC storage and snowpack and runs {ui.esc(MAIN_SPEC)}. Sources are shared '
+                    f'between visitors and cached until newer data can exist. Deployment mode: '
+                    f'<code>{ui.esc(deployment_mode())}</code>.</p></div>', unsafe_allow_html=True)
         return
     issued = r["issued_utc"]
     st.caption(f"Last updated {issued} UTC. Sources: " + "; ".join(
@@ -247,69 +182,56 @@ def render_interactive(b):
         return
     for w in r.get("warnings", []):
         ui.callout("Data freshness", ui.esc(w), "caution")
-    avail = {k: m for k, m in r["models"].items() if m.get("available")}
+    m = r["models"].get(MAIN_KEY, {})
     ob = r["observed"]
-    cols = st.columns(1 + len(avail))
+    cols = st.columns(2)
     cols[0].metric(f"Storage on {_d(ob['date'], False)}", ui.fmt_pct(ob["storage_pct"], 1))
     cols[0].caption(f"{ui.fmt_af(ob['storage_af'])}; target {_d(r['target_date'], False)}, "
                     f"{r['days_remaining']:.1f} days after issue")
-    for c, (k, m) in zip(cols[1:], avail.items()):
-        c.metric(f"Model {k}: projected", ui.fmt_pct(m["projected_pct"], 1), ui.fmt_pp(m["change_pp"], digits=1))
-        c.caption(f"{m['change_af']:+,.0f} AF; 90%: {m['interval']['lower_projected_pct']:.1f}% to "
-                  f"{m['interval']['upper_projected_pct']:.1f}%")
-    off = {k: m for k, m in r["models"].items() if not m.get("available")}
-    if off:
-        ui.callout("Models that could not run", ui.esc("; ".join(f"Model {k}: {' '.join(m.get('reasons', []))}"
-                                                                    for k, m in off.items())), "caution")
+    if m.get("available"):
+        cols[1].metric(f"{MAIN_NAME}: projected on {_d(r['target_date'], False)}", ui.fmt_pct(m["projected_pct"], 1),
+                       ui.fmt_pp(m["change_pp"], digits=1))
+        cols[1].caption(f"{m['change_af']:+,.0f} AF; 90%: {m['interval']['lower_projected_pct']:.1f}% to "
+                        f"{m['interval']['upper_projected_pct']:.1f}%")
+    else:
+        ui.callout("The model could not run", ui.esc(" ".join(m.get("reasons", [])) or "No reason was recorded."), "caution")
     if sid == "FOL":
         ui.callout("Interval caution: Folsom", "Nominal 90% ranges covered only about 75% of Folsom outcomes in the "
                    "2024-2025 backtest. Treat Folsom ranges as too narrow.", "caution")
     ui.show_chart(endpoint_figure(r), key=f"v3_chart_{sid}")
-    st.caption("Each diamond is one model's estimate for the target date, with its own retrospectively calibrated 90% "
-               "range. No model predicts the path between the origin and day 30, so none is drawn.")
+    st.caption("The diamond is the model's estimate for the target date, with its retrospectively calibrated 90% "
+               "range. The model does not predict the path between the origin and day 30, so none is drawn.")
 
-    st.markdown("## Forecast details by model")
+    st.markdown("## Forecast details")
     ui.show_table(detail_table(r))
     st.caption("Origin = the Monday whose end-of-day storage the forecast starts from. Issued = when this forecast was "
-               "computed. Days remaining are counted from the issue time to the end of the target date (UTC). 90% ranges "
-               "are retrospectively calibrated on each model's own historical errors; their future coverage is not "
-               "established.")
+               "computed. Days remaining are counted from the issue time to the end of the target date (UTC). The 90% "
+               "range is calibrated on the model's own historical errors; its future coverage is not established.")
 
-    st.markdown("## Model comparison")
-    ui.show_table(comparison_table(r, _perf()))
-    perf = _perf()
-    ui.callout("What the comparison shows", ui.esc(verdict_text(perf)), "model")
-    st.caption("Mean absolute error in percentage points, each model against Model A (v3 refit, same features as the "
-               "frozen model) on exactly the same rows, under docs/v3/PREREGISTRATION_V3.md. Development folds include "
-               "2024-2025, which were seen earlier and are not an independent test. Extra inputs do not make a model "
-               "better. The Model A forecast shown above is the unchanged frozen v2 model (trained on targets before "
-               "2024); B, B2 and C are v3 models trained on targets before 2026.")
-    cut = {k: m.get("information_cutoff") for k, m in avail.items()}
-    if len({json.dumps(v, sort_keys=True) for v in cut.values()}) > 1:
-        ui.callout("Different information cutoffs", "These models use different information. A uses storage to the origin "
-                   "and snow to the day before. B and B2 also use weather ending 7 days before the origin. C also uses a "
-                   "weather forecast issued at 00 UTC on the origin day. They are not equivalent as-of-origin forecasts.", "model")
-
-    st.markdown("## Weather inputs")
-    figs = weather_figures(r)
-    for i, f in enumerate(figs):
-        ui.show_chart(f, key=f"v3_wx_{sid}_{i}")
-    if not figs:
-        st.caption("No weather data available for this forecast.")
+    st.markdown("## About this model")
+    ui.facts(MAIN_FACTS)
+    tr = track_record()
+    if not tr.empty:
+        ui.show_table(tr)
+        st.caption("Mean absolute error of the 30-day storage change, in percentage points of capacity, on test windows "
+                   "that were fixed in advance and scored once (docs/preregistration.md, docs/v3/PREREGISTRATION_V3.md). "
+                   "Past accuracy does not establish future accuracy; no forecast has yet been scored prospectively.")
+    ui.callout("Other models", "The other nine study models (persistence, 30-day trend, monthly and day-of-year seasonal "
+               "baselines, Ridge, LSTM, GRU, TCN and the water-balance-structured LSTM) do not make forecasts on this "
+               "site. Their past test results are on the Model playground page, for research comparison only.", "model")
+    if st.button("Open the Model playground", key="v3_to_playground"):
+        ui_nav.go("playground")
 
     st.markdown("## Data freshness")
-    gs = r.get("source_status", {}).get("gefs", {})
     ui.facts([("Forecast issued", f"{ui.esc(issued)} UTC"),
               ("Latest storage observation", _d(r["storage_last_obs_date"])),
               ("Storage used (origin)", _d(r["origin_date"])),
               ("Latest snowpack index", _d(r.get("snow_last_obs_date"))),
               ("Snowpack used", _d(r["snow"]["swe_date"])),
-              ("Weather window used (B, B2)", f"ends {_d(str((pd.Timestamp(r['origin_date']) - pd.Timedelta(days=7)).date()))}"),
-              ("Weather forecast (C)", ui.esc(f"{gs.get('cycle', 'n/a')}, published {gs.get('published_utc_max') or 'n/a'}")),
               ("Target date", f"{_d(r['target_date'])} ({r['days_remaining']:.1f} days after issue)")])
     with st.expander("Full inputs and provenance"):
-        for k, m in avail.items():
-            st.markdown(f"**Model {k}** ({ui.esc(m['version'])}, artifact `{m['artifact_sha256'][:12]}`)")
+        if m.get("available"):
+            st.markdown(f"**{ui.esc(MAIN_SPEC)}** ({ui.esc(m['version'])}, artifact `{m['artifact_sha256'][:12]}`)")
             ui.show_table(pd.DataFrame({"input": list(m["inputs"]), "value": [round(v, 4) for v in m["inputs"].values()]}))
         st.json({"sources": r.get("sources"), "source_status": r.get("source_status")}, expanded=False)
     body = json.dumps(r, indent=1, default=str).encode()

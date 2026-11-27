@@ -499,3 +499,22 @@ This branch is based on `feature/30-day-forecast` (PR #4, open, CI passing). It 
 - **Not frozen, not deployed, not on the website.**
 - **Details:** `docs/v5/RESULTS.md`.
 - **Draft prospective protocol:** `docs/v5/PROSPECTIVE_PROTOCOL_DRAFT.md`. It is not in force; adopting it is the owner's decision.
+
+### 2026-11-27: website: frozen v2 HGB is the only forecasting model, plus a retrospective Model playground (branch `web/hgb-main-playground`, not committed)
+
+Owner's request: the site's forecasts use only the HGB, and the other nine study models go in a separate testing playground. After asking for a recommendation, the owner chose the frozen v2 HGB (not HGB v5 or N4) as the main model.
+
+- **Generate Forecast** (`app/view_forecast_v3.py`):
+  - runs only HGB[S,N,C,R] · frozen v2 artifact; v3 Models B, B2 and C are no longer shown;
+  - `src/v3_service.py` gains `ForecastService(model_keys=...)`. The default is still all four, so `src/official.py` and the prospective protocol are unchanged. With `("A",)` the service never fetches NASA POWER or GEFS;
+  - no frozen file changed: v2 hashes and v3 `code_sha256` were checked;
+  - no new model bundle or secret is needed.
+- **Live check** (local, private mode, 2026-11-27 ~21:50 UTC): all six reservoirs returned `ok`. Origin 2026-11-23 (Monday), target 2026-12-23, only CDEC fetched. Example: SHA 50.0% → 53.7% (+3.72 pp). **The public URL has not been checked.**
+- **Model playground** (`app/view_playground.py`, data in `src/v5/playground.py`):
+  - shows the other nine models against the HGB on confirmation WY2016–2023 (exploratory) and on 2024–2025 and 2026 (post-hoc);
+  - reads only tracked `results/v5` aggregates: metrics, breakdowns and paired comparisons. Nothing is fitted, re-scored or tested in the app;
+  - model 6 is the frozen artifact on 2024–2025 and 2026, and the per-fold refit HGB[S,N,C,R] on confirmation;
+  - per-row replays need the private `data/v5/preds/all_predictions.parquet`. On a public deployment, the five flow-using models (Ridge[all], LSTM, GRU, TCN, N4) are withheld, because CDEC sensors 76/23 are not in `config/data_release_policy.json`.
+- **Owner decision recorded:** v4/v5 models may appear in the retrospective playground only. None makes live forecasts.
+- **Tests:** `tests/test_playground.py` (18) and updated `tests/test_forecast_page.py`. Full suite: 198 passed, 5 skipped. Contract, frozen-hash, `v3_release --check` and fixture checks all OK.
+- **Merge dependency:** the playground reads `results/v5/`, which arrives with PR #15 (stacked on PR #14). This branch is cut from `research/v5-benchmark`.

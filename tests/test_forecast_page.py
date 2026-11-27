@@ -148,8 +148,9 @@ def test_generate_forecast_button_runs_service_offline(monkeypatch, tmp_path):
     at.button(key="v3_go").click().run()
     assert not at.exception, at.exception
     t = text(at)
-    assert "Model comparison" in t and "Data freshness" in t and "Interval caution: Folsom" in t
-    assert any("Model A" in m.label for m in at.metric)
+    assert "About this model" in t and "Data freshness" in t and "Interval caution: Folsom" in t
+    assert any("HGB (frozen v2)" in m.label for m in at.metric) and len(at.metric) == 2   # storage now + the HGB only
+    assert "Model B" not in t and "Model C" not in t and "Weather inputs" not in t
     assert len(list((tmp_path / "rec").glob("*.json"))) == 1
     assert "Saved as record wsf-v3-FOL-" in t and "local disk only" in t
     at.run()                                                   # a rerun shows the note without saving again
@@ -245,7 +246,7 @@ def test_fresh_deployment_uses_latest_public_release(monkeypatch, tmp_path):
     assert ui_io.resolve_data_dir()[1] == "default"                 # private outputs win when present
 
 
-@pytest.mark.parametrize("page", ["overview", "explorer", "backtest", "research", "forecast"])
+@pytest.mark.parametrize("page", ["overview", "explorer", "backtest", "research", "forecast", "playground"])
 def test_every_page_renders_on_the_published_release_in_public_mode(monkeypatch, page):
     """The public deployment's data (newest public release) must render every page without an exception."""
     rel = sorted(ROOT.glob("public_data/watershedshift-public-data-*/ui_outputs"))
@@ -268,7 +269,8 @@ def test_every_page_renders_on_the_published_release_in_public_mode(monkeypatch,
         import ui_components as ui
         ui.inject_css()
         importlib.import_module({"overview": "view_overview", "explorer": "view_explorer", "backtest": "view_backtest",
-                                 "research": "view_research", "forecast": "view_forecast"}[name]).render()
+                                 "research": "view_research", "forecast": "view_forecast",
+                                 "playground": "view_playground"}[name]).render()
 
     at = AppTest.from_function(_render, default_timeout=60, args=(page,))
     at.run()
