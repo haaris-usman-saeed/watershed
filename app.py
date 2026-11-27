@@ -23,6 +23,7 @@ import view_backtest  # noqa: E402
 import view_explorer  # noqa: E402
 import view_forecast  # noqa: E402
 import view_overview  # noqa: E402
+import view_playground  # noqa: E402
 import view_research  # noqa: E402
 
 st.set_page_config(page_title="WatershedShift", page_icon="💧", layout="wide", initial_sidebar_state="collapsed")
@@ -36,6 +37,7 @@ pages = {
     "backtest": st.Page(view_backtest.render, title="Backtesting", url_path="backtest"),
     "research": st.Page(view_research.render, title="Model and research", url_path="research"),
     "forecast": st.Page(view_forecast.render, title="30-Day Forecast", url_path="forecast"),
+    "playground": st.Page(view_playground.render, title="Model playground", url_path="playground"),
 }
 for name, page in pages.items():
     ui_nav.register(name, page)

@@ -13,6 +13,28 @@ from ui_theme import PALETTE as P, STORAGE_SCALE, FONT_SANS, axis, finish, rgba
 HAS_MAPLIBRE = hasattr(go, "Scattermap")
 
 
+TRAJECTORY_NAME = "Straight line to the day-30 estimate (visual guide, not a predicted path)"
+TRAJECTORY_NOTE = ("The dashed line and the shaded wedge only join the storage on the origin date to the day-30 estimate "
+                   "and its 90% range, so the direction is easy to see. They are not a forecast of the path: the model "
+                   "predicts day 30 only, and real storage can rise, fall or level off in between (storms, releases, "
+                   "operating decisions). Do not read values off the line for dates before day 30.")
+
+
+def add_trajectory_guide(fig, origin, target, start, mid, lo, hi, color):
+    """Draw an illustrative straight line, and a wedge to the 90% range, from the origin's observed storage to the
+    day-30 estimate. Only the endpoints are model output; nothing in between is predicted, and the legend, an
+    in-chart label and TRAJECTORY_NOTE say so. Hover is off so no intermediate value is read as a forecast."""
+    origin, target = pd.Timestamp(origin), pd.Timestamp(target)
+    fig.add_trace(go.Scatter(x=[origin, target, target, origin], y=[start, hi, lo, start], mode="lines", fill="toself",
+                             fillcolor=rgba(color, 0.10), line=dict(width=0), hoverinfo="skip", showlegend=False,
+                             name="90% range joined to the origin (visual guide)"))
+    fig.add_trace(go.Scatter(x=[origin, target], y=[start, mid], mode="lines", name=TRAJECTORY_NAME,
+                             line=dict(color=color, width=2, dash="dash"), hoverinfo="skip"))
+    fig.add_annotation(x=origin + (target - origin) / 2, y=(start + mid) / 2, text="guide only, not a forecast path",
+                       showarrow=False, yshift=14, font=dict(size=10, color=P["silt"]))
+    return fig
+
+
 def _date_str(d):
     return pd.Timestamp(d).strftime("%Y-%m-%d")
 

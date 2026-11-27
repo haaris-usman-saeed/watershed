@@ -24,6 +24,8 @@ Design
 - Model artifacts: when the app passes an installer (src.v3_artifacts.ensure_artifacts), a failed
   installation is retried at most once per ARTIFACT_RETRY_S instead of lasting until a restart, and the
   installer's status is shown in the refusal.
+- Model selection: ForecastService(model_keys=...) runs only the named models (default all four). With
+  model_keys=("A",), as on the website's Generate Forecast page, NASA POWER and GEFS are never fetched.
 """
 import argparse
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
@@ -51,6 +53,7 @@ POWER_WAIT_S = float(os.environ.get("WATERSHED_POWER_WAIT_S", "45"))   # longest
 POWER_RETRY_AFTER_FAILURE_S = 300        # after a failed POWER download, wait this long before trying again
 POWER_FETCH_DEADLINE_S = 180             # a POWER download starts no new request after this many seconds
 ARTIFACT_RETRY_S = 60                    # a failed model installation is retried at most this often
+ALL_MODEL_KEYS = ("A", "B", "B2", "C")
 MODEL_LABELS = {"A": "Model A: frozen v2 (storage, snow, season)",
                 "B": "Model B: + recent weather at the dam (NASA POWER)",
                 "B2": "Model B2: + recent weather over the upstream area (NASA POWER)",
@@ -205,7 +208,11 @@ def days_remaining(target_date, issued_utc):
 
 class ForecastService:
     def __init__(self, cache_dir=None, art_v3=ROOT / "models" / "v3", fetchers=None, clock=utcnow,
-                 artifact_installer=None, power_wait_s=None, monotonic=time.monotonic):
+                 artifact_installer=None, power_wait_s=None, monotonic=time.monotonic, model_keys=ALL_MODEL_KEYS):
+        unknown = [k for k in model_keys if k not in ALL_MODEL_KEYS]
+        if unknown or "A" not in model_keys:
+            raise ValueError(f"model_keys must include 'A' and be drawn from {ALL_MODEL_KEYS}; got {tuple(model_keys)}")
+        self.model_keys = tuple(k for k in ALL_MODEL_KEYS if k in model_keys)   # canonical order
         self.cache = SourceCache(cache_dir or os.environ.get("WATERSHED_CACHE_DIR", ROOT / "data" / "v3" / "cache"))
         self.art_v3 = Path(art_v3)
         self.clock = clock
@@ -344,13 +351,16 @@ class ForecastService:
             else:
                 why += ": " + loaded["A"]["error"]
             return self._failed(station, issued, why)
-        power_job = self._power_job(issued, force_refresh)    # runs alongside the CDEC refresh
+        needs_power = any(k in self.model_keys for k in ("B", "B2"))
+        power_job = self._power_job(issued, force_refresh) if needs_power else None   # runs alongside the CDEC refresh
         power_deadline = self._mono() + self.power_wait_s
         try:
             cdec_entry, cdec_cached = self.cdec(issued, force_refresh)
             status["cdec"] = {"ok": True, "cached": cdec_cached, "retrieved_utc": cdec_entry["written_utc"]}
         except (SourceError, RateLimited, RuntimeError) as exc:
             return self._failed(station, issued, f"CDEC refresh failed: {exc}")
+        if power_job is None:
+            return self._infer(station, issued, cdec_entry, None, status, warnings)
         try:
             pw_entry, pw_cached = power_job.result(timeout=max(0.0, power_deadline - self._mono()))
             status["power"] = {"ok": True, "cached": pw_cached, "retrieved_utc": pw_entry["written_utc"]}
@@ -434,14 +444,15 @@ class ForecastService:
                                                                  if "rain_mm" in d else {})
         cycle = origin.date()
         gefs = None
-        try:
-            ge, ge_cached = self.gefs(cycle)
-            gefs = ge["payload"]
-            status["gefs"] = {"ok": bool(gefs.get("complete")), "cached": ge_cached, "cycle": f"{cycle}T00Z",
-                              "published_utc_max": gefs.get("published_utc_max"), "note": gefs.get("note")}
-        except (SourceError, RateLimited, RuntimeError) as exc:
-            status["gefs"] = {"ok": False, "error": str(exc)}
-        for k in ("A", "B", "B2", "C"):
+        if "C" in self.model_keys:
+            try:
+                ge, ge_cached = self.gefs(cycle)
+                gefs = ge["payload"]
+                status["gefs"] = {"ok": bool(gefs.get("complete")), "cached": ge_cached, "cycle": f"{cycle}T00Z",
+                                  "published_utc_max": gefs.get("published_utc_max"), "note": gefs.get("note")}
+            except (SourceError, RateLimited, RuntimeError) as exc:
+                status["gefs"] = {"ok": False, "error": str(exc)}
+        for k in self.model_keys:
             rec["models"][k] = self._score(k, models.get(k, {}), station, origin, feats_a, weather, gefs, issued, cap, s_af, season_of(origin), swe)
         return rec
 

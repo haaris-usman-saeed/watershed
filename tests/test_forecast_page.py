@@ -148,8 +148,9 @@ def test_generate_forecast_button_runs_service_offline(monkeypatch, tmp_path):
     at.button(key="v3_go").click().run()
     assert not at.exception, at.exception
     t = text(at)
-    assert "Model comparison" in t and "Data freshness" in t and "Interval caution: Folsom" in t
-    assert any("Model A" in m.label for m in at.metric)
+    assert "About this model" in t and "Data freshness" in t and "Interval caution: Folsom" in t
+    assert any("HGB (frozen v2)" in m.label for m in at.metric) and len(at.metric) == 2   # storage now + the HGB only
+    assert "Model B" not in t and "Model C" not in t and "Weather inputs" not in t
     assert len(list((tmp_path / "rec").glob("*.json"))) == 1
     assert "Saved as record wsf-v3-FOL-" in t and "local disk only" in t
     at.run()                                                   # a rerun shows the note without saving again
@@ -245,7 +246,7 @@ def test_fresh_deployment_uses_latest_public_release(monkeypatch, tmp_path):
     assert ui_io.resolve_data_dir()[1] == "default"                 # private outputs win when present
 
 
-@pytest.mark.parametrize("page", ["overview", "explorer", "backtest", "research", "forecast"])
+@pytest.mark.parametrize("page", ["overview", "explorer", "backtest", "research", "forecast", "playground"])
 def test_every_page_renders_on_the_published_release_in_public_mode(monkeypatch, page):
     """The public deployment's data (newest public release) must render every page without an exception."""
     rel = sorted(ROOT.glob("public_data/watershedshift-public-data-*/ui_outputs"))
@@ -268,8 +269,66 @@ def test_every_page_renders_on_the_published_release_in_public_mode(monkeypatch,
         import ui_components as ui
         ui.inject_css()
         importlib.import_module({"overview": "view_overview", "explorer": "view_explorer", "backtest": "view_backtest",
-                                 "research": "view_research", "forecast": "view_forecast"}[name]).render()
+                                 "research": "view_research", "forecast": "view_forecast",
+                                 "playground": "view_playground"}[name]).render()
 
     at = AppTest.from_function(_render, default_timeout=60, args=(page,))
     at.run()
     assert not at.exception, at.exception
+
+
+def _guide_traces(fig):
+    from ui_charts import TRAJECTORY_NAME
+    return [tr for tr in fig.data if tr.name == TRAJECTORY_NAME]
+
+
+def test_generate_forecast_chart_draws_a_labelled_straight_line_guide(tmp_path):
+    import sys
+    sys.path.insert(0, str(ROOT / "app"))
+    import pandas as pd
+    import view_forecast_v3
+    from tests.test_v3 import NOW, service as synthetic_service
+    r = synthetic_service(tmp_path, NOW).forecast("FOL")
+    fig = view_forecast_v3.endpoint_figure(r)
+    (line,) = _guide_traces(fig)
+    a = r["models"]["A"]
+    assert [pd.Timestamp(x) for x in line.x] == [pd.Timestamp(r["origin_date"]), pd.Timestamp(r["target_date"])]
+    assert list(line.y) == pytest.approx([r["observed"]["storage_pct"], a["projected_pct"]])
+    assert line.line.dash == "dash" and line.hoverinfo == "skip"          # no in-between value can be hovered as a forecast
+    assert "not a predicted path" in line.name
+    assert any("not a forecast path" in (an.text or "") for an in fig.layout.annotations)
+    wedge = [tr for tr in fig.data if tr.fill == "toself"]
+    assert len(wedge) == 1 and list(wedge[0].y)[1:3] == pytest.approx(
+        [a["interval"]["upper_projected_pct"], a["interval"]["lower_projected_pct"]])
+
+
+def test_issued_record_chart_draws_the_same_guide():
+    import json
+    import sys
+    sys.path.insert(0, str(ROOT / "app"))
+    import view_forecast
+    snap = json.loads((ROOT / "app/sample_data/forecast_snapshot.json").read_text())
+    r = snap["stations"][0]
+    for units, y0, mid in (("pct", r["observed"]["storage_pct"], r["forecast"]["projected_pct"]),
+                           ("af", r["observed"]["storage_af"], r["forecast"]["projected_af"])):
+        (line,) = _guide_traces(view_forecast.forecast_figure(r, units, synthetic=True))
+        assert list(line.y) == pytest.approx([y0, mid])
+
+
+def test_generate_forecast_page_warns_the_line_is_only_a_guide(monkeypatch, tmp_path):
+    import sys
+    sys.path.insert(0, str(ROOT / "app"))
+    import view_forecast_v3
+    from tests.test_v3 import NOW, service as synthetic_service
+    from src.v3_service import RecordStore
+    monkeypatch.setattr(view_forecast_v3, "service", lambda: synthetic_service(tmp_path, NOW))
+    monkeypatch.setattr(view_forecast_v3, "record_store", lambda: RecordStore(root=tmp_path / "rec"))
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setenv("WATERSHED_DATA_DIR", str(ROOT / "app/sample_data"))
+    at = AppTest.from_function(_interactive, default_timeout=60)
+    at.run()
+    at.button_group(key="v3_station").set_value("FOL").run()     # the synthetic CDEC payload has Folsom only
+    at.button(key="v3_go").click().run()
+    assert not at.exception, at.exception
+    t = text(at)
+    assert "The dashed line is a guide, not a forecast path" in t and "predicts day 30 only" in t
