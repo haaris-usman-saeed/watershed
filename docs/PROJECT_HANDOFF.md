@@ -1,6 +1,6 @@
 # WatershedShift: project handoff
 
-**Last verified:** 2026-11-27, against `main` at `a29b876` (after PRs #13, #14, #15 and #16). Before that: 2026-11-24 against `1accaa6` (after PRs #7, #10, #11, #8, #12 and #9). The first version was a read-only recovery review on 2026-11-23 against `0063cc0`: nothing was retrained, re-evaluated or republished.
+**Last verified:** 2026-11-27, against `main` at `a29b876` (after PRs #13, #14, #15 and #16). Before that: 2026-11-24 against `1accaa6` (after PRs #7, #10, #11, #8, #12 and #9). The public website (https://watershed-lwe3carmkq2mgurch5jurm.streamlit.app) was checked on 2026-11-27 (section 9). The first version was a read-only recovery review on 2026-11-23 against `0063cc0`: nothing was retrained, re-evaluated or republished.
 
 This document holds everything needed to take over the project without reconstructing it from the history.
 - Rules for agents are in [CLAUDE.md](../CLAUDE.md).
@@ -89,7 +89,7 @@ Notes on these results:
 | Issued forecast records | 2 records, both unaltered | Local and public copies match `docs/v3/issued_forecast_ledger.jsonl` |
 | Public data releases | 2 versions, both intact | `python -m src.v3_release --check` |
 | Model bundle | Uploaded as a **pre-release** | Tag `models-2026-11-22`; GitHub's digest equals the pinned SHA-256; publicly downloadable |
-| Public website | **Unverified** | No public URL is recorded anywhere in the repository. The acceptance check has not been run, either before or after PR #16 changed the pages. |
+| Public website | **Checked 2026-11-27, about 23:30 UTC**, at https://watershed-lwe3carmkq2mgurch5jurm.streamlit.app. It serves PR #16's pages. Generate Forecast worked for all six reservoirs, and the Model playground renders. Replays need PR #18 | Section 9; STATUS.md 2026-11-27 |
 | Website forecast model | Generate Forecast runs only HGB[S,N,C,R] · frozen v2 artifact (owner decision 2026-11-27, PR #16). v3 Models B, B2 and C are no longer shown on the site; `src/official.py` still issues all four | `app/view_forecast_v3.py`, `ForecastService(model_keys=("A",))` |
 | Model playground | New page (PR #16): the other nine study models against the HGB on past windows only, read from tracked `results/v5` aggregates. Per-row replays read the tracked export `results/v5/playground/retro_predictions.csv` (no flow, weather or snow values) | `app/view_playground.py`, `src/v5/playground.py` |
 | v4 N4 and v5 benchmark | Merged as research (PRs #14, #15); nothing frozen, nothing makes live forecasts. v5 results on 2024–2025 and 2026 are post-hoc | `docs/v4/RESULTS_N4.md`, `docs/v5/RESULTS.md` |
@@ -285,8 +285,18 @@ Since PR #16 the website creates the service with `model_keys=("A",)`: only step
 
 ## 9. Deployment
 
-**Status: unverified.**
-- No public URL is recorded in the repository, the GitHub homepage field or GitHub deployments.
+**Status: checked on the public URL, 2026-11-27, about 23:30 UTC.**
+- URL: https://watershed-lwe3carmkq2mgurch5jurm.streamlit.app (Streamlit Community Cloud, deployment mode `public`; the README links to it).
+- Generate Forecast (frozen v2 HGB only) gave origin 2026-11-23 → target 2026-12-23, CDEC as the only source, for all six reservoirs:
+  - SHA: 50.0 → 53.7%;
+  - FOL: 38.3 → 44.2%, with the Folsom interval caution shown;
+  - NML: 63.4 → 65.3%;
+  - ORO: 42.3 → 45.4%;
+  - EXC: 49.0 → 51.4%;
+  - DNP: 72.8 → 74.7%.
+- A repeat press showed "(cached)". On a 375 px phone width the cards stack.
+- The Model playground renders its tables and charts. Per-row replays show "not available" until PR #18 is merged and redeployed.
+- Not checked: the app's logs and settings, and whether forecast records persist (the page reports where each record went).
 - The only end-to-end run was the previous engineer's local, data-free, public-mode deployment with the bundle served from localhost (STATUS.md, 2026-11-22). That run produced forecasts with all four models and rendered all five pages.
 
 **Intended settings (Streamlit Community Cloud)**
@@ -375,7 +385,7 @@ The docs-consistency PR (2026-11-24) fixed the stale publication and deployment 
 
 ## 13. Priorities
 
-1. **Verify the deployment.** Needs the public URL from the owner. Run the §9 acceptance check for all six reservoirs and the Model playground, and record the result. Fix only deployment problems; never retrain to fix them.
+1. **Verify the deployment:** done 2026-11-27 (§9). Re-run the playground part after PR #18 is merged and redeployed. Fix only deployment problems; never retrain to fix them.
 2. **Documentation consistency:** done by the docs-consistency PR (section 12). The UI strings remain, pending the owner.
 3. **Make forecasting resilient:** bugs 1, 2 and 4 are fixed (PR #8). Still open: bug 3 (shared rate limit), bugs 6 and 7, and a documented table of which models are available for each failure.
 4. **Prospective evaluation:**
@@ -390,7 +400,7 @@ The docs-consistency PR (2026-11-24) fixed the stale publication and deployment 
 
 ## 14. Owner-only actions and missing items
 
-- Public Streamlit URL, plus access to the app's logs or settings (or screenshots of them).
+- Access to the Streamlit app's logs or settings, or screenshots of them. The URL is recorded in section 9.
 - The written CDEC/DWR/operator permission, archived under `docs/permissions/` (sender, date, scope, conditions), covering storage and snow (§7) and inflow and outflow (§8). If it has conditions, update the policy and attribution text to match.
 - Licence choice for the code and the data, and the author list for `CITATION.cff`.
 - Persistent forecast records: create the GitHub records repository, protect its branch, and add a fine-grained token limited to it to the Streamlit secrets (`docs/v3/DEPLOYMENT.md`, "Persistent records in a GitHub repository").

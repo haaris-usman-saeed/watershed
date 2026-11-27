@@ -547,3 +547,15 @@ Owner's request: the site's forecasts use only the HGB, and the other nine study
 - **Faithfulness check:** every model's MAE recomputed from the file equals the tracked metric to within 2e-4.
 - **Playground:** reads the tracked file first, so replays work on a deployment without private data. The policy gate still withholds any model whose sources are not cleared.
 - **Unchanged:** no model, frozen file, issued record or public release changed. `src/v5/flows_ext.py` and `src/v4/flows.py` still say in their docstrings that flows are not covered by the policy. They are left as written because the v5 manifests hash `src/v5` code.
+
+### 2026-11-27: public website checked; README links to it (branch `web/playground-replays`)
+
+- **URL (from the owner):** https://watershed-lwe3carmkq2mgurch5jurm.streamlit.app. It is now the first line of `README.md`.
+- **Acceptance check** (`docs/v3/LAUNCH_AND_MERGE.md` §4), run in the built-in browser at about 23:30 UTC:
+  - the deployed app serves PR #16's pages (HGB-only Generate Forecast, Model playground, straight-line guide) in deployment mode `public`;
+  - all six reservoirs: origin 2026-11-23 (a Monday), target 2026-12-23, CDEC ok;
+  - SHA +3.7 pp, FOL +5.9 pp (Folsom caution shown), NML +1.9 pp, ORO +3.1 pp, EXC +2.4 pp, DNP +1.9 pp. These match the local run earlier the same day;
+  - a repeat press showed "(cached)";
+  - the phone layout (375 px) stacks the cards;
+  - the Model playground renders. Replays show "not available" until PR #18 is merged and redeployed.
+- **Not checked:** app logs and settings, and whether forecast records persist on the host.
