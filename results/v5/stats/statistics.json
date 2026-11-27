@@ -1,0 +1,3974 @@
+{
+ "family_F": {
+  "P1": {
+   "description": "HGB v5 vs HGB[S,N,C,R] (existing HGB primary configuration, per-fold refit)",
+   "weights": {
+    "HGB-V5": 1,
+    "B-HGB-SNCR": -1
+   },
+   "estimate": -0.08555620765195071,
+   "p_max": 0.29685157421289354,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.08555620765195071,
+     "ci95_low": -0.2255389310407551,
+     "ci95_high": 0.04960775713510213,
+     "share_below_zero": 0.895,
+     "p_two_sided": 0.2108945527236382,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.08555620765195071,
+     "ci95_low": -0.24526824865134556,
+     "ci95_high": 0.05541412359394056,
+     "share_below_zero": 0.8825,
+     "p_two_sided": 0.23588205897051473,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.08555620765195071,
+     "ci95_low": -0.25606151295720664,
+     "ci95_high": 0.06884003158349683,
+     "share_below_zero": 0.852,
+     "p_two_sided": 0.29685157421289354,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "P2": {
+   "description": "Ridge competitiveness under identical information: [Ridge[all] - HGB v5] - [Ridge[S,C,R] - HGB[S,C,R]]",
+   "weights": {
+    "A-RIDGE": 1,
+    "HGB-V5": -1,
+    "B-RIDGE-SCR": -1,
+    "B-HGB-SCR": 1
+   },
+   "estimate": 0.05093436265757667,
+   "p_max": 0.769615192403798,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.05093436265757667,
+     "ci95_low": -0.19006693477018677,
+     "ci95_high": 0.28658784496115347,
+     "share_below_zero": 0.3255,
+     "p_two_sided": 0.6516741629185407,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.05093436265757667,
+     "ci95_low": -0.20028895833677915,
+     "ci95_high": 0.29873967921875855,
+     "share_below_zero": 0.345,
+     "p_two_sided": 0.6906546726636682,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.05093436265757667,
+     "ci95_low": -0.1926458192493081,
+     "ci95_high": 0.30621016127886225,
+     "share_below_zero": 0.3845,
+     "p_two_sided": 0.769615192403798,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "P3": {
+   "description": "LSTM [all] vs HGB v5",
+   "weights": {
+    "A-N1": 1,
+    "HGB-V5": -1
+   },
+   "estimate": 0.07118285228272869,
+   "p_max": 0.49775112443778113,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.07118285228272869,
+     "ci95_low": -0.10407265897936016,
+     "ci95_high": 0.22290609872478356,
+     "share_below_zero": 0.199,
+     "p_two_sided": 0.3988005997001499,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.07118285228272869,
+     "ci95_low": -0.12001129352967443,
+     "ci95_high": 0.24569408361355857,
+     "share_below_zero": 0.221,
+     "p_two_sided": 0.4427786106946527,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.07118285228272869,
+     "ci95_low": -0.12555743398896646,
+     "ci95_high": 0.24268168015736055,
+     "share_below_zero": 0.2485,
+     "p_two_sided": 0.49775112443778113,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "P4": {
+   "description": "GRU [all] vs HGB v5",
+   "weights": {
+    "A-N2": 1,
+    "HGB-V5": -1
+   },
+   "estimate": -0.007097848779984428,
+   "p_max": 0.9405297351324338,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.007097848779984428,
+     "ci95_low": -0.17654401039123427,
+     "ci95_high": 0.14876947847284683,
+     "share_below_zero": 0.53,
+     "p_two_sided": 0.9405297351324338,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.007097848779984428,
+     "ci95_low": -0.20561501477043648,
+     "ci95_high": 0.16661254699321595,
+     "share_below_zero": 0.54,
+     "p_two_sided": 0.9205397301349325,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.007097848779984428,
+     "ci95_low": -0.22277190068359215,
+     "ci95_high": 0.17975284076019793,
+     "share_below_zero": 0.537,
+     "p_two_sided": 0.9265367316341829,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "P5": {
+   "description": "TCN [all] vs HGB v5",
+   "weights": {
+    "A-N3": 1,
+    "HGB-V5": -1
+   },
+   "estimate": 0.2314613084706143,
+   "p_max": 0.03798100949525238,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": 0.2314613084706143,
+     "ci95_low": 0.022907876162814124,
+     "ci95_high": 0.4143955653170256,
+     "share_below_zero": 0.0115,
+     "p_two_sided": 0.0239880059970015,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.2314613084706143,
+     "ci95_low": 0.021611438716538325,
+     "ci95_high": 0.4323011078238078,
+     "share_below_zero": 0.0185,
+     "p_two_sided": 0.03798100949525238,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.2314613084706143,
+     "ci95_low": 0.025950747385726336,
+     "ci95_high": 0.4284568323985595,
+     "share_below_zero": 0.016,
+     "p_two_sided": 0.03298350824587706,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "p_holm": 0.23788105947026486,
+   "verdict": "not established"
+  },
+  "P6": {
+   "description": "N4 wb_noaux [all] vs HGB v5",
+   "weights": {
+    "A-N4": 1,
+    "HGB-V5": -1
+   },
+   "estimate": -0.09323657766527216,
+   "p_max": 0.31784107946026985,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.09323657766527216,
+     "ci95_low": -0.27095272748482746,
+     "ci95_high": 0.07032520166487173,
+     "share_below_zero": 0.869,
+     "p_two_sided": 0.26286856571714146,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.09323657766527216,
+     "ci95_low": -0.2924221705927601,
+     "ci95_high": 0.07793593587840336,
+     "share_below_zero": 0.849,
+     "p_two_sided": 0.3028485757121439,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.09323657766527216,
+     "ci95_low": -0.2938055679591431,
+     "ci95_high": 0.08850720207467098,
+     "share_below_zero": 0.8415,
+     "p_two_sided": 0.31784107946026985,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "P7": {
+   "description": "HGB v5 (all variables) vs HGB[S,C,R] (storage, calendar, reservoir only)",
+   "weights": {
+    "HGB-V5": 1,
+    "B-HGB-SCR": -1
+   },
+   "estimate": -0.22577564046757903,
+   "p_max": 0.004997501249375313,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -0.22577564046757903,
+     "ci95_low": -0.3729787056748384,
+     "ci95_high": -0.08142667879173185,
+     "share_below_zero": 0.9985,
+     "p_two_sided": 0.00399800099950025,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.22577564046757903,
+     "ci95_low": -0.3819974620314556,
+     "ci95_high": -0.07964292933252838,
+     "share_below_zero": 0.998,
+     "p_two_sided": 0.004997501249375313,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.22577564046757903,
+     "ci95_low": -0.3872296359969857,
+     "ci95_high": -0.07411160282907092,
+     "share_below_zero": 0.998,
+     "p_two_sided": 0.004997501249375313,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "p_holm": 0.0399800099950025,
+   "verdict": "supported: first better"
+  },
+  "P8": {
+   "description": "Water-balance structure: N4 wb_noaux [all] vs N4 direct [all]",
+   "weights": {
+    "A-N4": 1,
+    "A-N4-DIRECT": -1
+   },
+   "estimate": -0.08068821252534653,
+   "p_max": 0.03398300849575212,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -0.08068821252534653,
+     "ci95_low": -0.15009016585130225,
+     "ci95_high": -0.013981674205973673,
+     "share_below_zero": 0.993,
+     "p_two_sided": 0.014992503748125937,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.08068821252534653,
+     "ci95_low": -0.1534848897475438,
+     "ci95_high": -0.01223603961387896,
+     "share_below_zero": 0.988,
+     "p_two_sided": 0.02498750624687656,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.08068821252534653,
+     "ci95_low": -0.1555123876117016,
+     "ci95_high": -0.009488160699380395,
+     "share_below_zero": 0.9835,
+     "p_two_sided": 0.03398300849575212,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "p_holm": 0.23788105947026486,
+   "verdict": "not established"
+  }
+ },
+ "family_T": {
+  "T1": {
+   "description": "tuned HGB v5 vs HGB[S,N,C,R] (frozen reference)",
+   "weights": {
+    "T-HGB-V5": 1,
+    "B-HGB-SNCR": -1
+   },
+   "estimate": -0.0920646854313909,
+   "p_max": 0.37181409295352325,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.0920646854313909,
+     "ci95_low": -0.25880703894168755,
+     "ci95_high": 0.07051864549372287,
+     "share_below_zero": 0.8645,
+     "p_two_sided": 0.271864067966017,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.0920646854313909,
+     "ci95_low": -0.28456731321982714,
+     "ci95_high": 0.09678914255424999,
+     "share_below_zero": 0.8485,
+     "p_two_sided": 0.303848075962019,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.0920646854313909,
+     "ci95_low": -0.3030408101272793,
+     "ci95_high": 0.10944069472616677,
+     "share_below_zero": 0.8145,
+     "p_two_sided": 0.37181409295352325,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "T2": {
+   "description": "tuned Ridge[all] vs tuned HGB v5",
+   "weights": {
+    "T-RIDGE": 1,
+    "T-HGB-V5": -1
+   },
+   "estimate": 0.6522943090414501,
+   "p_max": 0.0009995002498750624,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": 0.6522943090414501,
+     "ci95_low": 0.37250224855684166,
+     "ci95_high": 0.9188194283191309,
+     "share_below_zero": 0.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.6522943090414501,
+     "ci95_low": 0.33710066943069933,
+     "ci95_high": 0.959309959243599,
+     "share_below_zero": 0.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.6522943090414501,
+     "ci95_low": 0.3249414636612458,
+     "ci95_high": 0.9679359506582205,
+     "share_below_zero": 0.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "p_holm": 0.005997001499250375,
+   "verdict": "supported: second better"
+  },
+  "T3": {
+   "description": "tuned LSTM [all] vs tuned HGB v5",
+   "weights": {
+    "T-N1": 1,
+    "T-HGB-V5": -1
+   },
+   "estimate": 0.043822901926117375,
+   "p_max": 0.6846576711644178,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.043822901926117375,
+     "ci95_low": -0.14110393223596468,
+     "ci95_high": 0.20586956226153288,
+     "share_below_zero": 0.2935,
+     "p_two_sided": 0.5877061469265368,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.043822901926117375,
+     "ci95_low": -0.16819920128785165,
+     "ci95_high": 0.2228258292452653,
+     "share_below_zero": 0.321,
+     "p_two_sided": 0.6426786606696652,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.043822901926117375,
+     "ci95_low": -0.18778828963618305,
+     "ci95_high": 0.23376493032033047,
+     "share_below_zero": 0.342,
+     "p_two_sided": 0.6846576711644178,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "T4": {
+   "description": "tuned GRU [all] vs tuned HGB v5",
+   "weights": {
+    "T-N2": 1,
+    "T-HGB-V5": -1
+   },
+   "estimate": 0.04384281417305047,
+   "p_max": 0.7116441779110445,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.04384281417305047,
+     "ci95_low": -0.15343707227504594,
+     "ci95_high": 0.2169901200443236,
+     "share_below_zero": 0.329,
+     "p_two_sided": 0.6586706646676662,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.04384281417305047,
+     "ci95_low": -0.18987553105554872,
+     "ci95_high": 0.23641451038147074,
+     "share_below_zero": 0.3245,
+     "p_two_sided": 0.6496751624187906,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.04384281417305047,
+     "ci95_low": -0.19895415397962196,
+     "ci95_high": 0.24350552176199688,
+     "share_below_zero": 0.3555,
+     "p_two_sided": 0.7116441779110445,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "T5": {
+   "description": "tuned TCN [all] vs tuned HGB v5",
+   "weights": {
+    "T-N3": 1,
+    "T-HGB-V5": -1
+   },
+   "estimate": 0.2554866659813899,
+   "p_max": 0.06996501749125437,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.2554866659813899,
+     "ci95_low": 0.0056202580542939595,
+     "ci95_high": 0.4876110687637795,
+     "share_below_zero": 0.0215,
+     "p_two_sided": 0.04397801099450275,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.2554866659813899,
+     "ci95_low": -0.01355190648761022,
+     "ci95_high": 0.5162071721878562,
+     "share_below_zero": 0.0345,
+     "p_two_sided": 0.06996501749125437,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.2554866659813899,
+     "ci95_low": -0.02110562125457146,
+     "ci95_high": 0.5362218638972877,
+     "share_below_zero": 0.0325,
+     "p_two_sided": 0.06596701649175413,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "p_holm": 0.3498250874562719,
+   "verdict": "not established"
+  },
+  "T6": {
+   "description": "tuned N4 [all] vs tuned HGB v5",
+   "weights": {
+    "T-N4": 1,
+    "T-HGB-V5": -1
+   },
+   "estimate": -0.08672809988583197,
+   "p_max": 0.3778110944527736,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.08672809988583197,
+     "ci95_low": -0.2819785193599329,
+     "ci95_high": 0.07894855687077165,
+     "share_below_zero": 0.8335,
+     "p_two_sided": 0.33383308345827084,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.08672809988583197,
+     "ci95_low": -0.3072653241642365,
+     "ci95_high": 0.09712309116789807,
+     "share_below_zero": 0.8115,
+     "p_two_sided": 0.3778110944527736,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.08672809988583197,
+     "ci95_low": -0.3208564323469755,
+     "ci95_high": 0.10610631467748796,
+     "share_below_zero": 0.813,
+     "p_two_sided": 0.3748125937031484,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  }
+ },
+ "secondary": {
+  "B-HGB-SWdCR vs B-HGB-SNCR": {
+   "description": "HGB[S,Wd,C,R] vs HGB[S,N,C,R]",
+   "weights": {
+    "B-HGB-SWdCR": 1,
+    "B-HGB-SNCR": -1
+   },
+   "estimate": 0.0716447677676153,
+   "p_max": 0.271864067966017,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.0716447677676153,
+     "ci95_low": -0.04379564294355191,
+     "ci95_high": 0.1866835950131767,
+     "share_below_zero": 0.123,
+     "p_two_sided": 0.24687656171914044,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.0716447677676153,
+     "ci95_low": -0.05114374032784615,
+     "ci95_high": 0.1958823210924893,
+     "share_below_zero": 0.1265,
+     "p_two_sided": 0.2538730634682659,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.0716447677676153,
+     "ci95_low": -0.04875547246300088,
+     "ci95_high": 0.20250275084449035,
+     "share_below_zero": 0.1355,
+     "p_two_sided": 0.271864067966017,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "B-HGB-SCR vs B-HGB-SNCR": {
+   "description": "HGB[S,C,R] vs HGB[S,N,C,R]",
+   "weights": {
+    "B-HGB-SCR": 1,
+    "B-HGB-SNCR": -1
+   },
+   "estimate": 0.14021943281562832,
+   "p_max": 0.09895052473763119,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.14021943281562832,
+     "ci95_low": -0.01120739898444317,
+     "ci95_high": 0.27763287260637587,
+     "share_below_zero": 0.0325,
+     "p_two_sided": 0.06596701649175413,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.14021943281562832,
+     "ci95_low": -0.01684986914165616,
+     "ci95_high": 0.2814124685941673,
+     "share_below_zero": 0.043,
+     "p_two_sided": 0.08695652173913043,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.14021943281562832,
+     "ci95_low": -0.03043754965716344,
+     "ci95_high": 0.2892213921555168,
+     "share_below_zero": 0.049,
+     "p_two_sided": 0.09895052473763119,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "B-HGB-SNWdCR vs B-HGB-SNCR": {
+   "description": "HGB[S,N,Wd,C,R] vs HGB[S,N,C,R]",
+   "weights": {
+    "B-HGB-SNWdCR": 1,
+    "B-HGB-SNCR": -1
+   },
+   "estimate": 0.008267083602370384,
+   "p_max": 0.7486256871564217,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.008267083602370384,
+     "ci95_low": -0.03931955584987749,
+     "ci95_high": 0.059433352045633846,
+     "share_below_zero": 0.374,
+     "p_two_sided": 0.7486256871564217,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.008267083602370384,
+     "ci95_low": -0.03939897142055031,
+     "ci95_high": 0.05735330183758616,
+     "share_below_zero": 0.352,
+     "p_two_sided": 0.704647676161919,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.008267083602370384,
+     "ci95_low": -0.04037191379421219,
+     "ci95_high": 0.0617671583659902,
+     "share_below_zero": 0.336,
+     "p_two_sided": 0.672663668165917,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "B-HGB-SNWuCR vs B-HGB-SNCR": {
+   "description": "HGB[S,N,Wu,C,R] vs HGB[S,N,C,R]",
+   "weights": {
+    "B-HGB-SNWuCR": 1,
+    "B-HGB-SNCR": -1
+   },
+   "estimate": 0.014250373015974205,
+   "p_max": 0.6676661669165417,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.014250373015974205,
+     "ci95_low": -0.04151731907069608,
+     "ci95_high": 0.07363800293922496,
+     "share_below_zero": 0.302,
+     "p_two_sided": 0.6046976511744128,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.014250373015974205,
+     "ci95_low": -0.042678728785242856,
+     "ci95_high": 0.07304687576331384,
+     "share_below_zero": 0.305,
+     "p_two_sided": 0.6106946526736632,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.014250373015974205,
+     "ci95_low": -0.04524903445215943,
+     "ci95_high": 0.0726606749909782,
+     "share_below_zero": 0.3335,
+     "p_two_sided": 0.6676661669165417,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "B-HGB-SNGCR vs B-HGB-SNCR": {
+   "description": "HGB[S,N,G,C,R] vs HGB[S,N,C,R]",
+   "weights": {
+    "B-HGB-SNGCR": 1,
+    "B-HGB-SNCR": -1
+   },
+   "estimate": -0.11268877153930701,
+   "p_max": 0.095952023988006,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.11268877153930701,
+     "ci95_low": -0.23951560243328782,
+     "ci95_high": 0.0052250978625837646,
+     "share_below_zero": 0.97,
+     "p_two_sided": 0.06096951524237881,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.11268877153930701,
+     "ci95_low": -0.2627803793356929,
+     "ci95_high": 0.002271672923319135,
+     "share_below_zero": 0.971,
+     "p_two_sided": 0.05897051474262868,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.11268877153930701,
+     "ci95_low": -0.26835098013162084,
+     "ci95_high": 0.01857312143028856,
+     "share_below_zero": 0.9525,
+     "p_two_sided": 0.095952023988006,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "B-HGB-SNQCR vs B-HGB-SNCR": {
+   "description": "HGB[S,N,Q,C,R] vs HGB[S,N,C,R]",
+   "weights": {
+    "B-HGB-SNQCR": 1,
+    "B-HGB-SNCR": -1
+   },
+   "estimate": 0.004364375356185501,
+   "p_max": 0.848575712143928,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.004364375356185501,
+     "ci95_low": -0.05032105618523923,
+     "ci95_high": 0.06282579106548926,
+     "share_below_zero": 0.415,
+     "p_two_sided": 0.8305847076461769,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.004364375356185501,
+     "ci95_low": -0.058403448295543545,
+     "ci95_high": 0.07039405151336416,
+     "share_below_zero": 0.424,
+     "p_two_sided": 0.848575712143928,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.004364375356185501,
+     "ci95_low": -0.06378711558741625,
+     "ci95_high": 0.07533847269842672,
+     "share_below_zero": 0.42,
+     "p_two_sided": 0.8405797101449275,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "HGB-V5 vs B-HGB-SNCR": {
+   "description": "HGB[S,N,Wd,Wu,G,Q,C,R] vs HGB[S,N,C,R]",
+   "weights": {
+    "HGB-V5": 1,
+    "B-HGB-SNCR": -1
+   },
+   "estimate": -0.08555620765195071,
+   "p_max": 0.29685157421289354,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.08555620765195071,
+     "ci95_low": -0.2255389310407551,
+     "ci95_high": 0.04960775713510213,
+     "share_below_zero": 0.895,
+     "p_two_sided": 0.2108945527236382,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.08555620765195071,
+     "ci95_low": -0.24526824865134556,
+     "ci95_high": 0.05541412359394056,
+     "share_below_zero": 0.8825,
+     "p_two_sided": 0.23588205897051473,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.08555620765195071,
+     "ci95_low": -0.25606151295720664,
+     "ci95_high": 0.06884003158349683,
+     "share_below_zero": 0.852,
+     "p_two_sided": 0.29685157421289354,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "A-RIDGE vs B-RIDGE-SCR": {
+   "description": "Ridge[S,N,Wd,Wu,G,Q,C,R] vs Ridge[S,C,R]",
+   "weights": {
+    "A-RIDGE": 1,
+    "B-RIDGE-SCR": -1
+   },
+   "estimate": -0.17484127781000236,
+   "p_max": 0.1469265367316342,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.17484127781000236,
+     "ci95_low": -0.3933958071198643,
+     "ci95_high": 0.03580668194311633,
+     "share_below_zero": 0.9475,
+     "p_two_sided": 0.10594702648675662,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.17484127781000236,
+     "ci95_low": -0.4019890444418838,
+     "ci95_high": 0.05813243627402322,
+     "share_below_zero": 0.928,
+     "p_two_sided": 0.14492753623188406,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.17484127781000236,
+     "ci95_low": -0.42275472844747325,
+     "ci95_high": 0.06493472525963187,
+     "share_below_zero": 0.927,
+     "p_two_sided": 0.1469265367316342,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "A-N1 vs B-N1": {
+   "description": "LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30 vs LSTM[S,Q,N,Wd,Wu,C,R]-seq30",
+   "weights": {
+    "A-N1": 1,
+    "B-N1": -1
+   },
+   "estimate": -0.07831539325137848,
+   "p_max": 0.06096951524237881,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.07831539325137848,
+     "ci95_low": -0.16034640815238607,
+     "ci95_high": 0.003391551135737252,
+     "share_below_zero": 0.97,
+     "p_two_sided": 0.06096951524237881,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.07831539325137848,
+     "ci95_low": -0.1645230046414465,
+     "ci95_high": -8.94124990800121e-05,
+     "share_below_zero": 0.975,
+     "p_two_sided": 0.050974512743628186,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.07831539325137848,
+     "ci95_low": -0.16928075275124305,
+     "ci95_high": -0.002838631869266065,
+     "share_below_zero": 0.9795,
+     "p_two_sided": 0.041979010494752625,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "A-N2 vs B-N2": {
+   "description": "GRU[S,Q,N,Wd,Wu,G,C,R]-seq30 vs GRU[S,Q,N,Wd,Wu,C,R]-seq30",
+   "weights": {
+    "A-N2": 1,
+    "B-N2": -1
+   },
+   "estimate": -0.07854775526118152,
+   "p_max": 0.06796601699150424,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.07854775526118152,
+     "ci95_low": -0.15965520506244496,
+     "ci95_high": 0.0033312575661601103,
+     "share_below_zero": 0.9665,
+     "p_two_sided": 0.06796601699150424,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.07854775526118152,
+     "ci95_low": -0.16631478282155351,
+     "ci95_high": 0.003501866531182522,
+     "share_below_zero": 0.97,
+     "p_two_sided": 0.06096951524237881,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.07854775526118152,
+     "ci95_low": -0.1661844217046526,
+     "ci95_high": 0.005077571183460102,
+     "share_below_zero": 0.967,
+     "p_two_sided": 0.06696651674162919,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "A-N3 vs B-N3": {
+   "description": "TCN[S,Q,N,Wd,Wu,G,C,R]-seq30 vs TCN[S,Q,N,Wd,Wu,C,R]-seq30",
+   "weights": {
+    "A-N3": 1,
+    "B-N3": -1
+   },
+   "estimate": -0.015031051118266081,
+   "p_max": 0.7926036981509246,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.015031051118266081,
+     "ci95_low": -0.13855856289763677,
+     "ci95_high": 0.10935127706875865,
+     "share_below_zero": 0.604,
+     "p_two_sided": 0.7926036981509246,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.015031051118266081,
+     "ci95_low": -0.1395864034284599,
+     "ci95_high": 0.11176870499273749,
+     "share_below_zero": 0.6255,
+     "p_two_sided": 0.7496251874062968,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.015031051118266081,
+     "ci95_low": -0.13809363640266922,
+     "ci95_high": 0.11124956735075597,
+     "share_below_zero": 0.65,
+     "p_two_sided": 0.7006496751624188,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "A-N4 vs B-N4-NOAUX": {
+   "description": "N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30 vs N4-wb_noaux[S,Q,N,Wd,Wu,C,R]-seq30",
+   "weights": {
+    "A-N4": 1,
+    "B-N4-NOAUX": -1
+   },
+   "estimate": -0.102831014941688,
+   "p_max": 0.08195902048975512,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.102831014941688,
+     "ci95_low": -0.21046560544086418,
+     "ci95_high": -0.0002465989586325568,
+     "share_below_zero": 0.975,
+     "p_two_sided": 0.050974512743628186,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.102831014941688,
+     "ci95_low": -0.22088304437820547,
+     "ci95_high": 0.008451707468052154,
+     "share_below_zero": 0.9665,
+     "p_two_sided": 0.06796601699150424,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.102831014941688,
+     "ci95_low": -0.22087078527800977,
+     "ci95_high": 0.012633206284981734,
+     "share_below_zero": 0.9595,
+     "p_two_sided": 0.08195902048975512,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "A-N4-DIRECT vs B-N4-DIRECT": {
+   "description": "N4-direct[S,Q,N,Wd,Wu,G,C,R]-seq30 vs N4-direct[S,Q,N,Wd,Wu,C,R]-seq30",
+   "weights": {
+    "A-N4-DIRECT": 1,
+    "B-N4-DIRECT": -1
+   },
+   "estimate": -0.02998785919957525,
+   "p_max": 0.6006996501749126,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.02998785919957525,
+     "ci95_low": -0.13720633008949806,
+     "ci95_high": 0.06841681120575538,
+     "share_below_zero": 0.727,
+     "p_two_sided": 0.5467266366816592,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.02998785919957525,
+     "ci95_low": -0.14117402493789358,
+     "ci95_high": 0.07932414752130108,
+     "share_below_zero": 0.709,
+     "p_two_sided": 0.5827086456771614,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.02998785919957525,
+     "ci95_low": -0.1391860894109545,
+     "ci95_high": 0.08250665992526007,
+     "share_below_zero": 0.7,
+     "p_two_sided": 0.6006996501749126,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "A-HGB-DAILY vs HGB-V5": {
+   "description": "HGB[S,N,Wd,Wu,G,Q,C,R] \u00b7 daily vs HGB[S,N,Wd,Wu,G,Q,C,R]",
+   "weights": {
+    "A-HGB-DAILY": 1,
+    "HGB-V5": -1
+   },
+   "estimate": -0.014602496770920403,
+   "p_max": 0.7086456771614192,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.014602496770920403,
+     "ci95_low": -0.07963651262416457,
+     "ci95_high": 0.04900697265152105,
+     "share_below_zero": 0.6735,
+     "p_two_sided": 0.6536731634182908,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.014602496770920403,
+     "ci95_low": -0.08038513251367632,
+     "ci95_high": 0.050820637390480275,
+     "share_below_zero": 0.661,
+     "p_two_sided": 0.6786606696651675,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.014602496770920403,
+     "ci95_low": -0.08018107936589355,
+     "ci95_high": 0.049051253243770465,
+     "share_below_zero": 0.646,
+     "p_two_sided": 0.7086456771614192,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "B-N1 vs B-N1-NOFLOW": {
+   "description": "LSTM[S,Q,N,Wd,Wu,C,R]-seq30 vs LSTM[S,N,Wd,Wu,C,R]-seq30",
+   "weights": {
+    "B-N1": 1,
+    "B-N1-NOFLOW": -1
+   },
+   "estimate": -0.34321851410376425,
+   "p_max": 0.0009995002498750624,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -0.34321851410376425,
+     "ci95_low": -0.4307178261945714,
+     "ci95_high": -0.2527501637930163,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.34321851410376425,
+     "ci95_low": -0.44406537318092837,
+     "ci95_high": -0.2469931028016542,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.34321851410376425,
+     "ci95_low": -0.4529190225577159,
+     "ci95_high": -0.24958483739252782,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "first better (all 3 CIs exclude 0)"
+  },
+  "A-RIDGE vs B-RIDGE-SWdCR": {
+   "description": "Ridge[S,N,Wd,Wu,G,Q,C,R] vs Ridge[S,Wd,C,R]",
+   "weights": {
+    "A-RIDGE": 1,
+    "B-RIDGE-SWdCR": -1
+   },
+   "estimate": -0.22554716539903108,
+   "p_max": 0.047976011994003,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -0.22554716539903108,
+     "ci95_low": -0.43638085009669747,
+     "ci95_high": -0.02302004777561406,
+     "share_below_zero": 0.986,
+     "p_two_sided": 0.028985507246376812,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.22554716539903108,
+     "ci95_low": -0.4425026180907058,
+     "ci95_high": -0.005273428064183616,
+     "share_below_zero": 0.9765,
+     "p_two_sided": 0.047976011994003,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.22554716539903108,
+     "ci95_low": -0.4537578909020169,
+     "ci95_high": -0.00302066184661018,
+     "share_below_zero": 0.9765,
+     "p_two_sided": 0.047976011994003,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "first better (all 3 CIs exclude 0)"
+  },
+  "T-RIDGE vs A-RIDGE": {
+   "description": "tuned vs frozen: Ridge[S,N,Wd,Wu,G,Q,C,R]",
+   "weights": {
+    "T-RIDGE": 1,
+    "A-RIDGE": -1
+   },
+   "estimate": 0.04863694018891351,
+   "p_max": 0.15292353823088456,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.04863694018891351,
+     "ci95_low": -0.02180983814336194,
+     "ci95_high": 0.1204288737680405,
+     "share_below_zero": 0.075,
+     "p_two_sided": 0.15092453773113443,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.04863694018891351,
+     "ci95_low": -0.017618693685450694,
+     "ci95_high": 0.1293845313215256,
+     "share_below_zero": 0.076,
+     "p_two_sided": 0.15292353823088456,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.04863694018891351,
+     "ci95_low": -0.014521342266382131,
+     "ci95_high": 0.13524522581570078,
+     "share_below_zero": 0.072,
+     "p_two_sided": 0.14492753623188406,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "T-HGB-V5 vs HGB-V5": {
+   "description": "tuned vs frozen: HGB[S,N,Wd,Wu,G,Q,C,R]",
+   "weights": {
+    "T-HGB-V5": 1,
+    "HGB-V5": -1
+   },
+   "estimate": -0.006508477779440192,
+   "p_max": 0.8295852073963018,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.006508477779440192,
+     "ci95_low": -0.06055244961179733,
+     "ci95_high": 0.054521914887332636,
+     "share_below_zero": 0.5855,
+     "p_two_sided": 0.8295852073963018,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.006508477779440192,
+     "ci95_low": -0.06825282936032083,
+     "ci95_high": 0.060500897420498335,
+     "share_below_zero": 0.605,
+     "p_two_sided": 0.7906046976511744,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.006508477779440192,
+     "ci95_low": -0.069651480721821,
+     "ci95_high": 0.06117958539433115,
+     "share_below_zero": 0.6045,
+     "p_two_sided": 0.7916041979010495,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "T-N1 vs A-N1": {
+   "description": "tuned vs frozen: LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30",
+   "weights": {
+    "T-N1": 1,
+    "A-N1": -1
+   },
+   "estimate": -0.03386842813605151,
+   "p_max": 0.28785607196401797,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.03386842813605151,
+     "ci95_low": -0.08866527240035153,
+     "ci95_high": 0.023448342836303166,
+     "share_below_zero": 0.8565,
+     "p_two_sided": 0.28785607196401797,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.03386842813605151,
+     "ci95_low": -0.08884660615268117,
+     "ci95_high": 0.023432497550537452,
+     "share_below_zero": 0.8725,
+     "p_two_sided": 0.255872063968016,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.03386842813605151,
+     "ci95_low": -0.08415810423072959,
+     "ci95_high": 0.017433680544240198,
+     "share_below_zero": 0.9015,
+     "p_two_sided": 0.19790104947526238,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "T-N2 vs A-N2": {
+   "description": "tuned vs frozen: GRU[S,Q,N,Wd,Wu,G,C,R]-seq30",
+   "weights": {
+    "T-N2": 1,
+    "A-N2": -1
+   },
+   "estimate": 0.04443218517359471,
+   "p_max": 0.16691654172913542,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.04443218517359471,
+     "ci95_low": -0.0118188113687273,
+     "ci95_high": 0.10359958995900884,
+     "share_below_zero": 0.056,
+     "p_two_sided": 0.11294352823588207,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.04443218517359471,
+     "ci95_low": -0.01480526447502527,
+     "ci95_high": 0.10658729120688647,
+     "share_below_zero": 0.073,
+     "p_two_sided": 0.1469265367316342,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.04443218517359471,
+     "ci95_low": -0.013872921107425763,
+     "ci95_high": 0.10571708144986613,
+     "share_below_zero": 0.083,
+     "p_two_sided": 0.16691654172913542,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "T-N3 vs A-N3": {
+   "description": "tuned vs frozen: TCN[S,Q,N,Wd,Wu,G,C,R]-seq30",
+   "weights": {
+    "T-N3": 1,
+    "A-N3": -1
+   },
+   "estimate": 0.017516879731335422,
+   "p_max": 0.9495252373813093,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.017516879731335422,
+     "ci95_low": -0.1150535899996505,
+     "ci95_high": 0.16884579572037875,
+     "share_below_zero": 0.427,
+     "p_two_sided": 0.8545727136431784,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.017516879731335422,
+     "ci95_low": -0.13935324913799052,
+     "ci95_high": 0.21879663423394052,
+     "share_below_zero": 0.4615,
+     "p_two_sided": 0.9235382308845578,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.017516879731335422,
+     "ci95_low": -0.14331866376511726,
+     "ci95_high": 0.22389493247531225,
+     "share_below_zero": 0.4745,
+     "p_two_sided": 0.9495252373813093,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "T-N4 vs A-N4": {
+   "description": "tuned vs frozen: N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30",
+   "weights": {
+    "T-N4": 1,
+    "A-N4": -1
+   },
+   "estimate": 0.0,
+   "p_max": 1.0,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.0,
+     "ci95_low": 0.0,
+     "ci95_high": 0.0,
+     "share_below_zero": 0.0,
+     "p_two_sided": 1.0,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.0,
+     "ci95_low": 0.0,
+     "ci95_high": 0.0,
+     "share_below_zero": 0.0,
+     "p_two_sided": 1.0,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.0,
+     "ci95_low": 0.0,
+     "ci95_high": 0.0,
+     "share_below_zero": 0.0,
+     "p_two_sided": 1.0,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "B-N4-NOAUX vs B-N4-DIRECT": {
+   "description": "N4 B-N4-NOAUX vs N4 direct (original inputs)",
+   "weights": {
+    "B-N4-NOAUX": 1,
+    "B-N4-DIRECT": -1
+   },
+   "estimate": -0.007845056783233773,
+   "p_max": 0.863568215892054,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.007845056783233773,
+     "ci95_low": -0.0875578990044258,
+     "ci95_high": 0.06302956332630294,
+     "share_below_zero": 0.594,
+     "p_two_sided": 0.8125937031484258,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.007845056783233773,
+     "ci95_low": -0.09025973552156878,
+     "ci95_high": 0.061940313401838094,
+     "share_below_zero": 0.574,
+     "p_two_sided": 0.8525737131434283,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.007845056783233773,
+     "ci95_low": -0.09302622267157909,
+     "ci95_high": 0.06675637356587137,
+     "share_below_zero": 0.5685,
+     "p_two_sided": 0.863568215892054,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "B-N4-NOAUX vs B-N1": {
+   "description": "N4 B-N4-NOAUX vs N1 (original inputs)",
+   "weights": {
+    "B-N4-NOAUX": 1,
+    "B-N1": -1
+   },
+   "estimate": -0.13990380825769133,
+   "p_max": 0.0069965017491254375,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -0.13990380825769133,
+     "ci95_low": -0.23839769701106578,
+     "ci95_high": -0.04173952847466456,
+     "share_below_zero": 0.999,
+     "p_two_sided": 0.0029985007496251873,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.13990380825769133,
+     "ci95_low": -0.24300625587138328,
+     "ci95_high": -0.04722214501174103,
+     "share_below_zero": 0.997,
+     "p_two_sided": 0.0069965017491254375,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.13990380825769133,
+     "ci95_low": -0.2352103857853578,
+     "ci95_high": -0.06010973656061244,
+     "share_below_zero": 0.9995,
+     "p_two_sided": 0.001999000499750125,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "first better (all 3 CIs exclude 0)"
+  },
+  "B-N4-BAL vs B-N4-DIRECT": {
+   "description": "N4 B-N4-BAL vs N4 direct (original inputs)",
+   "weights": {
+    "B-N4-BAL": 1,
+    "B-N4-DIRECT": -1
+   },
+   "estimate": 0.06428502494557575,
+   "p_max": 0.2748625687156422,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.06428502494557575,
+     "ci95_low": -0.0457281178678847,
+     "ci95_high": 0.17932557735924726,
+     "share_below_zero": 0.131,
+     "p_two_sided": 0.26286856571714146,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.06428502494557575,
+     "ci95_low": -0.052205640302473044,
+     "ci95_high": 0.18934136649353275,
+     "share_below_zero": 0.137,
+     "p_two_sided": 0.2748625687156422,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.06428502494557575,
+     "ci95_low": -0.048445724846455575,
+     "ci95_high": 0.19122842965226114,
+     "share_below_zero": 0.135,
+     "p_two_sided": 0.2708645677161419,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "B-N4-BAL vs B-N1": {
+   "description": "N4 B-N4-BAL vs N1 (original inputs)",
+   "weights": {
+    "B-N4-BAL": 1,
+    "B-N1": -1
+   },
+   "estimate": -0.0677737265288818,
+   "p_max": 0.14392803598200898,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.0677737265288818,
+     "ci95_low": -0.1483957148117981,
+     "ci95_high": 0.014567851387032557,
+     "share_below_zero": 0.934,
+     "p_two_sided": 0.1329335332333833,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.0677737265288818,
+     "ci95_low": -0.15245629941199113,
+     "ci95_high": 0.0218566487643439,
+     "share_below_zero": 0.936,
+     "p_two_sided": 0.12893553223388307,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.0677737265288818,
+     "ci95_low": -0.16162999871583567,
+     "ci95_high": 0.02312465274945846,
+     "share_below_zero": 0.9285,
+     "p_two_sided": 0.14392803598200898,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "B-N4-PRIM vs B-N4-DIRECT": {
+   "description": "N4 B-N4-PRIM vs N4 direct (original inputs)",
+   "weights": {
+    "B-N4-PRIM": 1,
+    "B-N4-DIRECT": -1
+   },
+   "estimate": 0.06867281575200401,
+   "p_max": 0.3118440779610195,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.06867281575200401,
+     "ci95_low": -0.04347974506985057,
+     "ci95_high": 0.18895504121461196,
+     "share_below_zero": 0.127,
+     "p_two_sided": 0.25487256371814093,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.06867281575200401,
+     "ci95_low": -0.05928092784595916,
+     "ci95_high": 0.20806682230311738,
+     "share_below_zero": 0.1555,
+     "p_two_sided": 0.3118440779610195,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.06867281575200401,
+     "ci95_low": -0.06740161235339184,
+     "ci95_high": 0.22738039893413686,
+     "share_below_zero": 0.1535,
+     "p_two_sided": 0.3078460769615192,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "B-N4-PRIM vs B-N1": {
+   "description": "N4 B-N4-PRIM vs N1 (original inputs)",
+   "weights": {
+    "B-N4-PRIM": 1,
+    "B-N1": -1
+   },
+   "estimate": -0.06338593572245355,
+   "p_max": 0.11094452773613193,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.06338593572245355,
+     "ci95_low": -0.13251739878461105,
+     "ci95_high": 0.010486652766757395,
+     "share_below_zero": 0.9465,
+     "p_two_sided": 0.10794602698650675,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.06338593572245355,
+     "ci95_low": -0.13916006291080232,
+     "ci95_high": 0.015181206281204467,
+     "share_below_zero": 0.947,
+     "p_two_sided": 0.10694652673663169,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.06338593572245355,
+     "ci95_low": -0.13822812310639032,
+     "ci95_high": 0.014191808043016353,
+     "share_below_zero": 0.945,
+     "p_two_sided": 0.11094452773613193,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "B-N4-STRICT vs B-N4-DIRECT": {
+   "description": "N4 B-N4-STRICT vs N4 direct (original inputs)",
+   "weights": {
+    "B-N4-STRICT": 1,
+    "B-N4-DIRECT": -1
+   },
+   "estimate": 0.06382959382222886,
+   "p_max": 0.20089955022488756,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.06382959382222886,
+     "ci95_low": -0.025438901730346176,
+     "ci95_high": 0.15344166261365053,
+     "share_below_zero": 0.086,
+     "p_two_sided": 0.1729135432283858,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.06382959382222886,
+     "ci95_low": -0.03855789371122352,
+     "ci95_high": 0.1649296970121197,
+     "share_below_zero": 0.0945,
+     "p_two_sided": 0.18990504747626186,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.06382959382222886,
+     "ci95_low": -0.04112846063586454,
+     "ci95_high": 0.16687825357297076,
+     "share_below_zero": 0.1,
+     "p_two_sided": 0.20089955022488756,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "B-N4-STRICT vs B-N1": {
+   "description": "N4 B-N4-STRICT vs N1 (original inputs)",
+   "weights": {
+    "B-N4-STRICT": 1,
+    "B-N1": -1
+   },
+   "estimate": -0.0682291576522287,
+   "p_max": 0.1549225387306347,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.0682291576522287,
+     "ci95_low": -0.15258150517090696,
+     "ci95_high": 0.021323968495526292,
+     "share_below_zero": 0.9245,
+     "p_two_sided": 0.1519240379810095,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.0682291576522287,
+     "ci95_low": -0.15603611366249528,
+     "ci95_high": 0.022855290146865905,
+     "share_below_zero": 0.923,
+     "p_two_sided": 0.1549225387306347,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.0682291576522287,
+     "ci95_low": -0.15891975048516738,
+     "ci95_high": 0.0187018861603737,
+     "share_below_zero": 0.935,
+     "p_two_sided": 0.13093453273363317,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "HGB-V5 vs BL-DOY": {
+   "description": "HGB[S,N,Wd,Wu,G,Q,C,R] vs DOY climatology",
+   "weights": {
+    "HGB-V5": 1,
+    "BL-DOY": -1
+   },
+   "estimate": -1.033993412367023,
+   "p_max": 0.0009995002498750624,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -1.033993412367023,
+     "ci95_low": -1.2757182165282954,
+     "ci95_high": -0.788060964084699,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -1.033993412367023,
+     "ci95_low": -1.3322319560970624,
+     "ci95_high": -0.7798327678408045,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -1.033993412367023,
+     "ci95_low": -1.3509614760477477,
+     "ci95_high": -0.7574541334145676,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "first better (all 3 CIs exclude 0)"
+  },
+  "B-HGB-SNCR vs BL-DOY": {
+   "description": "HGB[S,N,C,R] vs DOY climatology",
+   "weights": {
+    "B-HGB-SNCR": 1,
+    "BL-DOY": -1
+   },
+   "estimate": -0.9484372047150722,
+   "p_max": 0.0009995002498750624,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -0.9484372047150722,
+     "ci95_low": -1.226023209091877,
+     "ci95_high": -0.6796873749655278,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.9484372047150722,
+     "ci95_low": -1.2615875084697794,
+     "ci95_high": -0.6367203080971471,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.9484372047150722,
+     "ci95_low": -1.2797831510609547,
+     "ci95_high": -0.6257284121149317,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "first better (all 3 CIs exclude 0)"
+  },
+  "A-N1 vs BL-DOY": {
+   "description": "LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30 vs DOY climatology",
+   "weights": {
+    "A-N1": 1,
+    "BL-DOY": -1
+   },
+   "estimate": -0.9628105600842942,
+   "p_max": 0.0009995002498750624,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -0.9628105600842942,
+     "ci95_low": -1.1911816453378516,
+     "ci95_high": -0.7484525437937376,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.9628105600842942,
+     "ci95_low": -1.2201392088630652,
+     "ci95_high": -0.7407282697526004,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.9628105600842942,
+     "ci95_low": -1.2356102701987233,
+     "ci95_high": -0.743384357697488,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "first better (all 3 CIs exclude 0)"
+  },
+  "A-N2 vs BL-DOY": {
+   "description": "GRU[S,Q,N,Wd,Wu,G,C,R]-seq30 vs DOY climatology",
+   "weights": {
+    "A-N2": 1,
+    "BL-DOY": -1
+   },
+   "estimate": -1.0410912611470073,
+   "p_max": 0.0009995002498750624,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -1.0410912611470073,
+     "ci95_low": -1.2632264571897143,
+     "ci95_high": -0.837144606837173,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -1.0410912611470073,
+     "ci95_low": -1.299026304805686,
+     "ci95_high": -0.829717091965213,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -1.0410912611470073,
+     "ci95_low": -1.3026287415758626,
+     "ci95_high": -0.8194716137337628,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "first better (all 3 CIs exclude 0)"
+  },
+  "A-N3 vs BL-DOY": {
+   "description": "TCN[S,Q,N,Wd,Wu,G,C,R]-seq30 vs DOY climatology",
+   "weights": {
+    "A-N3": 1,
+    "BL-DOY": -1
+   },
+   "estimate": -0.8025321038964086,
+   "p_max": 0.0009995002498750624,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -0.8025321038964086,
+     "ci95_low": -1.0442931788005485,
+     "ci95_high": -0.5770173699031078,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.8025321038964086,
+     "ci95_low": -1.0692232852236097,
+     "ci95_high": -0.5612065352456878,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.8025321038964086,
+     "ci95_low": -1.0729757393546473,
+     "ci95_high": -0.5684619852179967,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "first better (all 3 CIs exclude 0)"
+  },
+  "A-N4 vs BL-DOY": {
+   "description": "N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30 vs DOY climatology",
+   "weights": {
+    "A-N4": 1,
+    "BL-DOY": -1
+   },
+   "estimate": -1.127229990032295,
+   "p_max": 0.0009995002498750624,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -1.127229990032295,
+     "ci95_low": -1.3607044694443642,
+     "ci95_high": -0.8973501126853857,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -1.127229990032295,
+     "ci95_low": -1.3938617559018593,
+     "ci95_high": -0.8921832262715332,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -1.127229990032295,
+     "ci95_low": -1.4124726502600704,
+     "ci95_high": -0.8904698934202359,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "first better (all 3 CIs exclude 0)"
+  },
+  "A-RIDGE vs BL-DOY": {
+   "description": "Ridge[S,N,Wd,Wu,G,Q,C,R] vs DOY climatology",
+   "weights": {
+    "A-RIDGE": 1,
+    "BL-DOY": -1
+   },
+   "estimate": -0.4368445212939265,
+   "p_max": 0.01699150424787606,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -0.4368445212939265,
+     "ci95_low": -0.7633871097398552,
+     "ci95_high": -0.116057705136817,
+     "share_below_zero": 0.9975,
+     "p_two_sided": 0.005997001499250375,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.4368445212939265,
+     "ci95_low": -0.7880813834394506,
+     "ci95_high": -0.1046571402062771,
+     "share_below_zero": 0.992,
+     "p_two_sided": 0.01699150424787606,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.4368445212939265,
+     "ci95_low": -0.8294842356656839,
+     "ci95_high": -0.11432481680358435,
+     "share_below_zero": 0.995,
+     "p_two_sided": 0.010994502748625687,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "first better (all 3 CIs exclude 0)"
+  }
+ },
+ "posthoc_HELD_F": {
+  "P1": {
+   "description": "HGB v5 vs HGB[S,N,C,R] (existing HGB primary configuration, per-fold refit)",
+   "weights": {
+    "HGB-V5": 1,
+    "B-HGB-SNCR": -1
+   },
+   "estimate": -0.06537798160128228,
+   "p_max": 0.3288355822088955,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.06537798160128228,
+     "ci95_low": -0.14200325975225045,
+     "ci95_high": 0.047045817486155744,
+     "share_below_zero": 0.836,
+     "p_two_sided": 0.3288355822088955,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.06537798160128228,
+     "ci95_low": -0.12459948583735844,
+     "ci95_high": 0.03714612668785733,
+     "share_below_zero": 0.863,
+     "p_two_sided": 0.2748625687156422,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.06537798160128228,
+     "ci95_low": -0.12933914143891784,
+     "ci95_high": 0.016233084799119266,
+     "share_below_zero": 0.9295,
+     "p_two_sided": 0.14192903548225888,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "P2": {
+   "description": "Ridge competitiveness under identical information: [Ridge[all] - HGB v5] - [Ridge[S,C,R] - HGB[S,C,R]]",
+   "weights": {
+    "A-RIDGE": 1,
+    "HGB-V5": -1,
+    "B-RIDGE-SCR": -1,
+    "B-HGB-SCR": 1
+   },
+   "estimate": 0.07933995411142414,
+   "p_max": 0.5667166416791605,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.07933995411142414,
+     "ci95_low": -0.13174121108930392,
+     "ci95_high": 0.23748373150127233,
+     "share_below_zero": 0.283,
+     "p_two_sided": 0.5667166416791605,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.07933995411142414,
+     "ci95_low": -0.1150368282121336,
+     "ci95_high": 0.22618263890448728,
+     "share_below_zero": 0.257,
+     "p_two_sided": 0.5147426286856571,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.07933995411142414,
+     "ci95_low": -0.1040044877359555,
+     "ci95_high": 0.2129397752330741,
+     "share_below_zero": 0.2555,
+     "p_two_sided": 0.511744127936032,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "P3": {
+   "description": "LSTM [all] vs HGB v5",
+   "weights": {
+    "A-N1": 1,
+    "HGB-V5": -1
+   },
+   "estimate": 0.0431643799290371,
+   "p_max": 0.9145427286356822,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.0431643799290371,
+     "ci95_low": -0.12184854251202916,
+     "ci95_high": 0.160206432803555,
+     "share_below_zero": 0.3935,
+     "p_two_sided": 0.7876061969015492,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.0431643799290371,
+     "ci95_low": -0.1348468186288601,
+     "ci95_high": 0.15040227693520627,
+     "share_below_zero": 0.4425,
+     "p_two_sided": 0.8855572213893054,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.0431643799290371,
+     "ci95_low": -0.13937113102310938,
+     "ci95_high": 0.169500136120452,
+     "share_below_zero": 0.457,
+     "p_two_sided": 0.9145427286356822,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "P4": {
+   "description": "GRU [all] vs HGB v5",
+   "weights": {
+    "A-N2": 1,
+    "HGB-V5": -1
+   },
+   "estimate": 0.016818405363137945,
+   "p_max": 0.8405797101449275,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.016818405363137945,
+     "ci95_low": -0.1575525640412414,
+     "ci95_high": 0.12114750369745649,
+     "share_below_zero": 0.58,
+     "p_two_sided": 0.8405797101449275,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.016818405363137945,
+     "ci95_low": -0.16209642017053227,
+     "ci95_high": 0.11412697765341638,
+     "share_below_zero": 0.619,
+     "p_two_sided": 0.7626186906546727,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.016818405363137945,
+     "ci95_low": -0.1692147989430848,
+     "ci95_high": 0.11888162694711542,
+     "share_below_zero": 0.6095,
+     "p_two_sided": 0.7816091954022989,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "P5": {
+   "description": "TCN [all] vs HGB v5",
+   "weights": {
+    "A-N3": 1,
+    "HGB-V5": -1
+   },
+   "estimate": 0.1164638323826126,
+   "p_max": 0.23588205897051473,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.1164638323826126,
+     "ci95_low": -0.054553653862856634,
+     "ci95_high": 0.2280439362520002,
+     "share_below_zero": 0.1175,
+     "p_two_sided": 0.23588205897051473,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.1164638323826126,
+     "ci95_low": -0.04619403514064493,
+     "ci95_high": 0.19158212991327514,
+     "share_below_zero": 0.0975,
+     "p_two_sided": 0.19590204897551225,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.1164638323826126,
+     "ci95_low": -0.006784051857322415,
+     "ci95_high": 0.19125307143873435,
+     "share_below_zero": 0.037,
+     "p_two_sided": 0.07496251874062969,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "P6": {
+   "description": "N4 wb_noaux [all] vs HGB v5",
+   "weights": {
+    "A-N4": 1,
+    "HGB-V5": -1
+   },
+   "estimate": -0.005335096840426434,
+   "p_max": 0.7406296851574213,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.005335096840426434,
+     "ci95_low": -0.1850076314700063,
+     "ci95_high": 0.14493769108174429,
+     "share_below_zero": 0.63,
+     "p_two_sided": 0.7406296851574213,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.005335096840426434,
+     "ci95_low": -0.1726167630491587,
+     "ci95_high": 0.11137866459862515,
+     "share_below_zero": 0.697,
+     "p_two_sided": 0.6066966516741629,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.005335096840426434,
+     "ci95_low": -0.1654979497057581,
+     "ci95_high": 0.09692537581739614,
+     "share_below_zero": 0.7385,
+     "p_two_sided": 0.5237381309345327,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "P7": {
+   "description": "HGB v5 (all variables) vs HGB[S,C,R] (storage, calendar, reservoir only)",
+   "weights": {
+    "HGB-V5": 1,
+    "B-HGB-SCR": -1
+   },
+   "estimate": -0.18256021682489365,
+   "p_max": 0.0239880059970015,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -0.18256021682489365,
+     "ci95_low": -0.3427714189237192,
+     "ci95_high": -0.02315692570563857,
+     "share_below_zero": 0.9885,
+     "p_two_sided": 0.0239880059970015,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.18256021682489365,
+     "ci95_low": -0.34596001601893095,
+     "ci95_high": -0.04071608457238289,
+     "share_below_zero": 0.9945,
+     "p_two_sided": 0.01199400299850075,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.18256021682489365,
+     "ci95_low": -0.360661954797078,
+     "ci95_high": -0.04848652999884496,
+     "share_below_zero": 0.999,
+     "p_two_sided": 0.0029985007496251873,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "p_holm": 0.191904047976012,
+   "verdict": "not established"
+  },
+  "P8": {
+   "description": "Water-balance structure: N4 wb_noaux [all] vs N4 direct [all]",
+   "weights": {
+    "A-N4": 1,
+    "A-N4-DIRECT": -1
+   },
+   "estimate": -0.04015765316770015,
+   "p_max": 0.6756621689155422,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.04015765316770015,
+     "ci95_low": -0.13739276934673747,
+     "ci95_high": 0.08455970323383792,
+     "share_below_zero": 0.6625,
+     "p_two_sided": 0.6756621689155422,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.04015765316770015,
+     "ci95_low": -0.12747681563484758,
+     "ci95_high": 0.06835835154980421,
+     "share_below_zero": 0.7035,
+     "p_two_sided": 0.5937031484257871,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.04015765316770015,
+     "ci95_low": -0.12635069313550337,
+     "ci95_high": 0.05715510335092807,
+     "share_below_zero": 0.726,
+     "p_two_sided": 0.5487256371814093,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  }
+ },
+ "posthoc_HELD_T": {
+  "T1": {
+   "description": "tuned HGB v5 vs HGB[S,N,C,R] (frozen reference)",
+   "weights": {
+    "T-HGB-V5": 1,
+    "B-HGB-SNCR": -1
+   },
+   "estimate": -0.06531777546925088,
+   "p_max": 0.3458270864567716,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.06531777546925088,
+     "ci95_low": -0.16967369497025525,
+     "ci95_high": 0.06867789931971306,
+     "share_below_zero": 0.8275,
+     "p_two_sided": 0.3458270864567716,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.06531777546925088,
+     "ci95_low": -0.1726804650439786,
+     "ci95_high": 0.036927163007462696,
+     "share_below_zero": 0.9145,
+     "p_two_sided": 0.17191404297851073,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.06531777546925088,
+     "ci95_low": -0.17478026821187287,
+     "ci95_high": 0.013349133221787685,
+     "share_below_zero": 0.9625,
+     "p_two_sided": 0.07596201899050475,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "T2": {
+   "description": "tuned Ridge[all] vs tuned HGB v5",
+   "weights": {
+    "T-RIDGE": 1,
+    "T-HGB-V5": -1
+   },
+   "estimate": 1.04296353832633,
+   "p_max": 0.0009995002498750624,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": 1.04296353832633,
+     "ci95_low": 0.8291985379268381,
+     "ci95_high": 1.2912166657733015,
+     "share_below_zero": 0.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 1.04296353832633,
+     "ci95_low": 0.8715789169090602,
+     "ci95_high": 1.2908480354709464,
+     "share_below_zero": 0.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 1.04296353832633,
+     "ci95_low": 0.9042042087795235,
+     "ci95_high": 1.3112977675453024,
+     "share_below_zero": 0.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "p_holm": 0.005997001499250375,
+   "verdict": "supported: second better"
+  },
+  "T3": {
+   "description": "tuned LSTM [all] vs tuned HGB v5",
+   "weights": {
+    "T-N1": 1,
+    "T-HGB-V5": -1
+   },
+   "estimate": -0.048629333618529724,
+   "p_max": 0.43778110944527737,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.048629333618529724,
+     "ci95_low": -0.18863286325771875,
+     "ci95_high": 0.06161347634860617,
+     "share_below_zero": 0.853,
+     "p_two_sided": 0.29485257371314344,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.048629333618529724,
+     "ci95_low": -0.18270084589161475,
+     "ci95_high": 0.06468676583135934,
+     "share_below_zero": 0.8315,
+     "p_two_sided": 0.3378310844577711,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.048629333618529724,
+     "ci95_low": -0.1851118454042044,
+     "ci95_high": 0.07943802485244829,
+     "share_below_zero": 0.7815,
+     "p_two_sided": 0.43778110944527737,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "T4": {
+   "description": "tuned GRU [all] vs tuned HGB v5",
+   "weights": {
+    "T-N2": 1,
+    "T-HGB-V5": -1
+   },
+   "estimate": 0.003605115793898772,
+   "p_max": 0.9955022488755623,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.003605115793898772,
+     "ci95_low": -0.1640967288905661,
+     "ci95_high": 0.14801860388262594,
+     "share_below_zero": 0.5435,
+     "p_two_sided": 0.9135432283858071,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.003605115793898772,
+     "ci95_low": -0.1780311101275672,
+     "ci95_high": 0.16273884311243858,
+     "share_below_zero": 0.4975,
+     "p_two_sided": 0.9955022488755623,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.003605115793898772,
+     "ci95_low": -0.19406382491459467,
+     "ci95_high": 0.1821274908485304,
+     "share_below_zero": 0.4445,
+     "p_two_sided": 0.8895552223888056,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "T5": {
+   "description": "tuned TCN [all] vs tuned HGB v5",
+   "weights": {
+    "T-N3": 1,
+    "T-HGB-V5": -1
+   },
+   "estimate": -0.059828851277646145,
+   "p_max": 0.4237881059470265,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.059828851277646145,
+     "ci95_low": -0.18317818049334347,
+     "ci95_high": 0.0429228323681599,
+     "share_below_zero": 0.8925,
+     "p_two_sided": 0.2158920539730135,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.059828851277646145,
+     "ci95_low": -0.1824841621825078,
+     "ci95_high": 0.054434626473392846,
+     "share_below_zero": 0.846,
+     "p_two_sided": 0.30884557721139433,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.059828851277646145,
+     "ci95_low": -0.1881515453448514,
+     "ci95_high": 0.07474562642384144,
+     "share_below_zero": 0.7885,
+     "p_two_sided": 0.4237881059470265,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "T6": {
+   "description": "tuned N4 [all] vs tuned HGB v5",
+   "weights": {
+    "T-N4": 1,
+    "T-HGB-V5": -1
+   },
+   "estimate": -0.005395302972457827,
+   "p_max": 0.8755622188905547,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.005395302972457827,
+     "ci95_low": -0.16149272972113418,
+     "ci95_high": 0.1501951889875458,
+     "share_below_zero": 0.6185,
+     "p_two_sided": 0.7636181909045477,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.005395302972457827,
+     "ci95_low": -0.14171573600694942,
+     "ci95_high": 0.13605984341834504,
+     "share_below_zero": 0.578,
+     "p_two_sided": 0.8445777111444278,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.005395302972457827,
+     "ci95_low": -0.15200971424171145,
+     "ci95_high": 0.13748369322685353,
+     "share_below_zero": 0.5625,
+     "p_two_sided": 0.8755622188905547,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  }
+ },
+ "posthoc_HELD_vs_artifact": {
+  "HGB-V5 vs REF-V2-ARTIFACT": {
+   "description": "HGB[S,N,Wd,Wu,G,Q,C,R] vs frozen v2 artifact",
+   "weights": {
+    "HGB-V5": 1,
+    "REF-V2-ARTIFACT": -1
+   },
+   "estimate": -0.06537798160128228,
+   "p_max": 0.3288355822088955,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.06537798160128228,
+     "ci95_low": -0.14200325975225045,
+     "ci95_high": 0.04704581748615573,
+     "share_below_zero": 0.836,
+     "p_two_sided": 0.3288355822088955,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.06537798160128228,
+     "ci95_low": -0.12459948583735844,
+     "ci95_high": 0.03714612668785733,
+     "share_below_zero": 0.863,
+     "p_two_sided": 0.2748625687156422,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.06537798160128228,
+     "ci95_low": -0.12933914143891828,
+     "ci95_high": 0.016233084799119266,
+     "share_below_zero": 0.9295,
+     "p_two_sided": 0.14192903548225888,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "verdict_unadjusted": "not established"
+  },
+  "T-HGB-V5 vs REF-V2-ARTIFACT": {
+   "description": "HGB[S,N,Wd,Wu,G,Q,C,R] \u00b7 tuned vs frozen v2 artifact",
+   "weights": {
+    "T-HGB-V5": 1,
+    "REF-V2-ARTIFACT": -1
+   },
+   "estimate": -0.06531777546925088,
+   "p_max": 0.3458270864567716,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.06531777546925088,
+     "ci95_low": -0.16967369497025525,
+     "ci95_high": 0.06867789931971306,
+     "share_below_zero": 0.8275,
+     "p_two_sided": 0.3458270864567716,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.06531777546925088,
+     "ci95_low": -0.17268046504397905,
+     "ci95_high": 0.03692716300746226,
+     "share_below_zero": 0.9145,
+     "p_two_sided": 0.17191404297851073,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.06531777546925088,
+     "ci95_low": -0.17478026821187287,
+     "ci95_high": 0.013349133221787685,
+     "share_below_zero": 0.9625,
+     "p_two_sided": 0.07596201899050475,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "verdict_unadjusted": "not established"
+  },
+  "B-HGB-SNCR vs REF-V2-ARTIFACT": {
+   "description": "HGB[S,N,C,R] vs frozen v2 artifact",
+   "weights": {
+    "B-HGB-SNCR": 1,
+    "REF-V2-ARTIFACT": -1
+   },
+   "estimate": 0.0,
+   "p_max": 1.0,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.0,
+     "ci95_low": -4.440892098500626e-16,
+     "ci95_high": 4.440892098500626e-16,
+     "share_below_zero": 0.045,
+     "p_two_sided": 1.0,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.0,
+     "ci95_low": -4.440892098500626e-16,
+     "ci95_high": 4.440892098500626e-16,
+     "share_below_zero": 0.06,
+     "p_two_sided": 1.0,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.0,
+     "ci95_low": -4.440892098500626e-16,
+     "ci95_high": 4.440892098500626e-16,
+     "share_below_zero": 0.059,
+     "p_two_sided": 1.0,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "verdict_unadjusted": "not established"
+  },
+  "A-N1 vs REF-V2-ARTIFACT": {
+   "description": "LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30 vs frozen v2 artifact",
+   "weights": {
+    "A-N1": 1,
+    "REF-V2-ARTIFACT": -1
+   },
+   "estimate": -0.022213601672245176,
+   "p_max": 0.672663668165917,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.022213601672245176,
+     "ci95_low": -0.1707801864198863,
+     "ci95_high": 0.11575443390305022,
+     "share_below_zero": 0.664,
+     "p_two_sided": 0.672663668165917,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.022213601672245176,
+     "ci95_low": -0.17506168042114625,
+     "ci95_high": 0.09374576219989637,
+     "share_below_zero": 0.6845,
+     "p_two_sided": 0.6316841579210395,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.022213601672245176,
+     "ci95_low": -0.19285033525246822,
+     "ci95_high": 0.10607866089800876,
+     "share_below_zero": 0.693,
+     "p_two_sided": 0.6146926536731634,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "verdict_unadjusted": "not established"
+  },
+  "A-N4 vs REF-V2-ARTIFACT": {
+   "description": "N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30 vs frozen v2 artifact",
+   "weights": {
+    "A-N4": 1,
+    "REF-V2-ARTIFACT": -1
+   },
+   "estimate": -0.07071307844170871,
+   "p_max": 0.4107946026986507,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.07071307844170871,
+     "ci95_low": -0.25200745783628276,
+     "ci95_high": 0.11192227510735756,
+     "share_below_zero": 0.795,
+     "p_two_sided": 0.4107946026986507,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.07071307844170871,
+     "ci95_low": -0.2200642316333317,
+     "ci95_high": 0.05535207966003784,
+     "share_below_zero": 0.875,
+     "p_two_sided": 0.25087456271864067,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.07071307844170871,
+     "ci95_low": -0.22565531316495505,
+     "ci95_high": 0.03966989714525765,
+     "share_below_zero": 0.926,
+     "p_two_sided": 0.1489255372313843,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "verdict_unadjusted": "not established"
+  },
+  "T-N4 vs REF-V2-ARTIFACT": {
+   "description": "N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq \u00b7 tuned vs frozen v2 artifact",
+   "weights": {
+    "T-N4": 1,
+    "REF-V2-ARTIFACT": -1
+   },
+   "estimate": -0.07071307844170871,
+   "p_max": 0.4107946026986507,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.07071307844170871,
+     "ci95_low": -0.25200745783628276,
+     "ci95_high": 0.11192227510735756,
+     "share_below_zero": 0.795,
+     "p_two_sided": 0.4107946026986507,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.07071307844170871,
+     "ci95_low": -0.2200642316333317,
+     "ci95_high": 0.05535207966003784,
+     "share_below_zero": 0.875,
+     "p_two_sided": 0.25087456271864067,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.07071307844170871,
+     "ci95_low": -0.22565531316495505,
+     "ci95_high": 0.03966989714525765,
+     "share_below_zero": 0.926,
+     "p_two_sided": 0.1489255372313843,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "verdict_unadjusted": "not established"
+  },
+  "A-HGB-DAILY vs REF-V2-ARTIFACT": {
+   "description": "HGB[S,N,Wd,Wu,G,Q,C,R] \u00b7 daily vs frozen v2 artifact",
+   "weights": {
+    "A-HGB-DAILY": 1,
+    "REF-V2-ARTIFACT": -1
+   },
+   "estimate": 0.007006654700090653,
+   "p_max": 0.6256871564217891,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.007006654700090653,
+     "ci95_low": -0.08151585303755071,
+     "ci95_high": 0.11739624169142966,
+     "share_below_zero": 0.3015,
+     "p_two_sided": 0.6036981509245377,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.007006654700090653,
+     "ci95_low": -0.059809386389433006,
+     "ci95_high": 0.10708727983347821,
+     "share_below_zero": 0.2645,
+     "p_two_sided": 0.5297351324337831,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.007006654700090653,
+     "ci95_low": -0.06154849156480191,
+     "ci95_high": 0.08438577055974884,
+     "share_below_zero": 0.3125,
+     "p_two_sided": 0.6256871564217891,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 593,
+   "n_dates": 101,
+   "verdict_unadjusted": "not established"
+  }
+ },
+ "posthoc_T26_F": {
+  "P1": {
+   "description": "HGB v5 vs HGB[S,N,C,R] (existing HGB primary configuration, per-fold refit)",
+   "weights": {
+    "HGB-V5": 1,
+    "B-HGB-SNCR": -1
+   },
+   "estimate": 0.09207788126373906,
+   "p_max": 0.1359320339830085,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.09207788126373906,
+     "ci95_low": -0.03173200043699337,
+     "ci95_high": 0.24781500407487148,
+     "share_below_zero": 0.0675,
+     "p_two_sided": 0.1359320339830085,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.09207788126373906,
+     "ci95_low": 0.020038670934776293,
+     "ci95_high": 0.23036233266055087,
+     "share_below_zero": 0.009,
+     "p_two_sided": 0.01899050474762619,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.09207788126373906,
+     "ci95_low": 0.05476196077557101,
+     "ci95_high": 0.20907166891327095,
+     "share_below_zero": 0.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "p_holm": 0.6956521739130435,
+   "verdict": "not established"
+  },
+  "P2": {
+   "description": "Ridge competitiveness under identical information: [Ridge[all] - HGB v5] - [Ridge[S,C,R] - HGB[S,C,R]]",
+   "weights": {
+    "A-RIDGE": 1,
+    "HGB-V5": -1,
+    "B-RIDGE-SCR": -1,
+    "B-HGB-SCR": 1
+   },
+   "estimate": -0.44942383453161483,
+   "p_max": 0.12893553223388307,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.44942383453161483,
+     "ci95_low": -0.9089751945750436,
+     "ci95_high": 0.09812477576415556,
+     "share_below_zero": 0.936,
+     "p_two_sided": 0.12893553223388307,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.44942383453161483,
+     "ci95_low": -0.8541472486042583,
+     "ci95_high": 0.011575650519568454,
+     "share_below_zero": 0.969,
+     "p_two_sided": 0.06296851574212893,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.44942383453161483,
+     "ci95_low": -0.8499670280598144,
+     "ci95_high": -0.04513501233302155,
+     "share_below_zero": 0.9875,
+     "p_two_sided": 0.025987006496751622,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "p_holm": 0.6956521739130435,
+   "verdict": "not established"
+  },
+  "P3": {
+   "description": "LSTM [all] vs HGB v5",
+   "weights": {
+    "A-N1": 1,
+    "HGB-V5": -1
+   },
+   "estimate": -0.27835090787734007,
+   "p_max": 0.001999000499750125,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -0.27835090787734007,
+     "ci95_low": -0.5391317764682652,
+     "ci95_high": -0.12670662907937316,
+     "share_below_zero": 0.9995,
+     "p_two_sided": 0.001999000499750125,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.27835090787734007,
+     "ci95_low": -0.5839973619821057,
+     "ci95_high": -0.1611160487401551,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.27835090787734007,
+     "ci95_low": -0.5921610311733564,
+     "ci95_high": -0.17519160273480155,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "p_holm": 0.015992003998001,
+   "verdict": "supported: first better"
+  },
+  "P4": {
+   "description": "GRU [all] vs HGB v5",
+   "weights": {
+    "A-N2": 1,
+    "HGB-V5": -1
+   },
+   "estimate": -0.057245663860441276,
+   "p_max": 0.4397801099450275,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.057245663860441276,
+     "ci95_low": -0.20008361493085539,
+     "ci95_high": 0.08748187889469684,
+     "share_below_zero": 0.7805,
+     "p_two_sided": 0.4397801099450275,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.057245663860441276,
+     "ci95_low": -0.22266209881444543,
+     "ci95_high": 0.08123617157381546,
+     "share_below_zero": 0.824,
+     "p_two_sided": 0.35282358820589704,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.057245663860441276,
+     "ci95_low": -0.22474022314432,
+     "ci95_high": 0.04774902115390366,
+     "share_below_zero": 0.914,
+     "p_two_sided": 0.1729135432283858,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "p_holm": 0.9955022488755623,
+   "verdict": "not established"
+  },
+  "P5": {
+   "description": "TCN [all] vs HGB v5",
+   "weights": {
+    "A-N3": 1,
+    "HGB-V5": -1
+   },
+   "estimate": -0.1809594594508277,
+   "p_max": 0.33183408295852074,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.1809594594508277,
+     "ci95_low": -0.5494194974399281,
+     "ci95_high": 0.13544054427184027,
+     "share_below_zero": 0.88,
+     "p_two_sided": 0.24087956021989004,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.1809594594508277,
+     "ci95_low": -0.622731441252394,
+     "ci95_high": 0.17938920901723354,
+     "share_below_zero": 0.8575,
+     "p_two_sided": 0.28585707146426786,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.1809594594508277,
+     "ci95_low": -0.6758633055456547,
+     "ci95_high": 0.22757888718281305,
+     "share_below_zero": 0.8345,
+     "p_two_sided": 0.33183408295852074,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "p_holm": 0.9955022488755623,
+   "verdict": "not established"
+  },
+  "P6": {
+   "description": "N4 wb_noaux [all] vs HGB v5",
+   "weights": {
+    "A-N4": 1,
+    "HGB-V5": -1
+   },
+   "estimate": -0.27159734777982125,
+   "p_max": 0.01199400299850075,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -0.27159734777982125,
+     "ci95_low": -0.5341655746199924,
+     "ci95_high": -0.08491050336157076,
+     "share_below_zero": 0.9945,
+     "p_two_sided": 0.01199400299850075,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.27159734777982125,
+     "ci95_low": -0.5776903155557853,
+     "ci95_high": -0.10580956630192079,
+     "share_below_zero": 0.996,
+     "p_two_sided": 0.008995502248875561,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.27159734777982125,
+     "ci95_low": -0.589923759425167,
+     "ci95_high": -0.1762984448965651,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "p_holm": 0.08395802098950525,
+   "verdict": "not established"
+  },
+  "P7": {
+   "description": "HGB v5 (all variables) vs HGB[S,C,R] (storage, calendar, reservoir only)",
+   "weights": {
+    "HGB-V5": 1,
+    "B-HGB-SCR": -1
+   },
+   "estimate": 0.2667595414633248,
+   "p_max": 0.11594202898550725,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.2667595414633248,
+     "ci95_low": -0.035661559619661255,
+     "ci95_high": 0.8429816684379137,
+     "share_below_zero": 0.0575,
+     "p_two_sided": 0.11594202898550725,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.2667595414633248,
+     "ci95_low": -0.011679148693025675,
+     "ci95_high": 0.8631998233778216,
+     "share_below_zero": 0.032,
+     "p_two_sided": 0.06496751624187906,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.2667595414633248,
+     "ci95_low": 0.0331673834889336,
+     "ci95_high": 0.8117453871783941,
+     "share_below_zero": 0.009,
+     "p_two_sided": 0.01899050474762619,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "p_holm": 0.6956521739130435,
+   "verdict": "not established"
+  },
+  "P8": {
+   "description": "Water-balance structure: N4 wb_noaux [all] vs N4 direct [all]",
+   "weights": {
+    "A-N4": 1,
+    "A-N4-DIRECT": -1
+   },
+   "estimate": -0.049531012427072696,
+   "p_max": 0.8755622188905547,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.049531012427072696,
+     "ci95_low": -0.2564300391392023,
+     "ci95_high": 0.18648784271767346,
+     "share_below_zero": 0.6345,
+     "p_two_sided": 0.7316341829085458,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.049531012427072696,
+     "ci95_low": -0.2547074814775705,
+     "ci95_high": 0.21691068205270336,
+     "share_below_zero": 0.5735,
+     "p_two_sided": 0.8535732133933034,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.049531012427072696,
+     "ci95_low": -0.26440795648030996,
+     "ci95_high": 0.22923471358668437,
+     "share_below_zero": 0.5625,
+     "p_two_sided": 0.8755622188905547,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "p_holm": 0.9955022488755623,
+   "verdict": "not established"
+  }
+ },
+ "posthoc_T26_T": {
+  "T1": {
+   "description": "tuned HGB v5 vs HGB[S,N,C,R] (frozen reference)",
+   "weights": {
+    "T-HGB-V5": 1,
+    "B-HGB-SNCR": -1
+   },
+   "estimate": -0.07574516307489354,
+   "p_max": 0.6896551724137931,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.07574516307489354,
+     "ci95_low": -0.2436104373380079,
+     "ci95_high": 0.1593851829576584,
+     "share_below_zero": 0.7225,
+     "p_two_sided": 0.5557221389305347,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.07574516307489354,
+     "ci95_low": -0.1835193798946397,
+     "ci95_high": 0.15561023098444976,
+     "share_below_zero": 0.672,
+     "p_two_sided": 0.656671664167916,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.07574516307489354,
+     "ci95_low": -0.14966185931444848,
+     "ci95_high": 0.1095607122351741,
+     "share_below_zero": 0.6555,
+     "p_two_sided": 0.6896551724137931,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "T2": {
+   "description": "tuned Ridge[all] vs tuned HGB v5",
+   "weights": {
+    "T-RIDGE": 1,
+    "T-HGB-V5": -1
+   },
+   "estimate": 0.8965225103452727,
+   "p_max": 0.001999000499750125,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": 0.8965225103452727,
+     "ci95_low": 0.3935888363001058,
+     "ci95_high": 1.3791173417696458,
+     "share_below_zero": 0.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.8965225103452727,
+     "ci95_low": 0.3466605360916172,
+     "ci95_high": 1.4223920004717525,
+     "share_below_zero": 0.0005,
+     "p_two_sided": 0.001999000499750125,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.8965225103452727,
+     "ci95_low": 0.26539001789266303,
+     "ci95_high": 1.439075446915638,
+     "share_below_zero": 0.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "p_holm": 0.01199400299850075,
+   "verdict": "supported: second better"
+  },
+  "T3": {
+   "description": "tuned LSTM [all] vs tuned HGB v5",
+   "weights": {
+    "T-N1": 1,
+    "T-HGB-V5": -1
+   },
+   "estimate": -0.022224820493310204,
+   "p_max": 0.6996501749125438,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.022224820493310204,
+     "ci95_low": -0.3681376948516385,
+     "ci95_high": 0.23838837363564314,
+     "share_below_zero": 0.6505,
+     "p_two_sided": 0.6996501749125438,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.022224820493310204,
+     "ci95_low": -0.4618555034763398,
+     "ci95_high": 0.2795551203705358,
+     "share_below_zero": 0.6775,
+     "p_two_sided": 0.6456771614192903,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.022224820493310204,
+     "ci95_low": -0.5064225022118389,
+     "ci95_high": 0.3134858350316352,
+     "share_below_zero": 0.6595,
+     "p_two_sided": 0.6816591704147926,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "T4": {
+   "description": "tuned GRU [all] vs tuned HGB v5",
+   "weights": {
+    "T-N2": 1,
+    "T-HGB-V5": -1
+   },
+   "estimate": 0.2227022271286856,
+   "p_max": 0.14192903548225888,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.2227022271286856,
+     "ci95_low": -0.02769258615091855,
+     "ci95_high": 0.4391587849052105,
+     "share_below_zero": 0.041,
+     "p_two_sided": 0.08295852073963018,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.2227022271286856,
+     "ci95_low": -0.07262526863975309,
+     "ci95_high": 0.41242703548470855,
+     "share_below_zero": 0.0705,
+     "p_two_sided": 0.14192903548225888,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.2227022271286856,
+     "ci95_low": -0.046342427047981936,
+     "ci95_high": 0.356799567914723,
+     "share_below_zero": 0.068,
+     "p_two_sided": 0.13693153423288357,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "p_holm": 0.7096451774112944,
+   "verdict": "not established"
+  },
+  "T5": {
+   "description": "tuned TCN [all] vs tuned HGB v5",
+   "weights": {
+    "T-N3": 1,
+    "T-HGB-V5": -1
+   },
+   "estimate": 0.13144575175891537,
+   "p_max": 0.7096451774112944,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.13144575175891537,
+     "ci95_low": -0.1875603758058535,
+     "ci95_high": 0.3572730465329211,
+     "share_below_zero": 0.223,
+     "p_two_sided": 0.44677661169415295,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.13144575175891537,
+     "ci95_low": -0.25722852258046647,
+     "ci95_high": 0.3780448561731255,
+     "share_below_zero": 0.2825,
+     "p_two_sided": 0.5657171414292853,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.13144575175891537,
+     "ci95_low": -0.2799081838298977,
+     "ci95_high": 0.39006482483070615,
+     "share_below_zero": 0.3545,
+     "p_two_sided": 0.7096451774112944,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  },
+  "T6": {
+   "description": "tuned N4 [all] vs tuned HGB v5",
+   "weights": {
+    "T-N4": 1,
+    "T-HGB-V5": -1
+   },
+   "estimate": -0.10377430344118865,
+   "p_max": 0.2988505747126437,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.10377430344118865,
+     "ci95_low": -0.45231848792783064,
+     "ci95_high": 0.13042595963059356,
+     "share_below_zero": 0.851,
+     "p_two_sided": 0.2988505747126437,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.10377430344118865,
+     "ci95_low": -0.5109245495905392,
+     "ci95_high": 0.10469727712058921,
+     "share_below_zero": 0.897,
+     "p_two_sided": 0.20689655172413793,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.10377430344118865,
+     "ci95_low": -0.5176226771933942,
+     "ci95_high": 0.021603754614432424,
+     "share_below_zero": 0.9595,
+     "p_two_sided": 0.08195902048975512,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "p_holm": 1.0,
+   "verdict": "not established"
+  }
+ },
+ "posthoc_T26_vs_artifact": {
+  "HGB-V5 vs REF-V2-ARTIFACT": {
+   "description": "HGB[S,N,Wd,Wu,G,Q,C,R] vs frozen v2 artifact",
+   "weights": {
+    "HGB-V5": 1,
+    "REF-V2-ARTIFACT": -1
+   },
+   "estimate": 0.0852270353273088,
+   "p_max": 0.23888055972013994,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.0852270353273088,
+     "ci95_low": -0.05600408608851728,
+     "ci95_high": 0.237834134737,
+     "share_below_zero": 0.119,
+     "p_two_sided": 0.23888055972013994,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.0852270353273088,
+     "ci95_low": 0.008709727128038502,
+     "ci95_high": 0.2264115248014324,
+     "share_below_zero": 0.016,
+     "p_two_sided": 0.03298350824587706,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.0852270353273088,
+     "ci95_low": 0.0364733909711908,
+     "ci95_high": 0.20767688249293104,
+     "share_below_zero": 0.0025,
+     "p_two_sided": 0.005997001499250375,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "verdict_unadjusted": "not established"
+  },
+  "T-HGB-V5 vs REF-V2-ARTIFACT": {
+   "description": "HGB[S,N,Wd,Wu,G,Q,C,R] \u00b7 tuned vs frozen v2 artifact",
+   "weights": {
+    "T-HGB-V5": 1,
+    "REF-V2-ARTIFACT": -1
+   },
+   "estimate": -0.0825960090113238,
+   "p_max": 0.6896551724137931,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.0825960090113238,
+     "ci95_low": -0.29177383388357214,
+     "ci95_high": 0.18007640952857162,
+     "share_below_zero": 0.7315,
+     "p_two_sided": 0.5377311344327836,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.0825960090113238,
+     "ci95_low": -0.2373203365550628,
+     "ci95_high": 0.2034562072162738,
+     "share_below_zero": 0.695,
+     "p_two_sided": 0.6106946526736632,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.0825960090113238,
+     "ci95_low": -0.2097102458562849,
+     "ci95_high": 0.16339112643846526,
+     "share_below_zero": 0.6555,
+     "p_two_sided": 0.6896551724137931,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "verdict_unadjusted": "not established"
+  },
+  "B-HGB-SNCR vs REF-V2-ARTIFACT": {
+   "description": "HGB[S,N,C,R] vs frozen v2 artifact",
+   "weights": {
+    "B-HGB-SNCR": 1,
+    "REF-V2-ARTIFACT": -1
+   },
+   "estimate": -0.006850845936430261,
+   "p_max": 0.783608195902049,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.006850845936430261,
+     "ci95_low": -0.10252029160404152,
+     "ci95_high": 0.07399020577864807,
+     "share_below_zero": 0.64,
+     "p_two_sided": 0.7206396801599201,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.006850845936430261,
+     "ci95_low": -0.10435712212829726,
+     "ci95_high": 0.07592233634196958,
+     "share_below_zero": 0.6335,
+     "p_two_sided": 0.7336331834082959,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.006850845936430261,
+     "ci95_low": -0.08646099244363412,
+     "ci95_high": 0.06974992519965258,
+     "share_below_zero": 0.6085,
+     "p_two_sided": 0.783608195902049,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "verdict_unadjusted": "not established"
+  },
+  "A-N1 vs REF-V2-ARTIFACT": {
+   "description": "LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30 vs frozen v2 artifact",
+   "weights": {
+    "A-N1": 1,
+    "REF-V2-ARTIFACT": -1
+   },
+   "estimate": -0.19312387255003127,
+   "p_max": 0.009995002498750625,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -0.19312387255003127,
+     "ci95_low": -0.40544443460041735,
+     "ci95_high": -0.061928290554266824,
+     "share_below_zero": 0.9955,
+     "p_two_sided": 0.009995002498750625,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.19312387255003127,
+     "ci95_low": -0.42097643680125346,
+     "ci95_high": -0.10580019924068398,
+     "share_below_zero": 1.0,
+     "p_two_sided": 0.0009995002498750624,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.19312387255003127,
+     "ci95_low": -0.43151016489856786,
+     "ci95_high": -0.0890059415117295,
+     "share_below_zero": 0.9995,
+     "p_two_sided": 0.001999000499750125,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "verdict_unadjusted": "first better (all 3 CIs exclude 0)"
+  },
+  "A-N4 vs REF-V2-ARTIFACT": {
+   "description": "N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30 vs frozen v2 artifact",
+   "weights": {
+    "A-N4": 1,
+    "REF-V2-ARTIFACT": -1
+   },
+   "estimate": -0.18637031245251245,
+   "p_max": 0.038980509745127435,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -0.18637031245251245,
+     "ci95_low": -0.3986488569557553,
+     "ci95_high": -0.01292804060382572,
+     "share_below_zero": 0.981,
+     "p_two_sided": 0.038980509745127435,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.18637031245251245,
+     "ci95_low": -0.4222301840549113,
+     "ci95_high": -0.05224363380304775,
+     "share_below_zero": 0.9945,
+     "p_two_sided": 0.01199400299850075,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.18637031245251245,
+     "ci95_low": -0.4379257945501449,
+     "ci95_high": -0.08105133164414184,
+     "share_below_zero": 0.996,
+     "p_two_sided": 0.008995502248875561,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "verdict_unadjusted": "first better (all 3 CIs exclude 0)"
+  },
+  "T-N4 vs REF-V2-ARTIFACT": {
+   "description": "N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq \u00b7 tuned vs frozen v2 artifact",
+   "weights": {
+    "T-N4": 1,
+    "REF-V2-ARTIFACT": -1
+   },
+   "estimate": -0.18637031245251245,
+   "p_max": 0.038980509745127435,
+   "all_ci_exclude_zero": true,
+   "blocks": {
+    "5w": {
+     "estimate": -0.18637031245251245,
+     "ci95_low": -0.3986488569557553,
+     "ci95_high": -0.01292804060382572,
+     "share_below_zero": 0.981,
+     "p_two_sided": 0.038980509745127435,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.18637031245251245,
+     "ci95_low": -0.4222301840549113,
+     "ci95_high": -0.05224363380304775,
+     "share_below_zero": 0.9945,
+     "p_two_sided": 0.01199400299850075,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.18637031245251245,
+     "ci95_low": -0.4379257945501449,
+     "ci95_high": -0.08105133164414184,
+     "share_below_zero": 0.996,
+     "p_two_sided": 0.008995502248875561,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "verdict_unadjusted": "first better (all 3 CIs exclude 0)"
+  },
+  "A-HGB-DAILY vs REF-V2-ARTIFACT": {
+   "description": "HGB[S,N,Wd,Wu,G,Q,C,R] \u00b7 daily vs frozen v2 artifact",
+   "weights": {
+    "A-HGB-DAILY": 1,
+    "REF-V2-ARTIFACT": -1
+   },
+   "estimate": 0.008904829547651705,
+   "p_max": 0.9665167416291854,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": 0.008904829547651705,
+     "ci95_low": -0.14245013170043053,
+     "ci95_high": 0.10827046604917222,
+     "share_below_zero": 0.5595,
+     "p_two_sided": 0.881559220389805,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": 0.008904829547651705,
+     "ci95_low": -0.07403895093867321,
+     "ci95_high": 0.09308453012909372,
+     "share_below_zero": 0.517,
+     "p_two_sided": 0.9665167416291854,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": 0.008904829547651705,
+     "ci95_low": -0.07833690569971123,
+     "ci95_high": 0.06465973719902218,
+     "share_below_zero": 0.455,
+     "p_two_sided": 0.9105447276361819,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 251,
+   "n_dates": 42,
+   "verdict_unadjusted": "not established"
+  }
+ }
+}

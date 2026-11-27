@@ -1,0 +1,466 @@
+{
+ "T-RIDGE": [
+  {
+   "config": 0,
+   "hp": {
+    "alpha": "ridgecv"
+   },
+   "tuning_mae": 2.605199291288137,
+   "fit_seconds": 0.05150633351877332
+  },
+  {
+   "config": 1,
+   "hp": {
+    "alpha": 0.001
+   },
+   "tuning_mae": 2.6180024687350394,
+   "fit_seconds": 0.034787208307534456
+  },
+  {
+   "config": 2,
+   "hp": {
+    "alpha": 0.002448436746822227
+   },
+   "tuning_mae": 2.617995681618891,
+   "fit_seconds": 0.025479082949459553
+  },
+  {
+   "config": 3,
+   "hp": {
+    "alpha": 0.005994842503189409
+   },
+   "tuning_mae": 2.617979090998458,
+   "fit_seconds": 0.027364999521523714
+  },
+  {
+   "config": 4,
+   "hp": {
+    "alpha": 0.014677992676220698
+   },
+   "tuning_mae": 2.6179386321854614,
+   "fit_seconds": 0.028459709603339434
+  },
+  {
+   "config": 5,
+   "hp": {
+    "alpha": 0.03593813663804628
+   },
+   "tuning_mae": 2.6178405323579748,
+   "fit_seconds": 0.029699833132326603
+  },
+  {
+   "config": 6,
+   "hp": {
+    "alpha": 0.0879922543569107
+   },
+   "tuning_mae": 2.61760593482005,
+   "fit_seconds": 0.02746699983254075
+  },
+  {
+   "config": 7,
+   "hp": {
+    "alpha": 0.21544346900318845
+   },
+   "tuning_mae": 2.617084651473928,
+   "fit_seconds": 0.02563291834667325
+  },
+  {
+   "config": 8,
+   "hp": {
+    "alpha": 0.527499706370262
+   },
+   "tuning_mae": 2.615968937239853,
+   "fit_seconds": 0.026055832859128714
+  },
+  {
+   "config": 9,
+   "hp": {
+    "alpha": 1.291549665014884
+   },
+   "tuning_mae": 2.613914644515789,
+   "fit_seconds": 0.02412329101935029
+  },
+  {
+   "config": 10,
+   "hp": {
+    "alpha": 3.1622776601683795
+   },
+   "tuning_mae": 2.6112127695631115,
+   "fit_seconds": 0.024546042550355196
+  },
+  {
+   "config": 11,
+   "hp": {
+    "alpha": 7.742636826811269
+   },
+   "tuning_mae": 2.60842716896831,
+   "fit_seconds": 0.023500208742916584
+  },
+  {
+   "config": 12,
+   "hp": {
+    "alpha": 18.957356524063755
+   },
+   "tuning_mae": 2.605326949988246,
+   "fit_seconds": 0.022970749996602535
+  },
+  {
+   "config": 13,
+   "hp": {
+    "alpha": 46.41588833612782
+   },
+   "tuning_mae": 2.6004350599810375,
+   "fit_seconds": 0.023098374251276255
+  },
+  {
+   "config": 14,
+   "hp": {
+    "alpha": 113.64636663857242
+   },
+   "tuning_mae": 2.594479392915485,
+   "fit_seconds": 0.02390474919229746
+  },
+  {
+   "config": 15,
+   "hp": {
+    "alpha": 278.2559402207126
+   },
+   "tuning_mae": 2.5858316012823863,
+   "fit_seconds": 0.023522623348981142
+  },
+  {
+   "config": 16,
+   "hp": {
+    "alpha": 681.2920690579608
+   },
+   "tuning_mae": 2.5778046447522436,
+   "fit_seconds": 0.023904874455183744
+  },
+  {
+   "config": 17,
+   "hp": {
+    "alpha": 1668.100537200059
+   },
+   "tuning_mae": 2.6106724769226437,
+   "fit_seconds": 0.024100374430418015
+  },
+  {
+   "config": 18,
+   "hp": {
+    "alpha": 4084.238652674526
+   },
+   "tuning_mae": 2.7310126654776945,
+   "fit_seconds": 0.02445841720327735
+  },
+  {
+   "config": 19,
+   "hp": {
+    "alpha": 10000.0
+   },
+   "tuning_mae": 2.90975501542998,
+   "fit_seconds": 0.023977292235940695
+  }
+ ],
+ "T-HGB-V5": [
+  {
+   "config": 0,
+   "hp": {
+    "learning_rate": 0.03,
+    "max_iter": 150,
+    "max_depth": null,
+    "min_samples_leaf": 30,
+    "l2_regularization": 1.0,
+    "random_state": 42,
+    "max_leaf_nodes": 31,
+    "max_features": 1.0
+   },
+   "tuning_mae": 2.211587277172066,
+   "fit_seconds": 3.5997971245087683
+  },
+  {
+   "config": 1,
+   "hp": {
+    "learning_rate": 0.07057662833528267,
+    "max_iter": 300,
+    "max_leaf_nodes": 7,
+    "max_depth": 6,
+    "min_samples_leaf": 10,
+    "l2_regularization": 0.1,
+    "max_features": 1.0,
+    "random_state": 42
+   },
+   "tuning_mae": 2.401194731317931,
+   "fit_seconds": 1.4318071664310992
+  },
+  {
+   "config": 2,
+   "hp": {
+    "learning_rate": 0.05806182957199831,
+    "max_iter": 800,
+    "max_leaf_nodes": 7,
+    "max_depth": 8,
+    "min_samples_leaf": 50,
+    "l2_regularization": 0.1,
+    "max_features": 0.5,
+    "random_state": 42
+   },
+   "tuning_mae": 2.2607574456965556,
+   "fit_seconds": 3.832431834656745
+  },
+  {
+   "config": 3,
+   "hp": {
+    "learning_rate": 0.0351887514801508,
+    "max_iter": 500,
+    "max_leaf_nodes": 15,
+    "max_depth": null,
+    "min_samples_leaf": 100,
+    "l2_regularization": 0.1,
+    "max_features": 1.0,
+    "random_state": 42
+   },
+   "tuning_mae": 2.2233631466853843,
+   "fit_seconds": 4.215894835069776
+  },
+  {
+   "config": 4,
+   "hp": {
+    "learning_rate": 0.02304145627059167,
+    "max_iter": 500,
+    "max_leaf_nodes": 15,
+    "max_depth": 8,
+    "min_samples_leaf": 30,
+    "l2_regularization": 1.0,
+    "max_features": 0.5,
+    "random_state": 42
+   },
+   "tuning_mae": 2.2060304120487735,
+   "fit_seconds": 5.186094750650227
+  },
+  {
+   "config": 5,
+   "hp": {
+    "learning_rate": 0.02523010675953406,
+    "max_iter": 300,
+    "max_leaf_nodes": 63,
+    "max_depth": null,
+    "min_samples_leaf": 100,
+    "l2_regularization": 0.1,
+    "max_features": 0.75,
+    "random_state": 42
+   },
+   "tuning_mae": 2.146244178991809,
+   "fit_seconds": 6.339153083972633
+  },
+  {
+   "config": 6,
+   "hp": {
+    "learning_rate": 0.04281886594436655,
+    "max_iter": 800,
+    "max_leaf_nodes": 63,
+    "max_depth": 8,
+    "min_samples_leaf": 30,
+    "l2_regularization": 3.0,
+    "max_features": 1.0,
+    "random_state": 42
+   },
+   "tuning_mae": 2.241468260066192,
+   "fit_seconds": 15.23452949989587
+  },
+  {
+   "config": 7,
+   "hp": {
+    "learning_rate": 0.19873487291262165,
+    "max_iter": 100,
+    "max_leaf_nodes": 7,
+    "max_depth": 6,
+    "min_samples_leaf": 10,
+    "l2_regularization": 10.0,
+    "max_features": 1.0,
+    "random_state": 42
+   },
+   "tuning_mae": 2.39251328260193,
+   "fit_seconds": 0.9229505411349237
+  },
+  {
+   "config": 8,
+   "hp": {
+    "learning_rate": 0.014591792013384947,
+    "max_iter": 100,
+    "max_leaf_nodes": 15,
+    "max_depth": 8,
+    "min_samples_leaf": 20,
+    "l2_regularization": 3.0,
+    "max_features": 0.75,
+    "random_state": 42
+   },
+   "tuning_mae": 2.5110706240844434,
+   "fit_seconds": 1.3672483735717833
+  },
+  {
+   "config": 9,
+   "hp": {
+    "learning_rate": 0.011637450028541704,
+    "max_iter": 500,
+    "max_leaf_nodes": 15,
+    "max_depth": null,
+    "min_samples_leaf": 30,
+    "l2_regularization": 3.0,
+    "max_features": 0.5,
+    "random_state": 42
+   },
+   "tuning_mae": 2.198552218265575,
+   "fit_seconds": 6.235252333804965
+  },
+  {
+   "config": 10,
+   "hp": {
+    "learning_rate": 0.02781021063225089,
+    "max_iter": 500,
+    "max_leaf_nodes": 31,
+    "max_depth": null,
+    "min_samples_leaf": 20,
+    "l2_regularization": 1.0,
+    "max_features": 0.75,
+    "random_state": 42
+   },
+   "tuning_mae": 2.1933837524526143,
+   "fit_seconds": 9.221827500965446
+  },
+  {
+   "config": 11,
+   "hp": {
+    "learning_rate": 0.034622330531844235,
+    "max_iter": 200,
+    "max_leaf_nodes": 7,
+    "max_depth": 6,
+    "min_samples_leaf": 30,
+    "l2_regularization": 1.0,
+    "max_features": 0.5,
+    "random_state": 42
+   },
+   "tuning_mae": 2.3348200659339753,
+   "fit_seconds": 1.045555082615465
+  },
+  {
+   "config": 12,
+   "hp": {
+    "learning_rate": 0.05692108816810361,
+    "max_iter": 800,
+    "max_leaf_nodes": 7,
+    "max_depth": 4,
+    "min_samples_leaf": 30,
+    "l2_regularization": 0.0,
+    "max_features": 1.0,
+    "random_state": 42
+   },
+   "tuning_mae": 2.348323365938704,
+   "fit_seconds": 2.685256001073867
+  },
+  {
+   "config": 13,
+   "hp": {
+    "learning_rate": 0.02375377274987633,
+    "max_iter": 200,
+    "max_leaf_nodes": 7,
+    "max_depth": null,
+    "min_samples_leaf": 20,
+    "l2_regularization": 0.1,
+    "max_features": 0.75,
+    "random_state": 42
+   },
+   "tuning_mae": 2.4014302137791086,
+   "fit_seconds": 0.9058785843662918
+  },
+  {
+   "config": 14,
+   "hp": {
+    "learning_rate": 0.06258147813161902,
+    "max_iter": 800,
+    "max_leaf_nodes": 7,
+    "max_depth": 6,
+    "min_samples_leaf": 10,
+    "l2_regularization": 0.0,
+    "max_features": 1.0,
+    "random_state": 42
+   },
+   "tuning_mae": 2.3809568925857385,
+   "fit_seconds": 4.009340749587864
+  },
+  {
+   "config": 15,
+   "hp": {
+    "learning_rate": 0.03909172665659237,
+    "max_iter": 800,
+    "max_leaf_nodes": 31,
+    "max_depth": 6,
+    "min_samples_leaf": 100,
+    "l2_regularization": 3.0,
+    "max_features": 1.0,
+    "random_state": 42
+   },
+   "tuning_mae": 2.218285112301786,
+   "fit_seconds": 6.367624624166638
+  },
+  {
+   "config": 16,
+   "hp": {
+    "learning_rate": 0.1322519465889546,
+    "max_iter": 300,
+    "max_leaf_nodes": 15,
+    "max_depth": null,
+    "min_samples_leaf": 10,
+    "l2_regularization": 0.0,
+    "max_features": 0.5,
+    "random_state": 42
+   },
+   "tuning_mae": 2.416079790070991,
+   "fit_seconds": 3.1474425005726516
+  },
+  {
+   "config": 17,
+   "hp": {
+    "learning_rate": 0.032755339385336854,
+    "max_iter": 800,
+    "max_leaf_nodes": 31,
+    "max_depth": 8,
+    "min_samples_leaf": 30,
+    "l2_regularization": 10.0,
+    "max_features": 1.0,
+    "random_state": 42
+   },
+   "tuning_mae": 2.2013074769904923,
+   "fit_seconds": 12.222473707981408
+  },
+  {
+   "config": 18,
+   "hp": {
+    "learning_rate": 0.1193890312004695,
+    "max_iter": 500,
+    "max_leaf_nodes": 15,
+    "max_depth": null,
+    "min_samples_leaf": 10,
+    "l2_regularization": 10.0,
+    "max_features": 0.75,
+    "random_state": 42
+   },
+   "tuning_mae": 2.2311504348666253,
+   "fit_seconds": 5.031853042542934
+  },
+  {
+   "config": 19,
+   "hp": {
+    "learning_rate": 0.15713718996062578,
+    "max_iter": 100,
+    "max_leaf_nodes": 63,
+    "max_depth": 4,
+    "min_samples_leaf": 50,
+    "l2_regularization": 1.0,
+    "max_features": 0.75,
+    "random_state": 42
+   },
+   "tuning_mae": 2.2885584897821,
+   "fit_seconds": 0.7534176260232925
+  }
+ ]
+}

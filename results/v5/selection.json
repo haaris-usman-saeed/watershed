@@ -1,0 +1,90 @@
+{
+ "T-RIDGE": {
+  "config": 16,
+  "hp": {
+   "alpha": 681.2920690579608
+  },
+  "tuning_mae": 2.5778046447522436
+ },
+ "T-HGB-V5": {
+  "config": 5,
+  "hp": {
+   "learning_rate": 0.02523010675953406,
+   "max_iter": 300,
+   "max_leaf_nodes": 63,
+   "max_depth": null,
+   "min_samples_leaf": 100,
+   "l2_regularization": 0.1,
+   "max_features": 0.75,
+   "random_state": 42
+  },
+  "tuning_mae": 2.146244178991809
+ },
+ "T-N1": {
+  "config": 11,
+  "hp": {
+   "hidden": 32,
+   "layers": 2,
+   "emb_dim": 4,
+   "dropout": 0.0,
+   "lr": 0.001,
+   "weight_decay": 0.001,
+   "batch": 256,
+   "length": 60,
+   "max_epochs": 30,
+   "patience": 4
+  },
+  "tuning_mae": 2.0780156999386357
+ },
+ "T-N2": {
+  "config": 12,
+  "hp": {
+   "hidden": 64,
+   "layers": 2,
+   "emb_dim": 4,
+   "dropout": 0.1,
+   "lr": 0.0003,
+   "weight_decay": 1e-05,
+   "batch": 128,
+   "length": 30,
+   "max_epochs": 30,
+   "patience": 4
+  },
+  "tuning_mae": 2.082490956864497
+ },
+ "T-N3": {
+  "config": 6,
+  "hp": {
+   "hidden": 32,
+   "layers": 1,
+   "emb_dim": 4,
+   "dropout": 0.0,
+   "lr": 0.001,
+   "weight_decay": 1e-05,
+   "batch": 512,
+   "length": 30,
+   "max_epochs": 30,
+   "patience": 4,
+   "kernel": 2
+  },
+  "tuning_mae": 2.175230299293063
+ },
+ "T-N4": {
+  "config": 0,
+  "hp": {
+   "hidden": 64,
+   "layers": 1,
+   "emb_dim": 4,
+   "dropout": 0.2,
+   "lr": 0.001,
+   "weight_decay": 0.0001,
+   "batch": 256,
+   "length": 30,
+   "max_epochs": 30,
+   "patience": 4,
+   "cand": "wb_noaux"
+  },
+  "tuning_mae": 2.1513740026868904
+ },
+ "_rule": "lowest pooled MAE on the 1,248 Monday rows of tuning folds WY2012-2015, seed 0; 20 configurations each"
+}

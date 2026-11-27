@@ -468,3 +468,34 @@ This branch is based on `feature/30-day-forecast` (PR #4, open, CI passing). It 
 - **Other findings:** the water-balance layer adds no measurable accuracy (−0.008 against the direct-head ablation). The intervals undercover (90% nominal gives 0.840).
 - **Not frozen, not deployed.** Nothing from v4 is on the website, per the owner's decision of 2026-11-24.
 - **Details:** `docs/v4/RESULTS_N4.md`.
+
+### 2026-11-27: v5 benchmark: HGB v5 and the retraining of every implemented model (branch `research/v5-benchmark`, not committed)
+
+- **Plan fixed before any v5 result:** `docs/v5/BENCHMARK_PLAN.md`, SHA-256 `53aa2df4…`. Seven stage manifests record it, with UTC run times from 05:12 to 08:52.
+- **New data:** CDEC inflow and outflow (sensors 76/23) for 2024-01-01 to 2026-11-20, downloaded 2026-11-27. Private, like all flow data.
+- **Consolidated dataset:**
+  - `data/v5/daily_panel.parquet`, 56,730 × 18;
+  - `data/v5/features_daily.parquet`, 56,730 × 31.
+  Both are private. Before 2024 the panel is identical to the v4 panel, and its Monday rows are identical to the v3 weekly table.
+- **Run:**
+  - 13 tabular configurations plus 4 baselines;
+  - 14 network configurations × 3 seeds;
+  - an equal-budget search of 20 configurations for each of 6 algorithms on WY2012–2015;
+  - tuned models with 3 seeds;
+  - post-hoc windows HELD (2024–2025) and T26 (2026).
+
+  That is 1,060 saved networks and 196 saved tabular models, under `models/v5/` (git-ignored).
+- **Reproduction:**
+  - the frozen v2 artifact on HELD (2.3323), v3 Models A, B and B2 on T26, and the v4 networks are all reproduced exactly;
+  - v3 Model C differs, as expected: v5 trains on all rows with GEFS missing where unavailable.
+- **Confirmation folds WY2016–2023, 2,500 identical rows (exploratory):**
+  - lowest MAE: N4 wb_noaux with full information, 2.981 pp;
+  - HGB v5 [all], 3.074;
+  - HGB[S,N,C,R] reference, 3.160.
+- **Planned comparisons** (block bootstrap; Holm correction within each family): only two are supported.
+  - HGB v5 beats storage-only HGB[S,C,R] by 0.226 pp.
+  - Tuned HGB v5 beats tuned Ridge by 0.652 pp.
+  - Not established: HGB v5 against the reference (−0.086), and every network against HGB v5. The lowest-error model differs in each population.
+- **Not frozen, not deployed, not on the website.**
+- **Details:** `docs/v5/RESULTS.md`.
+- **Draft prospective protocol:** `docs/v5/PROSPECTIVE_PROTOCOL_DRAFT.md`. It is not in force; adopting it is the owner's decision.

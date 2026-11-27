@@ -38,3 +38,7 @@ data/v4/
 
 # Prospective scoring (src/prospective.py): raw CDEC responses kept with their SHA-256 on the scoring machine.
 data/prospective/
+
+# v5 (consolidated benchmark): private daily panel and feature tables, CDEC flow downloads for 2024-2026,
+# per-row predictions and run logs. Model artifacts go to models/v5/ (ignored above); aggregates to results/v5/.
+data/v5/

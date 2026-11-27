@@ -1,0 +1,16 @@
+{
+ "HELD: B-HGB-SNCR vs recorded pred_delta_pp": 1.7763568394002505e-15,
+ "HELD: B-HGB-SWdCR vs recorded pred_hgb_v1_features_pp": 1.7763568394002505e-15,
+ "HELD: B-HGB-SNWdCR vs recorded pred_hgb_swe_pp": 1.7763568394002505e-15,
+ "HELD: B-HGB-SCR vs recorded pred_hgb_no_weather_pp": 1.7763568394002505e-15,
+ "HELD: B-RIDGE-SWdCR vs recorded pred_ridge_pp": 3.552713678800501e-15,
+ "HELD: BL-DOY vs recorded baseline_doy_pp": 1.7763568394002505e-15,
+ "HELD: BL-MONTH vs recorded baseline_seasonal_pp": 1.7763568394002505e-15,
+ "HELD: BL-TREND vs recorded baseline_trend_pp": 0.0,
+ "T26: B-HGB-SNCR vs recorded pred_A": 1.7763568394002505e-15,
+ "T26: B-HGB-SNWdCR vs recorded pred_B": 1.7763568394002505e-15,
+ "T26: B-HGB-SNWuCR vs recorded pred_B2": 1.7763568394002505e-15,
+ "T26: B-HGB-SNGCR vs recorded pred_C": 1.5673538814649315,
+ "T26: BL-DOY vs recorded base_doy": 1.7763568394002505e-15,
+ "T26: BL-MONTH vs recorded base_monthly": 1.7763568394002505e-15
+}

@@ -1,0 +1,505 @@
+model,code,fold,train_rows,validation_rows,test_rows,train_unit
+BL-PERS,BL-PERS,WY2012,3250,0,307,v2 Monday rows
+BL-PERS,BL-PERS,WY2013,3557,0,318,v2 Monday rows
+BL-PERS,BL-PERS,WY2014,3869,0,311,v2 Monday rows
+BL-PERS,BL-PERS,WY2015,4180,0,312,v2 Monday rows
+BL-PERS,BL-PERS,WY2016,4498,0,312,v2 Monday rows
+BL-PERS,BL-PERS,WY2017,4810,0,312,v2 Monday rows
+BL-PERS,BL-PERS,WY2018,5122,0,312,v2 Monday rows
+BL-PERS,BL-PERS,WY2019,5434,0,318,v2 Monday rows
+BL-PERS,BL-PERS,WY2020,5746,0,311,v2 Monday rows
+BL-PERS,BL-PERS,WY2021,6063,0,311,v2 Monday rows
+BL-PERS,BL-PERS,WY2022,6374,0,312,v2 Monday rows
+BL-PERS,BL-PERS,WY2023,6686,0,312,v2 Monday rows
+BL-PERS,BL-PERS,HELD,7076,0,593,v2 Monday rows
+BL-PERS,BL-PERS,T26,7693,0,251,v2 Monday rows
+BL-TREND,BL-TREND,WY2012,3250,0,307,v2 Monday rows
+BL-TREND,BL-TREND,WY2013,3557,0,318,v2 Monday rows
+BL-TREND,BL-TREND,WY2014,3869,0,311,v2 Monday rows
+BL-TREND,BL-TREND,WY2015,4180,0,312,v2 Monday rows
+BL-TREND,BL-TREND,WY2016,4498,0,312,v2 Monday rows
+BL-TREND,BL-TREND,WY2017,4810,0,312,v2 Monday rows
+BL-TREND,BL-TREND,WY2018,5122,0,312,v2 Monday rows
+BL-TREND,BL-TREND,WY2019,5434,0,318,v2 Monday rows
+BL-TREND,BL-TREND,WY2020,5746,0,311,v2 Monday rows
+BL-TREND,BL-TREND,WY2021,6063,0,311,v2 Monday rows
+BL-TREND,BL-TREND,WY2022,6374,0,312,v2 Monday rows
+BL-TREND,BL-TREND,WY2023,6686,0,312,v2 Monday rows
+BL-TREND,BL-TREND,HELD,7076,0,593,v2 Monday rows
+BL-TREND,BL-TREND,T26,7693,0,251,v2 Monday rows
+BL-MONTH,BL-MONTH,WY2012,3250,0,307,v2 Monday rows
+BL-MONTH,BL-MONTH,WY2013,3557,0,318,v2 Monday rows
+BL-MONTH,BL-MONTH,WY2014,3869,0,311,v2 Monday rows
+BL-MONTH,BL-MONTH,WY2015,4180,0,312,v2 Monday rows
+BL-MONTH,BL-MONTH,WY2016,4498,0,312,v2 Monday rows
+BL-MONTH,BL-MONTH,WY2017,4810,0,312,v2 Monday rows
+BL-MONTH,BL-MONTH,WY2018,5122,0,312,v2 Monday rows
+BL-MONTH,BL-MONTH,WY2019,5434,0,318,v2 Monday rows
+BL-MONTH,BL-MONTH,WY2020,5746,0,311,v2 Monday rows
+BL-MONTH,BL-MONTH,WY2021,6063,0,311,v2 Monday rows
+BL-MONTH,BL-MONTH,WY2022,6374,0,312,v2 Monday rows
+BL-MONTH,BL-MONTH,WY2023,6686,0,312,v2 Monday rows
+BL-MONTH,BL-MONTH,HELD,7076,0,593,v2 Monday rows
+BL-MONTH,BL-MONTH,T26,7693,0,251,v2 Monday rows
+BL-DOY,BL-DOY,WY2012,3250,0,307,v2 Monday rows
+BL-DOY,BL-DOY,WY2013,3557,0,318,v2 Monday rows
+BL-DOY,BL-DOY,WY2014,3869,0,311,v2 Monday rows
+BL-DOY,BL-DOY,WY2015,4180,0,312,v2 Monday rows
+BL-DOY,BL-DOY,WY2016,4498,0,312,v2 Monday rows
+BL-DOY,BL-DOY,WY2017,4810,0,312,v2 Monday rows
+BL-DOY,BL-DOY,WY2018,5122,0,312,v2 Monday rows
+BL-DOY,BL-DOY,WY2019,5434,0,318,v2 Monday rows
+BL-DOY,BL-DOY,WY2020,5746,0,311,v2 Monday rows
+BL-DOY,BL-DOY,WY2021,6063,0,311,v2 Monday rows
+BL-DOY,BL-DOY,WY2022,6374,0,312,v2 Monday rows
+BL-DOY,BL-DOY,WY2023,6686,0,312,v2 Monday rows
+BL-DOY,BL-DOY,HELD,7076,0,593,v2 Monday rows
+BL-DOY,BL-DOY,T26,7693,0,251,v2 Monday rows
+B-HGB-SWdCR,"HGB[S,Wd,C,R]",WY2012,3250,0,307,v2 Monday rows
+B-HGB-SWdCR,"HGB[S,Wd,C,R]",WY2013,3557,0,318,v2 Monday rows
+B-HGB-SWdCR,"HGB[S,Wd,C,R]",WY2014,3869,0,311,v2 Monday rows
+B-HGB-SWdCR,"HGB[S,Wd,C,R]",WY2015,4180,0,312,v2 Monday rows
+B-HGB-SWdCR,"HGB[S,Wd,C,R]",WY2016,4498,0,312,v2 Monday rows
+B-HGB-SWdCR,"HGB[S,Wd,C,R]",WY2017,4810,0,312,v2 Monday rows
+B-HGB-SWdCR,"HGB[S,Wd,C,R]",WY2018,5122,0,312,v2 Monday rows
+B-HGB-SWdCR,"HGB[S,Wd,C,R]",WY2019,5434,0,318,v2 Monday rows
+B-HGB-SWdCR,"HGB[S,Wd,C,R]",WY2020,5746,0,311,v2 Monday rows
+B-HGB-SWdCR,"HGB[S,Wd,C,R]",WY2021,6063,0,311,v2 Monday rows
+B-HGB-SWdCR,"HGB[S,Wd,C,R]",WY2022,6374,0,312,v2 Monday rows
+B-HGB-SWdCR,"HGB[S,Wd,C,R]",WY2023,6686,0,312,v2 Monday rows
+B-HGB-SWdCR,"HGB[S,Wd,C,R]",HELD,7076,0,593,v2 Monday rows
+B-HGB-SWdCR,"HGB[S,Wd,C,R]",T26,7693,0,251,v2 Monday rows
+B-HGB-SCR,"HGB[S,C,R]",WY2012,3250,0,307,v2 Monday rows
+B-HGB-SCR,"HGB[S,C,R]",WY2013,3557,0,318,v2 Monday rows
+B-HGB-SCR,"HGB[S,C,R]",WY2014,3869,0,311,v2 Monday rows
+B-HGB-SCR,"HGB[S,C,R]",WY2015,4180,0,312,v2 Monday rows
+B-HGB-SCR,"HGB[S,C,R]",WY2016,4498,0,312,v2 Monday rows
+B-HGB-SCR,"HGB[S,C,R]",WY2017,4810,0,312,v2 Monday rows
+B-HGB-SCR,"HGB[S,C,R]",WY2018,5122,0,312,v2 Monday rows
+B-HGB-SCR,"HGB[S,C,R]",WY2019,5434,0,318,v2 Monday rows
+B-HGB-SCR,"HGB[S,C,R]",WY2020,5746,0,311,v2 Monday rows
+B-HGB-SCR,"HGB[S,C,R]",WY2021,6063,0,311,v2 Monday rows
+B-HGB-SCR,"HGB[S,C,R]",WY2022,6374,0,312,v2 Monday rows
+B-HGB-SCR,"HGB[S,C,R]",WY2023,6686,0,312,v2 Monday rows
+B-HGB-SCR,"HGB[S,C,R]",HELD,7076,0,593,v2 Monday rows
+B-HGB-SCR,"HGB[S,C,R]",T26,7693,0,251,v2 Monday rows
+B-HGB-SNCR,"HGB[S,N,C,R]",WY2012,3250,0,307,v2 Monday rows
+B-HGB-SNCR,"HGB[S,N,C,R]",WY2013,3557,0,318,v2 Monday rows
+B-HGB-SNCR,"HGB[S,N,C,R]",WY2014,3869,0,311,v2 Monday rows
+B-HGB-SNCR,"HGB[S,N,C,R]",WY2015,4180,0,312,v2 Monday rows
+B-HGB-SNCR,"HGB[S,N,C,R]",WY2016,4498,0,312,v2 Monday rows
+B-HGB-SNCR,"HGB[S,N,C,R]",WY2017,4810,0,312,v2 Monday rows
+B-HGB-SNCR,"HGB[S,N,C,R]",WY2018,5122,0,312,v2 Monday rows
+B-HGB-SNCR,"HGB[S,N,C,R]",WY2019,5434,0,318,v2 Monday rows
+B-HGB-SNCR,"HGB[S,N,C,R]",WY2020,5746,0,311,v2 Monday rows
+B-HGB-SNCR,"HGB[S,N,C,R]",WY2021,6063,0,311,v2 Monday rows
+B-HGB-SNCR,"HGB[S,N,C,R]",WY2022,6374,0,312,v2 Monday rows
+B-HGB-SNCR,"HGB[S,N,C,R]",WY2023,6686,0,312,v2 Monday rows
+B-HGB-SNCR,"HGB[S,N,C,R]",HELD,7076,0,593,v2 Monday rows
+B-HGB-SNCR,"HGB[S,N,C,R]",T26,7693,0,251,v2 Monday rows
+B-HGB-SNWdCR,"HGB[S,N,Wd,C,R]",WY2012,3250,0,307,v2 Monday rows
+B-HGB-SNWdCR,"HGB[S,N,Wd,C,R]",WY2013,3557,0,318,v2 Monday rows
+B-HGB-SNWdCR,"HGB[S,N,Wd,C,R]",WY2014,3869,0,311,v2 Monday rows
+B-HGB-SNWdCR,"HGB[S,N,Wd,C,R]",WY2015,4180,0,312,v2 Monday rows
+B-HGB-SNWdCR,"HGB[S,N,Wd,C,R]",WY2016,4498,0,312,v2 Monday rows
+B-HGB-SNWdCR,"HGB[S,N,Wd,C,R]",WY2017,4810,0,312,v2 Monday rows
+B-HGB-SNWdCR,"HGB[S,N,Wd,C,R]",WY2018,5122,0,312,v2 Monday rows
+B-HGB-SNWdCR,"HGB[S,N,Wd,C,R]",WY2019,5434,0,318,v2 Monday rows
+B-HGB-SNWdCR,"HGB[S,N,Wd,C,R]",WY2020,5746,0,311,v2 Monday rows
+B-HGB-SNWdCR,"HGB[S,N,Wd,C,R]",WY2021,6063,0,311,v2 Monday rows
+B-HGB-SNWdCR,"HGB[S,N,Wd,C,R]",WY2022,6374,0,312,v2 Monday rows
+B-HGB-SNWdCR,"HGB[S,N,Wd,C,R]",WY2023,6686,0,312,v2 Monday rows
+B-HGB-SNWdCR,"HGB[S,N,Wd,C,R]",HELD,7076,0,593,v2 Monday rows
+B-HGB-SNWdCR,"HGB[S,N,Wd,C,R]",T26,7693,0,251,v2 Monday rows
+B-HGB-SNWuCR,"HGB[S,N,Wu,C,R]",WY2012,3250,0,307,v2 Monday rows
+B-HGB-SNWuCR,"HGB[S,N,Wu,C,R]",WY2013,3557,0,318,v2 Monday rows
+B-HGB-SNWuCR,"HGB[S,N,Wu,C,R]",WY2014,3869,0,311,v2 Monday rows
+B-HGB-SNWuCR,"HGB[S,N,Wu,C,R]",WY2015,4180,0,312,v2 Monday rows
+B-HGB-SNWuCR,"HGB[S,N,Wu,C,R]",WY2016,4498,0,312,v2 Monday rows
+B-HGB-SNWuCR,"HGB[S,N,Wu,C,R]",WY2017,4810,0,312,v2 Monday rows
+B-HGB-SNWuCR,"HGB[S,N,Wu,C,R]",WY2018,5122,0,312,v2 Monday rows
+B-HGB-SNWuCR,"HGB[S,N,Wu,C,R]",WY2019,5434,0,318,v2 Monday rows
+B-HGB-SNWuCR,"HGB[S,N,Wu,C,R]",WY2020,5746,0,311,v2 Monday rows
+B-HGB-SNWuCR,"HGB[S,N,Wu,C,R]",WY2021,6063,0,311,v2 Monday rows
+B-HGB-SNWuCR,"HGB[S,N,Wu,C,R]",WY2022,6374,0,312,v2 Monday rows
+B-HGB-SNWuCR,"HGB[S,N,Wu,C,R]",WY2023,6686,0,312,v2 Monday rows
+B-HGB-SNWuCR,"HGB[S,N,Wu,C,R]",HELD,7076,0,593,v2 Monday rows
+B-HGB-SNWuCR,"HGB[S,N,Wu,C,R]",T26,7693,0,251,v2 Monday rows
+B-HGB-SNGCR,"HGB[S,N,G,C,R]",WY2012,3250,0,307,v2 Monday rows
+B-HGB-SNGCR,"HGB[S,N,G,C,R]",WY2013,3557,0,318,v2 Monday rows
+B-HGB-SNGCR,"HGB[S,N,G,C,R]",WY2014,3869,0,311,v2 Monday rows
+B-HGB-SNGCR,"HGB[S,N,G,C,R]",WY2015,4180,0,312,v2 Monday rows
+B-HGB-SNGCR,"HGB[S,N,G,C,R]",WY2016,4498,0,312,v2 Monday rows
+B-HGB-SNGCR,"HGB[S,N,G,C,R]",WY2017,4810,0,312,v2 Monday rows
+B-HGB-SNGCR,"HGB[S,N,G,C,R]",WY2018,5122,0,312,v2 Monday rows
+B-HGB-SNGCR,"HGB[S,N,G,C,R]",WY2019,5434,0,318,v2 Monday rows
+B-HGB-SNGCR,"HGB[S,N,G,C,R]",WY2020,5746,0,311,v2 Monday rows
+B-HGB-SNGCR,"HGB[S,N,G,C,R]",WY2021,6063,0,311,v2 Monday rows
+B-HGB-SNGCR,"HGB[S,N,G,C,R]",WY2022,6374,0,312,v2 Monday rows
+B-HGB-SNGCR,"HGB[S,N,G,C,R]",WY2023,6686,0,312,v2 Monday rows
+B-HGB-SNGCR,"HGB[S,N,G,C,R]",HELD,7076,0,593,v2 Monday rows
+B-HGB-SNGCR,"HGB[S,N,G,C,R]",T26,7693,0,251,v2 Monday rows
+B-HGB-SNQCR,"HGB[S,N,Q,C,R]",WY2012,3250,0,307,v2 Monday rows
+B-HGB-SNQCR,"HGB[S,N,Q,C,R]",WY2013,3557,0,318,v2 Monday rows
+B-HGB-SNQCR,"HGB[S,N,Q,C,R]",WY2014,3869,0,311,v2 Monday rows
+B-HGB-SNQCR,"HGB[S,N,Q,C,R]",WY2015,4180,0,312,v2 Monday rows
+B-HGB-SNQCR,"HGB[S,N,Q,C,R]",WY2016,4498,0,312,v2 Monday rows
+B-HGB-SNQCR,"HGB[S,N,Q,C,R]",WY2017,4810,0,312,v2 Monday rows
+B-HGB-SNQCR,"HGB[S,N,Q,C,R]",WY2018,5122,0,312,v2 Monday rows
+B-HGB-SNQCR,"HGB[S,N,Q,C,R]",WY2019,5434,0,318,v2 Monday rows
+B-HGB-SNQCR,"HGB[S,N,Q,C,R]",WY2020,5746,0,311,v2 Monday rows
+B-HGB-SNQCR,"HGB[S,N,Q,C,R]",WY2021,6063,0,311,v2 Monday rows
+B-HGB-SNQCR,"HGB[S,N,Q,C,R]",WY2022,6374,0,312,v2 Monday rows
+B-HGB-SNQCR,"HGB[S,N,Q,C,R]",WY2023,6686,0,312,v2 Monday rows
+B-HGB-SNQCR,"HGB[S,N,Q,C,R]",HELD,7076,0,593,v2 Monday rows
+B-HGB-SNQCR,"HGB[S,N,Q,C,R]",T26,7693,0,251,v2 Monday rows
+HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R]",WY2012,3250,0,307,v2 Monday rows
+HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R]",WY2013,3557,0,318,v2 Monday rows
+HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R]",WY2014,3869,0,311,v2 Monday rows
+HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R]",WY2015,4180,0,312,v2 Monday rows
+HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R]",WY2016,4498,0,312,v2 Monday rows
+HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R]",WY2017,4810,0,312,v2 Monday rows
+HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R]",WY2018,5122,0,312,v2 Monday rows
+HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R]",WY2019,5434,0,318,v2 Monday rows
+HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R]",WY2020,5746,0,311,v2 Monday rows
+HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R]",WY2021,6063,0,311,v2 Monday rows
+HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R]",WY2022,6374,0,312,v2 Monday rows
+HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R]",WY2023,6686,0,312,v2 Monday rows
+HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R]",HELD,7076,0,593,v2 Monday rows
+HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R]",T26,7693,0,251,v2 Monday rows
+B-RIDGE-SWdCR,"Ridge[S,Wd,C,R]",WY2012,3250,0,307,v2 Monday rows
+B-RIDGE-SWdCR,"Ridge[S,Wd,C,R]",WY2013,3557,0,318,v2 Monday rows
+B-RIDGE-SWdCR,"Ridge[S,Wd,C,R]",WY2014,3869,0,311,v2 Monday rows
+B-RIDGE-SWdCR,"Ridge[S,Wd,C,R]",WY2015,4180,0,312,v2 Monday rows
+B-RIDGE-SWdCR,"Ridge[S,Wd,C,R]",WY2016,4498,0,312,v2 Monday rows
+B-RIDGE-SWdCR,"Ridge[S,Wd,C,R]",WY2017,4810,0,312,v2 Monday rows
+B-RIDGE-SWdCR,"Ridge[S,Wd,C,R]",WY2018,5122,0,312,v2 Monday rows
+B-RIDGE-SWdCR,"Ridge[S,Wd,C,R]",WY2019,5434,0,318,v2 Monday rows
+B-RIDGE-SWdCR,"Ridge[S,Wd,C,R]",WY2020,5746,0,311,v2 Monday rows
+B-RIDGE-SWdCR,"Ridge[S,Wd,C,R]",WY2021,6063,0,311,v2 Monday rows
+B-RIDGE-SWdCR,"Ridge[S,Wd,C,R]",WY2022,6374,0,312,v2 Monday rows
+B-RIDGE-SWdCR,"Ridge[S,Wd,C,R]",WY2023,6686,0,312,v2 Monday rows
+B-RIDGE-SWdCR,"Ridge[S,Wd,C,R]",HELD,7076,0,593,v2 Monday rows
+B-RIDGE-SWdCR,"Ridge[S,Wd,C,R]",T26,7693,0,251,v2 Monday rows
+B-RIDGE-SCR,"Ridge[S,C,R]",WY2012,3250,0,307,v2 Monday rows
+B-RIDGE-SCR,"Ridge[S,C,R]",WY2013,3557,0,318,v2 Monday rows
+B-RIDGE-SCR,"Ridge[S,C,R]",WY2014,3869,0,311,v2 Monday rows
+B-RIDGE-SCR,"Ridge[S,C,R]",WY2015,4180,0,312,v2 Monday rows
+B-RIDGE-SCR,"Ridge[S,C,R]",WY2016,4498,0,312,v2 Monday rows
+B-RIDGE-SCR,"Ridge[S,C,R]",WY2017,4810,0,312,v2 Monday rows
+B-RIDGE-SCR,"Ridge[S,C,R]",WY2018,5122,0,312,v2 Monday rows
+B-RIDGE-SCR,"Ridge[S,C,R]",WY2019,5434,0,318,v2 Monday rows
+B-RIDGE-SCR,"Ridge[S,C,R]",WY2020,5746,0,311,v2 Monday rows
+B-RIDGE-SCR,"Ridge[S,C,R]",WY2021,6063,0,311,v2 Monday rows
+B-RIDGE-SCR,"Ridge[S,C,R]",WY2022,6374,0,312,v2 Monday rows
+B-RIDGE-SCR,"Ridge[S,C,R]",WY2023,6686,0,312,v2 Monday rows
+B-RIDGE-SCR,"Ridge[S,C,R]",HELD,7076,0,593,v2 Monday rows
+B-RIDGE-SCR,"Ridge[S,C,R]",T26,7693,0,251,v2 Monday rows
+A-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R]",WY2012,3250,0,307,v2 Monday rows
+A-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R]",WY2013,3557,0,318,v2 Monday rows
+A-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R]",WY2014,3869,0,311,v2 Monday rows
+A-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R]",WY2015,4180,0,312,v2 Monday rows
+A-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R]",WY2016,4498,0,312,v2 Monday rows
+A-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R]",WY2017,4810,0,312,v2 Monday rows
+A-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R]",WY2018,5122,0,312,v2 Monday rows
+A-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R]",WY2019,5434,0,318,v2 Monday rows
+A-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R]",WY2020,5746,0,311,v2 Monday rows
+A-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R]",WY2021,6063,0,311,v2 Monday rows
+A-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R]",WY2022,6374,0,312,v2 Monday rows
+A-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R]",WY2023,6686,0,312,v2 Monday rows
+A-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R]",HELD,7076,0,593,v2 Monday rows
+A-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R]",T26,7693,0,251,v2 Monday rows
+A-HGB-DAILY,"HGB[S,N,Wd,Wu,G,Q,C,R] · daily",WY2012,11632,0,307,labelled daily origins (every 2nd day)
+A-HGB-DAILY,"HGB[S,N,Wd,Wu,G,Q,C,R] · daily",WY2013,12720,0,318,labelled daily origins (every 2nd day)
+A-HGB-DAILY,"HGB[S,N,Wd,Wu,G,Q,C,R] · daily",WY2014,13811,0,311,labelled daily origins (every 2nd day)
+A-HGB-DAILY,"HGB[S,N,Wd,Wu,G,Q,C,R] · daily",WY2015,14906,0,312,labelled daily origins (every 2nd day)
+A-HGB-DAILY,"HGB[S,N,Wd,Wu,G,Q,C,R] · daily",WY2016,15998,0,312,labelled daily origins (every 2nd day)
+A-HGB-DAILY,"HGB[S,N,Wd,Wu,G,Q,C,R] · daily",WY2017,17096,0,312,labelled daily origins (every 2nd day)
+A-HGB-DAILY,"HGB[S,N,Wd,Wu,G,Q,C,R] · daily",WY2018,18194,0,312,labelled daily origins (every 2nd day)
+A-HGB-DAILY,"HGB[S,N,Wd,Wu,G,Q,C,R] · daily",WY2019,19286,0,318,labelled daily origins (every 2nd day)
+A-HGB-DAILY,"HGB[S,N,Wd,Wu,G,Q,C,R] · daily",WY2020,20383,0,311,labelled daily origins (every 2nd day)
+A-HGB-DAILY,"HGB[S,N,Wd,Wu,G,Q,C,R] · daily",WY2021,21480,0,311,labelled daily origins (every 2nd day)
+A-HGB-DAILY,"HGB[S,N,Wd,Wu,G,Q,C,R] · daily",WY2022,22570,0,312,labelled daily origins (every 2nd day)
+A-HGB-DAILY,"HGB[S,N,Wd,Wu,G,Q,C,R] · daily",WY2023,23668,0,312,labelled daily origins (every 2nd day)
+A-HGB-DAILY,"HGB[S,N,Wd,Wu,G,Q,C,R] · daily",HELD,25036,0,593,labelled daily origins (every 2nd day)
+A-HGB-DAILY,"HGB[S,N,Wd,Wu,G,Q,C,R] · daily",T26,27215,0,251,labelled daily origins (every 2nd day)
+B-N1,"LSTM[S,Q,N,Wd,Wu,C,R]-seq30",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+B-N1,"LSTM[S,Q,N,Wd,Wu,C,R]-seq30",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+B-N1,"LSTM[S,Q,N,Wd,Wu,C,R]-seq30",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+B-N1,"LSTM[S,Q,N,Wd,Wu,C,R]-seq30",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+B-N1,"LSTM[S,Q,N,Wd,Wu,C,R]-seq30",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+B-N1,"LSTM[S,Q,N,Wd,Wu,C,R]-seq30",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+B-N1,"LSTM[S,Q,N,Wd,Wu,C,R]-seq30",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+B-N1,"LSTM[S,Q,N,Wd,Wu,C,R]-seq30",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+B-N1,"LSTM[S,Q,N,Wd,Wu,C,R]-seq30",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+B-N1,"LSTM[S,Q,N,Wd,Wu,C,R]-seq30",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+B-N1,"LSTM[S,Q,N,Wd,Wu,C,R]-seq30",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+B-N1,"LSTM[S,Q,N,Wd,Wu,C,R]-seq30",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+B-N1,"LSTM[S,Q,N,Wd,Wu,C,R]-seq30",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+B-N1,"LSTM[S,Q,N,Wd,Wu,C,R]-seq30",T26,26117,2010,251,labelled daily origins (every 2nd day)
+B-N1-NOFLOW,"LSTM[S,N,Wd,Wu,C,R]-seq30",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+B-N1-NOFLOW,"LSTM[S,N,Wd,Wu,C,R]-seq30",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+B-N1-NOFLOW,"LSTM[S,N,Wd,Wu,C,R]-seq30",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+B-N1-NOFLOW,"LSTM[S,N,Wd,Wu,C,R]-seq30",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+B-N1-NOFLOW,"LSTM[S,N,Wd,Wu,C,R]-seq30",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+B-N1-NOFLOW,"LSTM[S,N,Wd,Wu,C,R]-seq30",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+B-N1-NOFLOW,"LSTM[S,N,Wd,Wu,C,R]-seq30",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+B-N1-NOFLOW,"LSTM[S,N,Wd,Wu,C,R]-seq30",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+B-N1-NOFLOW,"LSTM[S,N,Wd,Wu,C,R]-seq30",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+B-N1-NOFLOW,"LSTM[S,N,Wd,Wu,C,R]-seq30",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+B-N1-NOFLOW,"LSTM[S,N,Wd,Wu,C,R]-seq30",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+B-N1-NOFLOW,"LSTM[S,N,Wd,Wu,C,R]-seq30",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+B-N1-NOFLOW,"LSTM[S,N,Wd,Wu,C,R]-seq30",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+B-N1-NOFLOW,"LSTM[S,N,Wd,Wu,C,R]-seq30",T26,26117,2010,251,labelled daily origins (every 2nd day)
+B-N2,"GRU[S,Q,N,Wd,Wu,C,R]-seq30",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+B-N2,"GRU[S,Q,N,Wd,Wu,C,R]-seq30",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+B-N2,"GRU[S,Q,N,Wd,Wu,C,R]-seq30",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+B-N2,"GRU[S,Q,N,Wd,Wu,C,R]-seq30",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+B-N2,"GRU[S,Q,N,Wd,Wu,C,R]-seq30",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+B-N2,"GRU[S,Q,N,Wd,Wu,C,R]-seq30",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+B-N2,"GRU[S,Q,N,Wd,Wu,C,R]-seq30",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+B-N2,"GRU[S,Q,N,Wd,Wu,C,R]-seq30",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+B-N2,"GRU[S,Q,N,Wd,Wu,C,R]-seq30",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+B-N2,"GRU[S,Q,N,Wd,Wu,C,R]-seq30",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+B-N2,"GRU[S,Q,N,Wd,Wu,C,R]-seq30",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+B-N2,"GRU[S,Q,N,Wd,Wu,C,R]-seq30",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+B-N2,"GRU[S,Q,N,Wd,Wu,C,R]-seq30",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+B-N2,"GRU[S,Q,N,Wd,Wu,C,R]-seq30",T26,26117,2010,251,labelled daily origins (every 2nd day)
+B-N3,"TCN[S,Q,N,Wd,Wu,C,R]-seq30",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+B-N3,"TCN[S,Q,N,Wd,Wu,C,R]-seq30",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+B-N3,"TCN[S,Q,N,Wd,Wu,C,R]-seq30",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+B-N3,"TCN[S,Q,N,Wd,Wu,C,R]-seq30",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+B-N3,"TCN[S,Q,N,Wd,Wu,C,R]-seq30",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+B-N3,"TCN[S,Q,N,Wd,Wu,C,R]-seq30",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+B-N3,"TCN[S,Q,N,Wd,Wu,C,R]-seq30",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+B-N3,"TCN[S,Q,N,Wd,Wu,C,R]-seq30",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+B-N3,"TCN[S,Q,N,Wd,Wu,C,R]-seq30",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+B-N3,"TCN[S,Q,N,Wd,Wu,C,R]-seq30",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+B-N3,"TCN[S,Q,N,Wd,Wu,C,R]-seq30",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+B-N3,"TCN[S,Q,N,Wd,Wu,C,R]-seq30",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+B-N3,"TCN[S,Q,N,Wd,Wu,C,R]-seq30",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+B-N3,"TCN[S,Q,N,Wd,Wu,C,R]-seq30",T26,26117,2010,251,labelled daily origins (every 2nd day)
+B-N4-NOAUX,"N4-wb_noaux[S,Q,N,Wd,Wu,C,R]-seq30",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+B-N4-NOAUX,"N4-wb_noaux[S,Q,N,Wd,Wu,C,R]-seq30",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+B-N4-NOAUX,"N4-wb_noaux[S,Q,N,Wd,Wu,C,R]-seq30",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+B-N4-NOAUX,"N4-wb_noaux[S,Q,N,Wd,Wu,C,R]-seq30",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+B-N4-NOAUX,"N4-wb_noaux[S,Q,N,Wd,Wu,C,R]-seq30",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+B-N4-NOAUX,"N4-wb_noaux[S,Q,N,Wd,Wu,C,R]-seq30",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+B-N4-NOAUX,"N4-wb_noaux[S,Q,N,Wd,Wu,C,R]-seq30",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+B-N4-NOAUX,"N4-wb_noaux[S,Q,N,Wd,Wu,C,R]-seq30",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+B-N4-NOAUX,"N4-wb_noaux[S,Q,N,Wd,Wu,C,R]-seq30",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+B-N4-NOAUX,"N4-wb_noaux[S,Q,N,Wd,Wu,C,R]-seq30",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+B-N4-NOAUX,"N4-wb_noaux[S,Q,N,Wd,Wu,C,R]-seq30",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+B-N4-NOAUX,"N4-wb_noaux[S,Q,N,Wd,Wu,C,R]-seq30",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+B-N4-NOAUX,"N4-wb_noaux[S,Q,N,Wd,Wu,C,R]-seq30",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+B-N4-NOAUX,"N4-wb_noaux[S,Q,N,Wd,Wu,C,R]-seq30",T26,26117,2010,251,labelled daily origins (every 2nd day)
+B-N4-BAL,"N4-wb_balanced[S,Q,N,Wd,Wu,C,R]-seq30",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+B-N4-BAL,"N4-wb_balanced[S,Q,N,Wd,Wu,C,R]-seq30",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+B-N4-BAL,"N4-wb_balanced[S,Q,N,Wd,Wu,C,R]-seq30",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+B-N4-BAL,"N4-wb_balanced[S,Q,N,Wd,Wu,C,R]-seq30",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+B-N4-BAL,"N4-wb_balanced[S,Q,N,Wd,Wu,C,R]-seq30",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+B-N4-BAL,"N4-wb_balanced[S,Q,N,Wd,Wu,C,R]-seq30",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+B-N4-BAL,"N4-wb_balanced[S,Q,N,Wd,Wu,C,R]-seq30",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+B-N4-BAL,"N4-wb_balanced[S,Q,N,Wd,Wu,C,R]-seq30",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+B-N4-BAL,"N4-wb_balanced[S,Q,N,Wd,Wu,C,R]-seq30",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+B-N4-BAL,"N4-wb_balanced[S,Q,N,Wd,Wu,C,R]-seq30",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+B-N4-BAL,"N4-wb_balanced[S,Q,N,Wd,Wu,C,R]-seq30",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+B-N4-BAL,"N4-wb_balanced[S,Q,N,Wd,Wu,C,R]-seq30",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+B-N4-BAL,"N4-wb_balanced[S,Q,N,Wd,Wu,C,R]-seq30",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+B-N4-BAL,"N4-wb_balanced[S,Q,N,Wd,Wu,C,R]-seq30",T26,26117,2010,251,labelled daily origins (every 2nd day)
+B-N4-PRIM,"N4-wb_primary[S,Q,N,Wd,Wu,C,R]-seq30",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+B-N4-PRIM,"N4-wb_primary[S,Q,N,Wd,Wu,C,R]-seq30",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+B-N4-PRIM,"N4-wb_primary[S,Q,N,Wd,Wu,C,R]-seq30",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+B-N4-PRIM,"N4-wb_primary[S,Q,N,Wd,Wu,C,R]-seq30",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+B-N4-PRIM,"N4-wb_primary[S,Q,N,Wd,Wu,C,R]-seq30",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+B-N4-PRIM,"N4-wb_primary[S,Q,N,Wd,Wu,C,R]-seq30",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+B-N4-PRIM,"N4-wb_primary[S,Q,N,Wd,Wu,C,R]-seq30",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+B-N4-PRIM,"N4-wb_primary[S,Q,N,Wd,Wu,C,R]-seq30",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+B-N4-PRIM,"N4-wb_primary[S,Q,N,Wd,Wu,C,R]-seq30",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+B-N4-PRIM,"N4-wb_primary[S,Q,N,Wd,Wu,C,R]-seq30",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+B-N4-PRIM,"N4-wb_primary[S,Q,N,Wd,Wu,C,R]-seq30",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+B-N4-PRIM,"N4-wb_primary[S,Q,N,Wd,Wu,C,R]-seq30",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+B-N4-PRIM,"N4-wb_primary[S,Q,N,Wd,Wu,C,R]-seq30",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+B-N4-PRIM,"N4-wb_primary[S,Q,N,Wd,Wu,C,R]-seq30",T26,26117,2010,251,labelled daily origins (every 2nd day)
+B-N4-STRICT,"N4-wb_strict[S,Q,N,Wd,Wu,C,R]-seq30",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+B-N4-STRICT,"N4-wb_strict[S,Q,N,Wd,Wu,C,R]-seq30",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+B-N4-STRICT,"N4-wb_strict[S,Q,N,Wd,Wu,C,R]-seq30",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+B-N4-STRICT,"N4-wb_strict[S,Q,N,Wd,Wu,C,R]-seq30",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+B-N4-STRICT,"N4-wb_strict[S,Q,N,Wd,Wu,C,R]-seq30",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+B-N4-STRICT,"N4-wb_strict[S,Q,N,Wd,Wu,C,R]-seq30",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+B-N4-STRICT,"N4-wb_strict[S,Q,N,Wd,Wu,C,R]-seq30",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+B-N4-STRICT,"N4-wb_strict[S,Q,N,Wd,Wu,C,R]-seq30",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+B-N4-STRICT,"N4-wb_strict[S,Q,N,Wd,Wu,C,R]-seq30",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+B-N4-STRICT,"N4-wb_strict[S,Q,N,Wd,Wu,C,R]-seq30",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+B-N4-STRICT,"N4-wb_strict[S,Q,N,Wd,Wu,C,R]-seq30",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+B-N4-STRICT,"N4-wb_strict[S,Q,N,Wd,Wu,C,R]-seq30",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+B-N4-STRICT,"N4-wb_strict[S,Q,N,Wd,Wu,C,R]-seq30",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+B-N4-STRICT,"N4-wb_strict[S,Q,N,Wd,Wu,C,R]-seq30",T26,26117,2010,251,labelled daily origins (every 2nd day)
+B-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,C,R]-seq30",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+B-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,C,R]-seq30",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+B-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,C,R]-seq30",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+B-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,C,R]-seq30",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+B-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,C,R]-seq30",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+B-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,C,R]-seq30",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+B-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,C,R]-seq30",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+B-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,C,R]-seq30",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+B-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,C,R]-seq30",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+B-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,C,R]-seq30",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+B-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,C,R]-seq30",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+B-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,C,R]-seq30",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+B-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,C,R]-seq30",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+B-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,C,R]-seq30",T26,26117,2010,251,labelled daily origins (every 2nd day)
+A-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+A-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+A-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+A-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+A-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+A-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+A-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+A-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+A-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+A-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+A-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+A-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+A-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+A-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq30",T26,26117,2010,251,labelled daily origins (every 2nd day)
+A-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+A-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+A-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+A-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+A-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+A-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+A-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+A-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+A-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+A-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+A-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+A-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+A-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq30",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+A-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq30",T26,26117,2010,251,labelled daily origins (every 2nd day)
+A-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+A-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+A-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+A-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+A-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+A-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+A-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+A-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+A-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+A-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+A-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+A-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+A-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq30",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+A-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq30",T26,26117,2010,251,labelled daily origins (every 2nd day)
+A-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+A-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+A-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+A-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+A-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+A-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+A-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+A-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+A-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+A-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+A-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+A-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+A-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+A-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq30",T26,26117,2010,251,labelled daily origins (every 2nd day)
+A-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+A-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+A-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+A-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+A-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+A-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+A-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+A-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+A-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+A-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+A-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+A-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,G,C,R]-seq30",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+A-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,G,C,R]-seq30",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+A-N4-DIRECT,"N4-direct[S,Q,N,Wd,Wu,G,C,R]-seq30",T26,26117,2010,251,labelled daily origins (every 2nd day)
+T-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2012,3250,0,307,v2 Monday rows
+T-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2013,3557,0,318,v2 Monday rows
+T-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2014,3869,0,311,v2 Monday rows
+T-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2015,4180,0,312,v2 Monday rows
+T-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2016,4498,0,312,v2 Monday rows
+T-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2017,4810,0,312,v2 Monday rows
+T-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2018,5122,0,312,v2 Monday rows
+T-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2019,5434,0,318,v2 Monday rows
+T-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2020,5746,0,311,v2 Monday rows
+T-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2021,6063,0,311,v2 Monday rows
+T-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2022,6374,0,312,v2 Monday rows
+T-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2023,6686,0,312,v2 Monday rows
+T-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R] · tuned",HELD,7076,0,593,v2 Monday rows
+T-RIDGE,"Ridge[S,N,Wd,Wu,G,Q,C,R] · tuned",T26,7693,0,251,v2 Monday rows
+T-HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2012,3250,0,307,v2 Monday rows
+T-HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2013,3557,0,318,v2 Monday rows
+T-HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2014,3869,0,311,v2 Monday rows
+T-HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2015,4180,0,312,v2 Monday rows
+T-HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2016,4498,0,312,v2 Monday rows
+T-HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2017,4810,0,312,v2 Monday rows
+T-HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2018,5122,0,312,v2 Monday rows
+T-HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2019,5434,0,318,v2 Monday rows
+T-HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2020,5746,0,311,v2 Monday rows
+T-HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2021,6063,0,311,v2 Monday rows
+T-HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2022,6374,0,312,v2 Monday rows
+T-HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R] · tuned",WY2023,6686,0,312,v2 Monday rows
+T-HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R] · tuned",HELD,7076,0,593,v2 Monday rows
+T-HGB-V5,"HGB[S,N,Wd,Wu,G,Q,C,R] · tuned",T26,7693,0,251,v2 Monday rows
+T-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+T-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+T-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+T-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+T-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+T-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+T-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+T-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+T-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+T-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+T-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+T-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+T-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+T-N1,"LSTM[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",T26,26117,2010,251,labelled daily origins (every 2nd day)
+T-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+T-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+T-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+T-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+T-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+T-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+T-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+T-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+T-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+T-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+T-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+T-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+T-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+T-N2,"GRU[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",T26,26117,2010,251,labelled daily origins (every 2nd day)
+T-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+T-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+T-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+T-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+T-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+T-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+T-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+T-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+T-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+T-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+T-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+T-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+T-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+T-N3,"TCN[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",T26,26117,2010,251,labelled daily origins (every 2nd day)
+T-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2012,10536,2009,307,labelled daily origins (every 2nd day)
+T-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2013,11632,1995,318,labelled daily origins (every 2nd day)
+T-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2014,12720,2008,311,labelled daily origins (every 2nd day)
+T-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2015,13811,2009,312,labelled daily origins (every 2nd day)
+T-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2016,14906,2010,312,labelled daily origins (every 2nd day)
+T-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2017,16004,2010,312,labelled daily origins (every 2nd day)
+T-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2018,17096,2010,312,labelled daily origins (every 2nd day)
+T-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2019,18194,2010,318,labelled daily origins (every 2nd day)
+T-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2020,19286,2009,311,labelled daily origins (every 2nd day)
+T-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2021,20383,2010,311,labelled daily origins (every 2nd day)
+T-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2022,21480,2006,312,labelled daily origins (every 2nd day)
+T-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",WY2023,22570,2008,312,labelled daily origins (every 2nd day)
+T-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",HELD,23944,2010,593,labelled daily origins (every 2nd day)
+T-N4,"N4-wb_noaux[S,Q,N,Wd,Wu,G,C,R]-seq · tuned",T26,26117,2010,251,labelled daily origins (every 2nd day)

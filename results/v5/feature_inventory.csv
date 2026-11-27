@@ -1,0 +1,31 @@
+feature,group,definition,units,window,justification,in_HGB_v5
+storage_pct,S,100 x S(t) / C(t),% of capacity,day t,"current fill; bounds future change (flood space, dead pool)",True
+prev7_pct,S,"100 x (S(t) - S(t-7)) / C(t), same series segment",pp,t-7..t,recent momentum (operations persist),True
+prev30_pct,S,as prev7 with 30 days,pp,t-30..t,monthly momentum,True
+prev60_pct,S,as prev7 with 60 days,pp,t-60..t,seasonal phase of fill/drawdown,True
+swe_basin_in,N,"basin snow index (core pillows, sensor 82) at t-1",inches,t-1,stored snow = future melt inflow,True
+swe_change_14d_in,N,SWE(t-1) - SWE(t-15),inches,t-15..t-1,melt onset / accumulation,True
+swe_anom_in,N,SWE(t-1) minus smoothed DOY climatology from days before the fold,inches,t-1,snowpack relative to normal,True
+rain_7d_mm,Wd,"NASA POWER precipitation at the dam point, sum over t-13..t-7",mm,t-13..t-7,recent rain (7-day lag),True
+rain_30d_mm,Wd,sum over t-36..t-7,mm,t-36..t-7,antecedent wetness,True
+temp_30d_c,Wd,mean 2-m temperature over t-36..t-7,deg C,t-36..t-7,"melt energy, evaporation",True
+humidity_30d_pct,Wd,mean relative humidity over t-36..t-7,%,t-36..t-7,evaporative demand,True
+gefs_p_d1_7_mm,G,"GEFSv12 control member 00Z on the origin Monday, upstream-box mean precipitation, days 1-7",mm,forecast for t+1..t+7,known-at-origin forecast of near-term rain,True
+gefs_p_d8_16_mm,G,"as above, days 8-16",mm,forecast for t+8..t+16,medium-range rain,True
+inflow_7d_pp,Q,mean over t-6..t of 100 x inflow(cfs) x 1.983471 / C(day); missing unless all 7 days observed,% of capacity per day,t-6..t,"current hydrologic inflow (rising limb, melt, baseflow memory)",True
+inflow_30d_pp,Q,as above over t-29..t (30 days),% of capacity per day,t-29..t,horizon-length inflow regime; recession memory,True
+outflow_7d_pp,Q,mean over t-6..t of 100 x outflow(cfs) x 1.983471 / C(day); missing unless all 7 days observed,% of capacity per day,t-6..t,current release schedule (operations persist),True
+outflow_30d_pp,Q,as above over t-29..t,% of capacity per day,t-29..t,"monthly release regime (irrigation, flood control)",True
+season_sin,C,sin(2 pi doy / 365.25),-,day t,annual cycle,True
+season_cos,C,cos(2 pi doy / 365.25),-,day t,annual cycle,True
+rain_7d_mm_box,Wu,"NASA POWER precipitation averaged over the upstream box, sum over t-13..t-7",mm,t-13..t-7,recent rain (7-day lag) (upstream basin),True
+rain_30d_mm_box,Wu,sum over t-36..t-7,mm,t-36..t-7,antecedent wetness (upstream basin),True
+temp_30d_c_box,Wu,upstream-box mean 2-m temperature over t-36..t-7,deg C,t-36..t-7,"melt energy, evaporation (upstream basin)",True
+humidity_30d_pct_box,Wu,upstream-box mean relative humidity over t-36..t-7,%,t-36..t-7,evaporative demand (upstream basin),True
+station_DNP,R,one-hot reservoir indicator,0/1,-,reservoir-specific operations and basin,True
+station_EXC,R,one-hot reservoir indicator,0/1,-,reservoir-specific operations and basin,True
+station_FOL,R,one-hot reservoir indicator,0/1,-,reservoir-specific operations and basin,True
+station_NML,R,one-hot reservoir indicator,0/1,-,reservoir-specific operations and basin,True
+station_ORO,R,one-hot reservoir indicator,0/1,-,reservoir-specific operations and basin,True
+station_SHA,R,one-hot reservoir indicator,0/1,-,reservoir-specific operations and basin,True
+gefs_age_days,G,days since the GEFS cycle used (0 on Mondays),days,-,daily-origin training only (A-HGB-DAILY); 0 on every evaluation row,False

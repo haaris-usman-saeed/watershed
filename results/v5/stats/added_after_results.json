@@ -1,0 +1,90 @@
+{
+ "status": "ADDED AFTER RESULTS WERE SEEN (not in BENCHMARK_PLAN.md); unadjusted; exploratory; supports no claim",
+ "population": "confirmation WY2016-2023",
+ "results": {
+  "A-N4 vs B-HGB-SNCR": {
+   "description": "N4 wb_noaux [all] (lowest confirmation MAE) vs HGB[S,N,C,R] reference",
+   "weights": {
+    "A-N4": 1,
+    "B-HGB-SNCR": -1
+   },
+   "estimate": -0.17879278531722287,
+   "p_max": 0.14192903548225888,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.17879278531722287,
+     "ci95_low": -0.41249775038791964,
+     "ci95_high": 0.020981999946290384,
+     "share_below_zero": 0.9615,
+     "p_two_sided": 0.07796101949025487,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.17879278531722287,
+     "ci95_low": -0.4464740954199388,
+     "ci95_high": 0.03441472733397002,
+     "share_below_zero": 0.9495,
+     "p_two_sided": 0.10194902548725637,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.17879278531722287,
+     "ci95_low": -0.471623401233906,
+     "ci95_high": 0.04851016457271392,
+     "share_below_zero": 0.9295,
+     "p_two_sided": 0.14192903548225888,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  },
+  "B-HGB-SNGCR vs HGB-V5": {
+   "description": "HGB[S,N,G,C,R] vs HGB v5 [all]",
+   "weights": {
+    "B-HGB-SNGCR": 1,
+    "HGB-V5": -1
+   },
+   "estimate": -0.027132563887356298,
+   "p_max": 0.5007496251874063,
+   "all_ci_exclude_zero": false,
+   "blocks": {
+    "5w": {
+     "estimate": -0.027132563887356298,
+     "ci95_low": -0.10180432226003494,
+     "ci95_high": 0.03942190524598789,
+     "share_below_zero": 0.7755,
+     "p_two_sided": 0.4497751124437781,
+     "block_weeks": 5,
+     "n_boot": 2000
+    },
+    "9w": {
+     "estimate": -0.027132563887356298,
+     "ci95_low": -0.10261673610402518,
+     "ci95_high": 0.04917279005198184,
+     "share_below_zero": 0.75,
+     "p_two_sided": 0.5007496251874063,
+     "block_weeks": 9,
+     "n_boot": 2000
+    },
+    "13w": {
+     "estimate": -0.027132563887356298,
+     "ci95_low": -0.11068396742749569,
+     "ci95_high": 0.05114609664905963,
+     "share_below_zero": 0.762,
+     "p_two_sided": 0.4767616191904048,
+     "block_weeks": 13,
+     "n_boot": 2000
+    }
+   },
+   "n_rows": 2500,
+   "n_dates": 417,
+   "verdict_unadjusted": "not established"
+  }
+ }
+}
