@@ -177,6 +177,98 @@ The details are in `results/v5/dataset/` (accounting, missingness, GEFS and flow
 
 The GEFS-available confirmation subset (2,248 rows) is in the generated tables. A-N4 scores 3.103 there, T-HGB-V5 3.109 and HGB-V5 3.135.
 
+### The ten study models (report numbering)
+
+Added 2026-11-27, after the results, at the owner's request. It reorganises numbers already in `results/v5/metrics/` under the numbering used in the research report; nothing was rerun. The tables are generated from those CSVs.
+
+| Report model | v5 run | Definition |
+|---|---|---|
+| 1 Persistence | BL-PERS | predicted change = 0 (storage unchanged) |
+| 2 Trend extrapolation | BL-TREND | predicted change = the change over the previous 30 days (`prev30_pct`) |
+| 3 Monthly seasonal mean | BL-MONTH | mean training-row change for the reservoir and the calendar month of the origin |
+| 4 Smoothed DOY seasonal | BL-DOY | per reservoir, Gaussian-kernel weighted mean of training-row changes over circular day-of-year distance, σ = 15 days |
+| 5 Ridge | A-RIDGE | Ridge[all]: StandardScaler + RidgeCV (α in logspace(−2, 3, 20)), median imputation with missing indicators |
+| 6 HGB | HGB-V5 | HGB[S,N,Wd,Wu,G,Q,C,R], frozen v2 hyperparameters |
+| 7 LSTM | A-N1 | LSTM[all], 30-day input window, v4 defaults |
+| 8 GRU | A-N2 | GRU[all], same settings as the LSTM |
+| 9 TCN | A-N3 | TCN[all], same settings |
+| 10 Water-balance-structured LSTM | A-N4 | N4 wb_noaux[all]: LSTM encoder–decoder; per day it predicts inflow, release (≥ 0) and losses (≥ 0) plus a residual bounded at ±1 pp, summed to the 30-day change; no auxiliary loss on observed inflow or outflow |
+
+[all] = [S,N,Wd,Wu,G,Q,C,R]. Models 5–10 here are the Experiment A versions: the same information and frozen hyperparameters. Every model is a per-fold refit; networks are the mean of 3 seeds. Training time is the total for the population (tabular: one process, all cores; networks: 3 seeds, single-thread workers).
+
+**Status of the test windows.**
+- \* HELD (2024–2025) was the v2 one-shot test set. The rows marked \* reproduce v2's preregistered test results exactly (`results/v2/final/test_predictions_public.csv`). Every other HELD number is **post-hoc**.
+- T26 (2026) was the v3 test set. HGB[S,N,C,R] is v3 Model A (2.349 here, 2.3485 in v3). Every other T26 number is **post-hoc**.
+- Models 5–10 in their [all] form have never been scored on an unseen test set.
+
+**HELD, 2024–2025 (593 rows)**
+
+| Model | MAE | RMSE | Bias | R² | Median AE | Max AE | Skill vs DOY | Conformal 90 % cov / width | Training time (s) |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 Persistence (BL-PERS)\* | 5.782 | 7.701 | +0.017 | 0.000 | 4.611 | 32.52 | −0.947 | 0.906 / 23.78 | – |
+| 2 Trend extrapolation (BL-TREND)\* | 4.793 | 6.849 | −0.142 | 0.209 | 3.200 | 32.04 | −0.614 | 0.907 / 22.97 | – |
+| 3 Monthly seasonal mean (BL-MONTH)\* | 2.977 | 4.282 | +0.099 | 0.691 | 2.200 | 27.14 | −0.002 | 0.949 / 17.86 | – |
+| 4 Smoothed DOY seasonal (BL-DOY)\* | 2.969 | 4.255 | +0.088 | 0.695 | 2.330 | 26.46 | 0.000 | 0.949 / 17.33 | – |
+| 5 Ridge[all] (A-RIDGE) | 3.231 | 4.720 | −1.260 | 0.624 | 2.279 | 28.14 | −0.088 | 0.911 / 14.46 | 0.03 |
+| 6 HGB v5 (HGB-V5) | 2.267 | 3.634 | −0.808 | 0.777 | 1.252 | 28.66 | +0.237 | 0.934 / 12.88 | 0.66 |
+| 7 LSTM[all] (A-N1) | 2.310 | 3.770 | −1.013 | 0.760 | 1.306 | 31.02 | +0.222 | 0.933 / 13.45 | 262 |
+| 8 GRU[all] (A-N2) | 2.284 | 3.773 | −0.829 | 0.760 | 1.323 | 29.94 | +0.231 | 0.927 / 13.13 | 233 |
+| 9 TCN[all] (A-N3) | 2.383 | 3.851 | −0.991 | 0.750 | 1.358 | 28.60 | +0.197 | 0.938 / 13.94 | 898 |
+| 10 N4 wb_noaux[all] (A-N4) | 2.262 | 3.790 | −0.891 | 0.758 | 1.265 | 32.09 | +0.238 | 0.931 / 12.87 | 491 |
+| Original Model 5: Ridge[S,Wd,C,R] (B-RIDGE-SWdCR)\* | 3.346 | 4.870 | −0.948 | 0.600 | 2.366 | 25.96 | −0.127 | 0.897 / 14.93 | 0.01 |
+| Original Model 6: HGB[S,N,C,R], v2 primary (B-HGB-SNCR)\* | 2.332 | 3.759 | −0.940 | 0.762 | 1.325 | 26.81 | +0.215 | 0.944 / 14.29 | 0.66 |
+
+**T26, 2026 (251 rows)**
+
+| Model | MAE | RMSE | Bias | R² | Median AE | Max AE | Skill vs DOY | Conformal 90 % cov / width | Training time (s) |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 Persistence (BL-PERS) | 5.945 | 7.807 | +2.139 | −0.081 | 4.722 | 25.36 | −1.063 | 0.892 / 23.65 | – |
+| 2 Trend extrapolation (BL-TREND) | 5.189 | 7.586 | +1.410 | −0.021 | 3.586 | 30.64 | −0.800 | 0.900 / 22.89 | – |
+| 3 Monthly seasonal mean (BL-MONTH) | 2.904 | 4.192 | +1.609 | 0.688 | 1.883 | 16.21 | −0.007 | 0.928 / 17.07 | – |
+| 4 Smoothed DOY seasonal (BL-DOY) | 2.882 | 4.144 | +1.672 | 0.695 | 1.897 | 16.04 | 0.000 | 0.940 / 16.62 | – |
+| 5 Ridge[all] (A-RIDGE) | 3.077 | 4.428 | −1.048 | 0.652 | 2.087 | 22.21 | −0.068 | 0.920 / 14.32 | 0.04 |
+| 6 HGB v5 (HGB-V5) | 2.441 | 3.774 | −0.767 | 0.747 | 1.432 | 18.64 | +0.153 | 0.900 / 12.61 | 0.91 |
+| 7 LSTM[all] (A-N1) | 2.162 | 3.422 | −0.435 | 0.792 | 1.166 | 20.82 | +0.250 | 0.944 / 12.94 | 228 |
+| 8 GRU[all] (A-N2) | 2.383 | 3.615 | −0.773 | 0.768 | 1.291 | 19.15 | +0.173 | 0.908 / 12.85 | 214 |
+| 9 TCN[all] (A-N3) | 2.260 | 3.391 | −0.221 | 0.796 | 1.392 | 16.31 | +0.216 | 0.956 / 13.63 | 855 |
+| 10 N4 wb_noaux[all] (A-N4) | 2.169 | 3.450 | −0.690 | 0.789 | 1.256 | 20.74 | +0.248 | 0.936 / 12.48 | 648 |
+| Original Model 5: Ridge[S,Wd,C,R] (B-RIDGE-SWdCR) | 3.438 | 4.939 | +0.406 | 0.567 | 2.605 | 24.48 | −0.193 | 0.892 / 14.93 | 0.01 |
+| Original Model 6: HGB[S,N,C,R], v3 Model A (B-HGB-SNCR) | 2.349 | 3.575 | −0.770 | 0.773 | 1.426 | 20.96 | +0.185 | 0.948 / 13.65 | 0.83 |
+
+**Confirmation folds WY2016–2023 (2,500 rows, exploratory)**
+
+| Model | MAE | RMSE | Bias | R² | Median AE | Max AE | Skill vs DOY | Conformal 90 % cov / width | Training time (s) |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 Persistence (BL-PERS) | 5.761 | 8.089 | −0.529 | −0.004 | 4.091 | 39.53 | −0.402 | 0.870 / 23.15 | – |
+| 2 Trend extrapolation (BL-TREND) | 5.167 | 7.960 | +0.039 | 0.028 | 2.979 | 60.92 | −0.258 | 0.863 / 21.79 | – |
+| 3 Monthly seasonal mean (BL-MONTH) | 4.209 | 6.261 | −0.577 | 0.398 | 2.764 | 36.53 | −0.025 | 0.868 / 17.03 | – |
+| 4 Smoothed DOY seasonal (BL-DOY) | 4.108 | 6.152 | −0.570 | 0.419 | 2.604 | 36.35 | 0.000 | 0.868 / 16.49 | – |
+| 5 Ridge[all] (A-RIDGE) | 3.671 | 5.779 | −0.373 | 0.487 | 2.290 | 43.50 | +0.106 | 0.859 / 13.57 | 0.15 |
+| 6 HGB v5 (HGB-V5) | 3.074 | 4.991 | −0.198 | 0.618 | 1.688 | 33.48 | +0.252 | 0.868 / 12.29 | 4.70 |
+| 7 LSTM[all] (A-N1) | 3.145 | 5.242 | −0.728 | 0.578 | 1.682 | 34.49 | +0.234 | 0.862 / 12.60 | 895 |
+| 8 GRU[all] (A-N2) | 3.067 | 5.119 | −0.601 | 0.598 | 1.653 | 33.96 | +0.253 | 0.858 / 12.07 | 761 |
+| 9 TCN[all] (A-N3) | 3.306 | 5.397 | −0.796 | 0.553 | 1.777 | 34.34 | +0.195 | 0.859 / 13.05 | 3,770 |
+| 10 N4 wb_noaux[all] (A-N4) | 2.981 | 4.988 | −0.711 | 0.618 | 1.568 | 34.35 | +0.274 | 0.863 / 12.05 | 1,793 |
+| Original Model 5: Ridge[S,Wd,C,R] (B-RIDGE-SWdCR) | 3.897 | 6.088 | −0.383 | 0.431 | 2.520 | 46.79 | +0.051 | 0.872 / 14.34 | 0.04 |
+| Original Model 6: HGB[S,N,C,R] (B-HGB-SNCR) | 3.160 | 5.186 | −0.217 | 0.587 | 1.697 | 34.49 | +0.231 | 0.874 / 13.53 | 4.05 |
+
+Tuning folds WY2012–2015 (1,248 rows, used for hyperparameter selection), MAE: 1 4.380; 2 3.426; 3 3.331; 4 3.263; 5 2.605; 6 2.212; 7 2.169; 8 2.064; 9 2.234; 10 2.094.
+
+**Other versions of Models 5–10** (MAE: confirmation / HELD / T26)
+
+| Model | Tuned hyperparameters | Original inputs (before v5) |
+|---|---|---|
+| 5 Ridge | T-RIDGE: 3.720 / 3.310 / 3.169 | Ridge[S,Wd,C,R] (B-RIDGE-SWdCR): 3.897 / 3.346\* / 3.438 |
+| 6 HGB | T-HGB-V5: 3.068 / 2.267 / 2.273 | HGB[S,N,C,R] (B-HGB-SNCR): 3.160 / 2.332\* / 2.349 |
+| 7 LSTM | T-N1: 3.112 / 2.218 / 2.251 | LSTM without GEFS (B-N1): 3.224 / 2.264 / 2.178 |
+| 8 GRU | T-N2: 3.112 / 2.271 / 2.495 | GRU without GEFS (B-N2): 3.146 / 2.380 / 2.254 |
+| 9 TCN | T-N3: 3.323 / 2.207 / 2.404 | TCN without GEFS (B-N3): 3.321 / 2.431 / 2.386 |
+| 10 N4 | T-N4: identical to A-N4 (the search selected configuration 0) | N4 without GEFS (B-N4-NOAUX): 3.084 / 2.289 / 2.209 |
+
+**Rows.** Test rows: tuning 1,248; confirmation 2,500; HELD 593; T26 251. Models 1–6 train on 3,250–4,180 weekly rows per tuning fold, 4,498–6,686 per confirmation fold, 7,076 for HELD and 7,693 for T26. Models 7–10 train on 10,536–13,811, 14,906–22,570, 23,944 and 26,117 sampled daily sequences respectively, with about 2,000 early-stopping sequences (the 365 days before each fold). The sequences start every second day and overlap heavily, so they are not independent observations.
+
+**Reading.** Among these ten, no model has the lowest MAE in every population: A-N2 on the tuning folds (2.064), A-N4 on confirmation (2.981) and HELD (2.262), A-N1 on T26 (2.162). On confirmation none of Models 7–10 differs from HGB v5 after Holm correction (P3–P6, §5), and tuned Ridge[all] is worse than tuned HGB v5 (T2, supported). Every learned model beats DOY climatology on confirmation; on both test windows Ridge[all] does not (negative skill).
+
 ## 5. Statistical validation
 
 **Method.** Paired moving-block bootstrap over origin dates, with all reservoirs on the same date resampled together:
