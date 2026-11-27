@@ -1,6 +1,6 @@
 # WatershedShift: project handoff
 
-**Last verified:** 2026-11-24, against `main` at `1accaa6` (after PRs #7, #10, #11, #8, #12 and #9). The first version was a read-only recovery review on 2026-11-23 against `0063cc0`: nothing was retrained, re-evaluated or republished.
+**Last verified:** 2026-11-27, against `main` at `a29b876` (after PRs #13, #14, #15 and #16). Before that: 2026-11-24 against `1accaa6` (after PRs #7, #10, #11, #8, #12 and #9). The first version was a read-only recovery review on 2026-11-23 against `0063cc0`: nothing was retrained, re-evaluated or republished.
 
 This document holds everything needed to take over the project without reconstructing it from the history.
 - Rules for agents are in [CLAUDE.md](../CLAUDE.md).
@@ -79,22 +79,25 @@ Notes on these results:
 - Reforecasts are labelled "retrospective, not issued in real time".
 - Forecasts are statistical predictions of observed storage change. They are not reservoir-operation simulations and not a water-safety tool.
 
-## 2. Current state (2026-11-23)
+## 2. Current state (2026-11-27)
 
 | Item | State | Evidence |
 |---|---|---|
-| `main` | `1accaa6` = `origin/main`. PRs #1–#12 merged; none open | `git ls-remote`, `gh pr list` |
-| CI on `main` | Green (run 44998950732) | GitHub Actions |
+| `main` | `a29b876` = `origin/main`. PRs #1–#16 merged; none open | `git ls-remote`, `gh pr list` |
+| CI on `main` | Green (run 46079939246, on `a29b876`) | GitHub Actions |
 | Frozen v2 and v3 material | Intact | All 6 v2 hashes match `RUN_RECORD.json`. All 12 v3 hashes match `config/v3_plan.json`, and the plan hash matches the v3 run record. |
 | Issued forecast records | 2 records, both unaltered | Local and public copies match `docs/v3/issued_forecast_ledger.jsonl` |
 | Public data releases | 2 versions, both intact | `python -m src.v3_release --check` |
 | Model bundle | Uploaded as a **pre-release** | Tag `models-2026-11-22`; GitHub's digest equals the pinned SHA-256; publicly downloadable |
-| Public website | **Unverified** | No public URL is recorded anywhere in the repository. The acceptance check has not been run. |
+| Public website | **Unverified** | No public URL is recorded anywhere in the repository. The acceptance check has not been run, either before or after PR #16 changed the pages. |
+| Website forecast model | Generate Forecast runs only HGB[S,N,C,R] · frozen v2 artifact (owner decision 2026-11-27, PR #16). v3 Models B, B2 and C are no longer shown on the site; `src/official.py` still issues all four | `app/view_forecast_v3.py`, `ForecastService(model_keys=("A",))` |
+| Model playground | New page (PR #16): the other nine study models against the HGB on past windows only, read from tracked `results/v5` aggregates. Per-row replays need the private prediction file, and on a public deployment omit the five flow-using models | `app/view_playground.py`, `src/v5/playground.py` |
+| v4 N4 and v5 benchmark | Merged as research (PRs #14, #15); nothing frozen, nothing makes live forecasts. v5 results on 2024–2025 and 2026 are post-hoc | `docs/v4/RESULTS_N4.md`, `docs/v5/RESULTS.md` |
 | CDEC publication permission | Owner-reported, **not archived** | `docs/DATA_PUBLICATION_AUDIT.md` §7; `docs/permissions/` does not exist |
 | Licence and citation | **None** | No `LICENSE`, no `CITATION.cff` |
 | Prospective scoring protocol | **In effect:** v1.0, merged 2026-11-24 09:37 UTC (`e79c54b`), before the first target date | `docs/prospective/PROTOCOL.md`; its hashes are verified by `src/prospective.py` |
 | Official weekly issuance | None yet. The command `src/official.py` is merged (PR #12; [ISSUING.md](prospective/ISSUING.md)). Issuing needs the owner's GitHub records repository and token, set in the issuing machine's shell | `docs/prospective/official_ledger.jsonl` (empty) |
-| Tests on `main` | With the private data: 164 passed and 2 skipped in the app environment (the PyTorch tests skip); 166 passed in the v4 environment (2026-11-24, after PR #9) | `pytest` |
+| Tests on `main` | With the private data: 201 passed and 5 skipped in the app environment (the PyTorch tests skip), 2026-11-27 after PR #16. The v4 environment was not re-run after PRs #14–#16 | `pytest` |
 
 ## 3. History
 
@@ -112,6 +115,10 @@ Notes on these results:
 | #8 | `fix/forecast-reliability` | `50c83c6` | 2026-11-24 09:55 | Install retries; NASA POWER never delays Model A; write-once records; GitHub record store |
 | #12 | `feature/official-issuance` | `e3e3466` | 2026-11-24 10:03 | Official weekly issuance command (manual, no scheduler) and operator guide |
 | #9 | `research/v4-neuralhydro` | `1accaa6` | 2026-11-24 10:05 | v4 NeuralHydro research: daily neural pipeline, shared LSTM/GRU/TCN, initial development results |
+| #13 | `docs/status-refresh` | `0b50bc0` | 2026-11-24 10:14 | Docs: status after PRs #12 and #9 |
+| #14 | `research/v4-n4` | `91d8242` | 2026-11-27 22:47 | v4 N4: water-balance-structured encoder-decoder, development results |
+| #15 | `research/v5-benchmark` | `cb62c75` | 2026-11-27 22:54 | v5: HGB v5 and the standardised benchmark of every implemented model (research) |
+| #16 | `web/hgb-main-playground` | `a29b876` | 2026-11-27 23:00 | Website: frozen v2 HGB as the only forecasting model, Model playground, straight-line guide on the forecast charts |
 
 Tags and branches:
 - **Tags:** `v1-results` (`01e43cb`) and `models-2026-11-22`. The `submission-v2` tag proposed in `docs/merge_plan.md` was never created.
@@ -142,11 +149,12 @@ Tags and branches:
 - `app.py` and `app/`:
   - `view_overview`, `view_explorer`, `view_backtest` and `view_research` are the historical pages;
   - `view_forecast` shows the issued Model A record;
-  - `view_forecast_v3` is Generate Forecast.
+  - `view_forecast_v3` is Generate Forecast, which since PR #16 runs only the frozen v2 HGB;
+  - `view_playground` is the Model playground (retrospective comparison of the other nine study models).
 - When `outputs/` is absent, the backtest pages read the newest `public_data/*/ui_outputs`.
 
 **Tests and CI**
-- `tests/` contains 119 tests, all offline.
+- `tests/` contains 206 tests, all offline (5 skip without PyTorch or the private data).
 - `.github/workflows/ci.yml` runs on Python 3.14 with `requirements-lock.txt`:
   - pytest;
   - the contract check on `app/sample_data`;
@@ -163,7 +171,12 @@ Tags and branches:
 **v4 research programme (NeuralHydro; merged as PR #9 on 2026-11-24; not deployed)**
 - Separate deep-learning research in `src/v4/`, `tests/test_v4.py`, `docs/v4/`, `results/v4/` and `requirements-v4.txt`, in its own `.venv-v4` with PyTorch.
 - Development data stops before 2024-01-01. It touches nothing frozen and is not deployed.
-- See `docs/v4/README.md`.
+- See `docs/v4/README.md`. N4 (water-balance-structured encoder-decoder) was merged as PR #14 (`docs/v4/RESULTS_N4.md`).
+
+**v5 benchmark (merged as PR #15 on 2026-11-27; research only)**
+- `src/v5/`, `tests/test_v5.py`, `docs/v5/`, `results/v5/`: HGB v5 and the retraining of every implemented model on one dataset, with frozen and equal-budget tuning, paired block bootstrap and Holm correction.
+- Plan fixed before any result (`docs/v5/BENCHMARK_PLAN.md`, hashed in every manifest). Results on 2024–2025 and 2026 are post-hoc.
+- `src/v5/playground.py` serves the Model playground from the tracked aggregates.
 
 ## 5. Models
 
@@ -248,6 +261,8 @@ Attribution strings are in the policy file. Full audit: `docs/DATA_PUBLICATION_A
 
 **Each Generate Forecast request** (`src/v3_service.py`, `ForecastService.forecast`)
 
+Since PR #16 the website creates the service with `model_keys=("A",)`: only step 1 runs, and NASA POWER and GEFS are never fetched. The default (all four models, all three steps) is unchanged and is what `src/official.py` uses.
+
 1. **CDEC** storage and snow, cached in 6-hour buckets.
    - If this fails, or Model A cannot load, **no forecast** is produced.
 2. **NASA POWER**, cached in 12-hour buckets, fetched in the background alongside CDEC.
@@ -279,8 +294,9 @@ Attribution strings are in the policy file. Full audit: `docs/DATA_PUBLICATION_A
 - Python: 3.12 or 3.13 (Advanced settings).
 - Secrets: `WATERSHED_DEPLOYMENT="public"`, `WATERSHED_ARTIFACT_URL` and `WATERSHED_ARTIFACT_SHA256` (section 7). Template: `.streamlit/secrets.toml.example`. Full guide: `docs/v3/DEPLOYMENT.md`.
 
-**Acceptance check before calling the site live:** `docs/v3/LAUNCH_AND_MERGE.md` §4.
-- All four models are available for each reservoir.
+**Acceptance check before calling the site live:** `docs/v3/LAUNCH_AND_MERGE.md` §4 (updated for PR #16).
+- The frozen v2 HGB forecast is available for each reservoir, with CDEC as the only source.
+- The Model playground renders.
 - The origin is a Monday and the target is 30 days later.
 - A second press shows "(cached)".
 - The layout works on a phone.
@@ -359,7 +375,7 @@ The docs-consistency PR (2026-11-24) fixed the stale publication and deployment 
 
 ## 13. Priorities
 
-1. **Verify the deployment.** Needs the public URL from the owner. Run the §9 acceptance check for all six reservoirs and record the result. Fix only deployment problems; never retrain to fix them.
+1. **Verify the deployment.** Needs the public URL from the owner. Run the §9 acceptance check for all six reservoirs and the Model playground, and record the result. Fix only deployment problems; never retrain to fix them.
 2. **Documentation consistency:** done by the docs-consistency PR (section 12). The UI strings remain, pending the owner.
 3. **Make forecasting resilient:** bugs 1, 2 and 4 are fixed (PR #8). Still open: bug 3 (shared rate limit), bugs 6 and 7, and a documented table of which models are available for each failure.
 4. **Prospective evaluation:**
@@ -381,6 +397,8 @@ The docs-consistency PR (2026-11-24) fixed the stale publication and deployment 
 - Whether the bundle release should stay a pre-release.
 - Whether the NASA POWER notification email has been sent.
 - Approval for any change under `app.py`, `app/` or `.streamlit/`.
+- Whether to adopt the v5 draft prospective protocol (`docs/v5/PROSPECTIVE_PROTOCOL_DRAFT.md`) and which candidates (for example HGB v5 and N4) to freeze for prospective scoring.
+- Whether to clear CDEC flow sensors 76 and 23 in `config/data_release_policy.json`. Only per-row playground replays of the five flow-using models need it; nothing else depends on it.
 - A backup of the trusted build machine (section 15).
 
 ## 15. Assets that exist only on the trusted build machine
