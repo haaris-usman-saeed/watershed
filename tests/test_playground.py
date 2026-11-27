@@ -56,17 +56,32 @@ def test_ten_models_in_report_order_with_the_hgb_as_model_6():
     main = pg.by_number(6)
     assert pg.run_id(main, "held") == pg.run_id(main, "t26") == "REF-V2-ARTIFACT"
     assert pg.run_id(main, "confirmation") == "B-HGB-SNCR"      # the artifact was trained on those years
-    assert all(pg.FLOWS in m["sources"] for m in pg.TEN if m["number"] in (5, 7, 8, 9, 10))
-    assert all(pg.FLOWS not in m["sources"] for m in pg.TEN if m["number"] <= 4 or m["number"] == 6)
+    assert all(set(pg.FLOWS) <= set(m["sources"]) for m in pg.TEN if m["number"] in (5, 7, 8, 9, 10))
+    assert all(not set(pg.FLOWS) & set(m["sources"]) for m in pg.TEN if m["number"] <= 4 or m["number"] == 6)
 
 
-def test_flow_sources_are_not_cleared_by_the_release_policy():
+def _policy_without_flows():
     pol = json.loads((ROOT / "config/data_release_policy.json").read_text())
-    assert pg.FLOWS not in pol["sources"]
-    assert pg.display_block(pg.by_number(7), mode="public") is not None
-    assert pg.display_block(pg.by_number(4), mode="public") is None
-    assert pg.display_block(pg.by_number(6), mode="public") is None
-    assert pg.display_block(pg.by_number(7), mode="private") is None
+    for k in pg.FLOWS:
+        pol["sources"].pop(k, None)
+    return pol
+
+
+def test_flow_sources_are_cleared_for_display_but_not_raw_publication():
+    """Owner-reported authorization 2026-11-27 (docs/DATA_PUBLICATION_AUDIT.md section 8)."""
+    pol = json.loads((ROOT / "config/data_release_policy.json").read_text())
+    for k in pg.FLOWS:
+        assert pol["sources"][k]["public_display"] and pol["sources"][k]["publish_derived"]
+        assert pol["sources"][k]["publish_raw"] is False and "section 8" in pol["sources"][k]["authorization"]
+    assert all(pg.display_block(m, mode="public") is None for m in pg.TEN)
+
+
+def test_the_gate_still_withholds_models_whose_sources_are_not_cleared():
+    pol = _policy_without_flows()
+    assert pg.display_block(pg.by_number(7), policy=pol, mode="public") is not None
+    assert pg.display_block(pg.by_number(4), policy=pol, mode="public") is None
+    assert pg.display_block(pg.by_number(6), policy=pol, mode="public") is None
+    assert pg.display_block(pg.by_number(7), policy=pol, mode="private") is None
 
 
 @needs_results
@@ -127,17 +142,47 @@ def test_rows_filter_the_window_and_hide_flow_models_on_public(tmp_path):
     fr, hidden = pg.rows("held", mode="private", path=p)
     assert len(fr) == 8 and set(fr.station_id) == {"SHA", "FOL"} and not hidden
     assert "REF-V2-ARTIFACT" in fr and "B-HGB-SNCR" not in fr and "unused" not in fr
-    fr, hidden = pg.rows("held", mode="public", path=p)
+    fr, hidden = pg.rows("held", mode="public", path=p, policy=_policy_without_flows())
     assert set(hidden) == {5, 7, 8, 9, 10}
     assert not {"A-RIDGE", "A-N1", "A-N2", "A-N3", "A-N4"} & set(fr.columns)
     assert {"BL-PERS", "BL-DOY", "REF-V2-ARTIFACT"} <= set(fr.columns)
     fr, _ = pg.rows("confirmation", mode="private", path=p)
     assert len(fr) == 8 and "B-HGB-SNCR" in fr and "REF-V2-ARTIFACT" not in fr
+    fr, hidden = pg.rows("held", mode="public", path=p)              # the real policy clears every source
+    assert not hidden and {"A-RIDGE", "A-N1", "A-N4", "REF-V2-ARTIFACT"} <= set(fr.columns)
 
 
 def test_missing_prediction_file_is_explained(tmp_path):
     fr, hidden = pg.rows("t26", path=tmp_path / "absent.parquet")
-    assert fr is None and "private" in hidden["all"]
+    assert fr is None and "not on this deployment" in hidden["all"]
+
+
+HAVE_PUBLISHED = pg.PUBLISHED.exists()
+needs_published = pytest.mark.skipif(not HAVE_PUBLISHED, reason="published per-row file not in this checkout")
+
+
+@needs_published
+def test_published_rows_match_the_manifest_and_hold_no_flow_values():
+    import hashlib
+    man = json.loads(pg.PUBLISHED_MANIFEST.read_text())
+    assert hashlib.sha256(pg.PUBLISHED.read_bytes()).hexdigest() == man["sha256"]
+    d = pd.read_csv(pg.PUBLISHED)
+    assert man["rows_by_window"] == {"confirmation": 2500, "held": 593, "t26": 251} and len(d) == man["rows"]
+    allowed = {"station_id", "date", "target_date", "target_delta_pp", "storage_pct", "regime", "fold"} | set(pg._all_run_ids())
+    assert set(d.columns) <= allowed                                   # predictions and the target only
+    assert not [c for c in d.columns if any(w in c.lower() for w in ("flow", "rain", "swe", "temp", "humid", "gefs"))]
+
+
+@needs_results
+@needs_published
+@pytest.mark.parametrize("window", ["confirmation", "held", "t26"])
+def test_published_rows_reproduce_the_tracked_mae(window):
+    """The export is faithful: every model's MAE recomputed from it equals the tracked metric (rounding only)."""
+    fr, hidden = pg.rows(window, path=pg.PUBLISHED, mode="public")
+    assert not hidden
+    s = pg.summary(window).set_index("run")
+    for rid in s.index:
+        assert (fr[rid] - fr.target_delta_pp).abs().mean() == pytest.approx(s.loc[rid, "mae"], abs=2e-4)
 
 
 def test_replay_gives_day30_storage_and_errors(tmp_path):
@@ -167,11 +212,12 @@ def _playground():
 
 
 @needs_results
-def test_playground_page_renders_without_private_rows(monkeypatch, tmp_path):
+def test_playground_page_renders_without_any_per_row_file(monkeypatch, tmp_path):
     pytest.importorskip("streamlit")
     from streamlit.testing.v1 import AppTest
     monkeypatch.chdir(ROOT)
     monkeypatch.setattr(pg, "PREDS", tmp_path / "absent.parquet")
+    monkeypatch.setattr(pg, "PUBLISHED", tmp_path / "absent.csv")
     at = AppTest.from_function(_playground, default_timeout=60)
     at.run()
     assert not at.exception, at.exception
@@ -189,3 +235,22 @@ def test_model_6_specification_names_the_refit_on_confirmation():
     assert pg.spec(main, "held") == pg.spec(main, "t26") == "HGB[S,N,C,R] · frozen v2 artifact"
     assert pg.spec(main, "confirmation") == "HGB[S,N,C,R] · frozen hyperparameters, per-fold refit"
     assert pg.spec(pg.by_number(10), "confirmation") == pg.by_number(10)["spec"]
+
+
+@needs_results
+@needs_published
+def test_playground_replays_render_in_public_mode_from_the_published_file(monkeypatch, tmp_path):
+    pytest.importorskip("streamlit")
+    from streamlit.testing.v1 import AppTest
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setenv("WATERSHED_DEPLOYMENT", "public")
+    monkeypatch.setattr(pg, "PREDS", tmp_path / "absent.parquet")    # as on the server: only the tracked export
+    at = AppTest.from_function(_playground, default_timeout=60)
+    at.run()
+    assert not at.exception, at.exception
+    t = " ".join(m.value for m in at.markdown) + " " + " ".join(c.value for c in at.caption)
+    assert "Replay a past 30-day forecast" in t and "Replays are not available here" not in t
+    assert "withheld" not in t and len(at.dataframe) >= 3
+    at.button_group(key="pg_window").set_value("held").run()
+    assert not at.exception, at.exception
+

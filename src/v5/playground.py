@@ -6,10 +6,12 @@ is computed:
 - everything a public deployment shows comes from tracked aggregate files under results/v5/ (metrics and paired
   comparisons written by python -m src.v5.report);
 - MAE differences are differences of tracked MAEs on the same rows;
-- per-row predictions (data/v5/preds/all_predictions.parquet) are private and git-ignored. They are loaded only where
-  they exist, and on a public deployment only for models whose every input source config/data_release_policy.json
-  clears for public display. Five models use CDEC inflow/outflow (sensors 76 and 23), which the policy does not list,
-  so their per-row predictions are never shown publicly.
+- per-row predictions for replays come from results/v5/playground/retro_predictions.csv, a tracked export of the
+  private data/v5/preds/all_predictions.parquet (python -m src.v5.playground --export). It holds predictions, the
+  observed 30-day change and storage percentage, and no flow values. Publishing it rests on the owner-reported
+  authorizations in docs/DATA_PUBLICATION_AUDIT.md sections 7 and 8;
+- on a public deployment a model's per-row predictions are shown only if config/data_release_policy.json clears every
+  one of its input sources for public display.
 
 Windows (never pooled):
 - confirmation WY2016-2023: development data used for the v5 comparisons (exploratory);
@@ -23,12 +25,15 @@ from src.v5 import ROOT
 
 METRICS = ROOT / "results" / "v5" / "metrics"
 STATS = ROOT / "results" / "v5" / "stats" / "comparisons.csv"
-PREDS = ROOT / "data" / "v5" / "preds" / "all_predictions.parquet"
+PREDS = ROOT / "data" / "v5" / "preds" / "all_predictions.parquet"          # private source (git-ignored)
+PUBLISHED = ROOT / "results" / "v5" / "playground" / "retro_predictions.csv"  # tracked export used by the website
+PUBLISHED_MANIFEST = PUBLISHED.with_name("MANIFEST.json")
 
 STORAGE, SNOW = "cdec_storage_sensor15", "cdec_snow_sensor82"
 POWER, GEFS_OP, GEFS_RE = "nasa_power", "noaa_gefs_operational", "noaa_gefs_reforecast"
-FLOWS = "cdec_flow_sensors76_23"            # not in config/data_release_policy.json: never cleared for public display
-ALL_SOURCES = (STORAGE, SNOW, POWER, GEFS_OP, GEFS_RE, FLOWS)
+INFLOW, OUTFLOW = "cdec_inflow_sensor76", "cdec_outflow_sensor23"
+FLOWS = (INFLOW, OUTFLOW)
+ALL_SOURCES = (STORAGE, SNOW, POWER, GEFS_OP, GEFS_RE) + FLOWS
 ALL_INPUTS = ("Storage and its 7, 30 and 60-day changes; basin snowpack, its 14-day change and anomaly; NASA POWER "
               "weather at the dam and over the upstream area; GEFS precipitation forecast days 1-7 and 8-16 (blank "
               "where none); CDEC inflow and outflow over 7 and 30 days; season; reservoir")
@@ -164,23 +169,40 @@ def display_block(model, policy=None, mode=None):
     return None
 
 
-def rows(window, policy=None, mode=None, path=None):
-    """Per-row predictions of the ten models in this window, or (None, reason).
+def _all_run_ids():
+    return sorted({run_id(m, w) for m in TEN for w in WINDOWS})
 
-    Returns (frame, hidden): frame has station_id, date, target_date, target_delta_pp, storage_pct, regime and one
-    column per run id; `hidden` maps the number of each model withheld on this deployment to the reason.
-    """
-    path = path or PREDS
-    if not path.exists():
-        return None, {"all": "Per-row predictions are private (CDEC-derived) and are not on this deployment."}
-    keep = ["station_id", "date", "target_date", "target_delta_pp", "storage_pct", "regime"]
-    try:
+
+def _load(path):
+    """Read a per-row file (the tracked CSV or the private parquet) with only the columns the playground uses."""
+    base = ["station_id", "date", "target_date", "target_delta_pp", "storage_pct", "regime", "fold"]
+    if path.suffix == ".csv":
+        p = pd.read_csv(path)
+    else:
         import pyarrow.parquet as pq
         have = set(pq.read_schema(path).names)
-        p = pd.read_parquet(path, columns=[c for c in keep + ["fold"] + [run_id(m, window) for m in TEN] if c in have])
-    except ImportError as exc:                       # pyarrow missing
+        p = pd.read_parquet(path, columns=[c for c in base + _all_run_ids() if c in have])
+    return p[[c for c in base + _all_run_ids() if c in p]]
+
+
+def rows(window, policy=None, mode=None, path=None):
+    """Per-row predictions of the ten models in this window.
+
+    Returns (frame, hidden). frame has station_id, date, target_date, target_delta_pp, storage_pct, regime and one
+    column per shown run id; `hidden` maps the number of each model withheld on this deployment to the reason. When no
+    per-row file exists, returns (None, {"all": reason}). Lookup order: `path`, the tracked export, the private file.
+    """
+    candidates = [path] if path is not None else [PUBLISHED, PREDS]
+    path = next((c for c in candidates if c.exists()), None)
+    if path is None:
+        return None, {"all": "Per-row predictions are not on this deployment (results/v5/playground/"
+                              "retro_predictions.csv is missing)."}
+    try:
+        p = _load(path)
+    except ImportError as exc:                       # pyarrow missing for the private parquet
         return None, {"all": f"Per-row predictions could not be read here ({exc})."}
     p = p[p.fold.isin(WINDOWS[window]["folds"])]
+    keep = ["station_id", "date", "target_date", "target_delta_pp", "storage_pct", "regime"]
     hidden = {}
     for m in TEN:
         rid = run_id(m, window)
@@ -193,6 +215,42 @@ def rows(window, policy=None, mode=None, path=None):
     out["date"] = pd.to_datetime(out["date"])
     out["target_date"] = pd.to_datetime(out["target_date"])
     return out.sort_values(["station_id", "date"]).reset_index(drop=True), hidden
+
+
+def export_published(src=None, dst=None):
+    """Write the tracked per-row file from the private predictions: the ten models' predictions, the observed 30-day
+    change and storage percentage, for the three playground windows only. No flow or weather values are written.
+    Overwrites dst; writes a manifest with SHA-256s, row counts and the policy version it was published under."""
+    import hashlib
+    import json
+    from datetime import datetime, timezone
+    src, dst = src or PREDS, dst or PUBLISHED
+    p = _load(src)
+    folds = [f for w in WINDOWS.values() for f in w["folds"]]
+    p = p[p.fold.isin(folds)].copy()
+    p["date"] = pd.to_datetime(p["date"]).dt.strftime("%Y-%m-%d")
+    p["target_date"] = pd.to_datetime(p["target_date"]).dt.strftime("%Y-%m-%d")
+    num = [c for c in p.columns if c not in ("station_id", "date", "target_date", "regime", "fold")]
+    p[num] = p[num].round(4)
+    p = p.sort_values(["fold", "station_id", "date"]).reset_index(drop=True)
+    counts = {w: int(p.fold.isin(spec["folds"]).sum()) for w, spec in WINDOWS.items()}
+    expected = {"confirmation": 2500, "held": 593, "t26": 251}
+    if counts != expected:
+        raise ValueError(f"row counts {counts} differ from the scored populations {expected}")
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    body = p.to_csv(index=False, lineterminator="\n").encode()
+    dst.write_bytes(body)
+    policy = json.loads((ROOT / "config" / "data_release_policy.json").read_text())
+    manifest = {"file": dst.name, "sha256": hashlib.sha256(body).hexdigest(), "rows": len(p), "rows_by_window": counts,
+                "columns": list(p.columns), "source": "data/v5/preds/all_predictions.parquet (private)",
+                "source_sha256": hashlib.sha256(src.read_bytes()).hexdigest(),
+                "policy_version": policy["policy_version"],
+                "authorization": "docs/DATA_PUBLICATION_AUDIT.md sections 7 and 8",
+                "contains": "predictions in pp of capacity, observed 30-day change (target_delta_pp) and storage_pct; "
+                            "no inflow, outflow, weather or snow values",
+                "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
+    dst.with_name("MANIFEST.json").write_text(json.dumps(manifest, indent=1) + "\n")
+    return manifest
 
 
 def replay(frame, window, station, origin):
@@ -212,3 +270,13 @@ def replay(frame, window, station, origin):
                     "pred_change_pp": pred, "pred_day30_pct": s0 + pred, "obs_change_pp": obs,
                     "obs_day30_pct": s0 + obs, "error_pp": pred - obs})
     return pd.DataFrame(out)
+
+
+if __name__ == "__main__":
+    import argparse
+    import json
+    ap = argparse.ArgumentParser(description="Model playground data")
+    ap.add_argument("--export", action="store_true", help="write results/v5/playground/retro_predictions.csv")
+    if ap.parse_args().export:
+        print(json.dumps(export_published(), indent=1))
+

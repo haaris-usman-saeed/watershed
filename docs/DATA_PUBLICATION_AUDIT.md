@@ -135,3 +135,13 @@ Until a written answer is received, `config/data_release_policy.json` keeps ever
 | 5. Model artifacts | Yes, as a hash-pinned bundle, uploaded as GitHub Release `models-2026-11-22` (pre-release) | GitHub Release asset |
 | 6. Generated live forecasts | Yes, on the website and as downloads; issued records are included in the release | website, `public_data/.../issued_forecasts/` |
 | Raw CDEC responses (byte-for-byte) | Permitted. Kept out of git for size (about 29 MB); offered as a release asset with checksums | GitHub Release asset |
+
+## 8. Authorization record (2026-11-27): CDEC inflow and outflow (sensors 76 and 23)
+
+- **Statement.** On 2026-11-27 the owner told the engineering agent, about the Model playground's per-row replays (which use predictions from models with CDEC inflow and outflow inputs), "include these we have permission". This follows the owner's 2026-11-22 statement recorded in section 7, which referred to CDEC in general.
+- **Policy change.** On that basis, policy version `2026-11-27.1` adds `cdec_inflow_sensor76` and `cdec_outflow_sensor23` with:
+  - `publish_derived` and `public_display` set to `true`;
+  - `publish_raw` set to `false`. Raw flow files are not published, because the statement covered the replays, not raw data.
+- **What the engineering agent has not seen.** As in section 7, the agent did not see any permission correspondence. The audit trail is the owner's statement.
+- **What is published on this basis:** `results/v5/playground/retro_predictions.csv`. It holds per-row model predictions with the observed 30-day storage change and storage percentage, for the confirmation folds WY2016–2023 and the retrospective windows 2024–2025 and 2026. It contains no inflow or outflow values.
+- **Owner action:** archive the written permission under `docs/permissions/` together with the section 7 permission. If it carries conditions, update the flags and attribution to match.

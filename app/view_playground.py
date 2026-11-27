@@ -2,8 +2,8 @@
 
 Research comparison, not forecasting. The site's forecasts come only from HGB[S,N,C,R] · frozen v2 artifact
 (30-Day Forecast page). Everything here is read from tracked v5 result files through src.v5.playground; nothing is
-fitted, re-scored or tested on this page. Per-row replays need the private prediction file and, on a public
-deployment, are limited to models whose input sources are all cleared by config/data_release_policy.json.
+fitted, re-scored or tested on this page. Per-row replays read results/v5/playground/retro_predictions.csv (a tracked
+export) and, on a public deployment, show only models whose input sources config/data_release_policy.json clears.
 """
 from __future__ import annotations
 
@@ -249,8 +249,8 @@ def render():
     if hidden:
         ui.callout("Some models are withheld here",
                    ui.esc("Per-row predictions of models " + ", ".join(str(n) for n in sorted(hidden)) + " are not shown "
-                          "on this public deployment: their inputs include CDEC inflow and outflow, which the data "
-                          "release policy does not clear for publication."), "caution")
+                          "on this public deployment: the data release policy does not clear all of their input "
+                          "sources for public display."), "caution")
     stations = sorted(fr.station_id.unique())
     r1, r2 = st.columns([3, 2])
     with r1:

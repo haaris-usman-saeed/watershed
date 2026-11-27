@@ -1,0 +1,36 @@
+{
+ "file": "retro_predictions.csv",
+ "sha256": "1448ca5f9668cba385e3b0bb140e7a16a84ed449081269940f1b0da6d52401e5",
+ "rows": 3344,
+ "rows_by_window": {
+  "confirmation": 2500,
+  "held": 593,
+  "t26": 251
+ },
+ "columns": [
+  "station_id",
+  "date",
+  "target_date",
+  "target_delta_pp",
+  "storage_pct",
+  "regime",
+  "fold",
+  "A-N1",
+  "A-N2",
+  "A-N3",
+  "A-N4",
+  "A-RIDGE",
+  "B-HGB-SNCR",
+  "BL-DOY",
+  "BL-MONTH",
+  "BL-PERS",
+  "BL-TREND",
+  "REF-V2-ARTIFACT"
+ ],
+ "source": "data/v5/preds/all_predictions.parquet (private)",
+ "source_sha256": "d8dcfb659ddda3a24b42c64b93d8bfac1dcd7fa97b633eb7d12b2ec7226f402a",
+ "policy_version": "2026-11-27.1",
+ "authorization": "docs/DATA_PUBLICATION_AUDIT.md sections 7 and 8",
+ "contains": "predictions in pp of capacity, observed 30-day change (target_delta_pp) and storage_pct; no inflow, outflow, weather or snow values",
+ "generated_utc": "2026-11-27T23:22:13Z"
+}
