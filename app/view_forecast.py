@@ -19,6 +19,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+import ui_charts
 import ui_components as ui
 import ui_io
 from ui_theme import PALETTE as P, axis, finish, rgba
@@ -101,6 +102,7 @@ def forecast_figure(r, units, synthetic, height=420):
                                      line=dict(color=P["bone"], width=1.4, dash="dot"), marker=dict(size=4),
                                      connectgaps=False,
                                      hovertemplate="%{x|%b %d, %Y}<br>%{y:,.1f}" + ("%" if pct else " AF") + "<extra>observed later</extra>"))
+    ui_charts.add_trajectory_guide(fig, o, t, y0, mid, lo, hi, P["model"])
     fig.add_trace(go.Scatter(x=[t], y=[mid], mode="markers", name="Day-30 estimate and 90% range",
                              marker=dict(size=11, symbol="diamond", color=P["model"]),
                              error_y=dict(type="data", symmetric=False, array=[hi - mid], arrayminus=[mid - lo],
@@ -334,8 +336,9 @@ def render_snapshot(b):
     ui.show_chart(forecast_figure(r, units, synthetic), key=f"fc_chart_{sid}")
     st.caption("Solid: observed storage up to the origin, the only storage the model saw. Dotted: storage reported after "
                "the origin, shown for context and not used. Diamond: the estimate for the target date with its 90% range. "
-               "The model predicts only the day-30 value, so no path between the origin and day 30 is drawn. "
+               "Dashed line: a straight-line guide from the origin to that estimate (see the note below). "
                "Percent-full uses the capacity in force on the origin date.")
+    ui.callout("The dashed line is a guide, not a forecast path", ui.esc(ui_charts.TRAJECTORY_NOTE), "caution")
 
     st.markdown("## Snowpack inputs")
     s = r["snow"]

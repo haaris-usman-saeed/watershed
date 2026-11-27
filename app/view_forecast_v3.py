@@ -18,6 +18,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+import ui_charts
 import ui_components as ui
 import ui_io
 import ui_nav
@@ -101,6 +102,8 @@ def endpoint_figure(r, synthetic=False, height=430):
     m = r["models"].get(MAIN_KEY, {})
     if m.get("available"):
         iv = m["interval"]
+        ui_charts.add_trajectory_guide(fig, o, t, r["observed"]["storage_pct"], m["projected_pct"],
+                                       iv["lower_projected_pct"], iv["upper_projected_pct"], P["model"])
         fig.add_trace(go.Scatter(
             x=[t], y=[m["projected_pct"]], mode="markers", name=f"{MAIN_NAME}: day-30 estimate and 90% range",
             marker=dict(size=11, symbol="diamond", color=P["model"], line=dict(width=1, color=P["ink"])),
@@ -200,7 +203,8 @@ def render_interactive(b):
                    "2024-2025 backtest. Treat Folsom ranges as too narrow.", "caution")
     ui.show_chart(endpoint_figure(r), key=f"v3_chart_{sid}")
     st.caption("The diamond is the model's estimate for the target date, with its retrospectively calibrated 90% "
-               "range. The model does not predict the path between the origin and day 30, so none is drawn.")
+               "range.")
+    ui.callout("The dashed line is a guide, not a forecast path", ui.esc(ui_charts.TRAJECTORY_NOTE), "caution")
 
     st.markdown("## Forecast details")
     ui.show_table(detail_table(r))
