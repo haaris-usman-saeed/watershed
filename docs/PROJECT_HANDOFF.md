@@ -1,6 +1,6 @@
 # WatershedShift: project handoff
 
-**Last verified:** 2026-11-27, against `main` at `a29b876` (after PRs #13, #14, #15 and #16). Before that: 2026-11-24 against `1accaa6` (after PRs #7, #10, #11, #8, #12 and #9). The public website (https://watershed-lwe3carmkq2mgurch5jurm.streamlit.app) was checked on 2026-11-27 (section 9). The first version was a read-only recovery review on 2026-11-23 against `0063cc0`: nothing was retrained, re-evaluated or republished.
+**Last verified:** 2026-11-27, against `main` at `da1101d` (after PRs #13–#19). Before that: 2026-11-24 against `1accaa6` (after PRs #7, #10, #11, #8, #12 and #9). The public website (https://watershed-lwe3carmkq2mgurch5jurm.streamlit.app) was checked on 2026-11-27 (section 9). The first version was a read-only recovery review on 2026-11-23 against `0063cc0`: nothing was retrained, re-evaluated or republished.
 
 This document holds everything needed to take over the project without reconstructing it from the history.
 - Rules for agents are in [CLAUDE.md](../CLAUDE.md).
@@ -83,13 +83,13 @@ Notes on these results:
 
 | Item | State | Evidence |
 |---|---|---|
-| `main` | `a29b876` = `origin/main`. PRs #1–#16 merged; none open | `git ls-remote`, `gh pr list` |
-| CI on `main` | Green (run 46079939246, on `a29b876`) | GitHub Actions |
+| `main` | `da1101d` = `origin/main`. PRs #1–#19 merged; none open | `git ls-remote`, `gh pr list` |
+| CI on `main` | Green (run 46084465213, on `da1101d`) | GitHub Actions |
 | Frozen v2 and v3 material | Intact | All 6 v2 hashes match `RUN_RECORD.json`. All 12 v3 hashes match `config/v3_plan.json`, and the plan hash matches the v3 run record. |
 | Issued forecast records | 2 records, both unaltered | Local and public copies match `docs/v3/issued_forecast_ledger.jsonl` |
 | Public data releases | 2 versions, both intact | `python -m src.v3_release --check` |
 | Model bundle | Uploaded as a **pre-release** | Tag `models-2026-11-22`; GitHub's digest equals the pinned SHA-256; publicly downloadable |
-| Public website | **Checked 2026-11-27, about 23:30 UTC**, at https://watershed-lwe3carmkq2mgurch5jurm.streamlit.app. It serves PR #16's pages. Generate Forecast worked for all six reservoirs, and the Model playground renders. Replays need PR #18 | Section 9; STATUS.md 2026-11-27 |
+| Public website | **Checked 2026-11-27, about 23:30 UTC**, at https://watershed-lwe3carmkq2mgurch5jurm.streamlit.app. Generate Forecast worked for all six reservoirs. After PRs #18 and #19 (about 23:50 UTC), Model playground replays work in all three windows with all ten models | Section 9; STATUS.md 2026-11-27 |
 | Website forecast model | Generate Forecast runs only HGB[S,N,C,R] · frozen v2 artifact (owner decision 2026-11-27, PR #16). v3 Models B, B2 and C are no longer shown on the site; `src/official.py` still issues all four | `app/view_forecast_v3.py`, `ForecastService(model_keys=("A",))` |
 | Model playground | New page (PR #16): the other nine study models against the HGB on past windows only, read from tracked `results/v5` aggregates. Per-row replays read the tracked export `results/v5/playground/retro_predictions.csv` (no flow, weather or snow values) | `app/view_playground.py`, `src/v5/playground.py` |
 | v4 N4 and v5 benchmark | Merged as research (PRs #14, #15); nothing frozen, nothing makes live forecasts. v5 results on 2024–2025 and 2026 are post-hoc | `docs/v4/RESULTS_N4.md`, `docs/v5/RESULTS.md` |
@@ -119,6 +119,9 @@ Notes on these results:
 | #14 | `research/v4-n4` | `91d8242` | 2026-11-27 22:47 | v4 N4: water-balance-structured encoder-decoder, development results |
 | #15 | `research/v5-benchmark` | `cb62c75` | 2026-11-27 22:54 | v5: HGB v5 and the standardised benchmark of every implemented model (research) |
 | #16 | `web/hgb-main-playground` | `a29b876` | 2026-11-27 23:00 | Website: frozen v2 HGB as the only forecasting model, Model playground, straight-line guide on the forecast charts |
+| #17 | `docs/status-after-14-15-16` | `462e4b3` | 2026-11-27 23:14 | Docs: status after PRs #14, #15 and #16 |
+| #18 | `web/playground-replays` | `cd4e278` | 2026-11-27 23:37 | Playground replays published (owner-reported CDEC flow permission, policy `2026-11-27.1`); README links to the live site; public-site check recorded |
+| #19 | `fix/playground-cache-refresh` | `da1101d` | 2026-11-27 23:47 | Playground caches keyed on file stamps, so deployed files are not hidden by stale cached results |
 
 Tags and branches:
 - **Tags:** `v1-results` (`01e43cb`) and `models-2026-11-22`. The `submission-v2` tag proposed in `docs/merge_plan.md` was never created.
@@ -295,7 +298,9 @@ Since PR #16 the website creates the service with `model_keys=("A",)`: only step
   - EXC: 49.0 → 51.4%;
   - DNP: 72.8 → 74.7%.
 - A repeat press showed "(cached)". On a 375 px phone width the cards stack.
-- The Model playground renders its tables and charts. Per-row replays show "not available" until PR #18 is merged and redeployed.
+- The Model playground renders its tables and charts.
+- **Replays, checked after PRs #18 and #19 were deployed (about 23:50 UTC):** "Replay a past 30-day forecast" works in the confirmation, 2024–2025 and 2026 windows, with all ten models and none withheld.
+- Right after PR #18, the confirmation window still showed a "not available" result that had been cached before the deploy. PR #19 keys the playground caches on file stamps. The redeploy cleared it without a reboot.
 - Not checked: the app's logs and settings, and whether forecast records persist (the page reports where each record went).
 - The only end-to-end run was the previous engineer's local, data-free, public-mode deployment with the bundle served from localhost (STATUS.md, 2026-11-22). That run produced forecasts with all four models and rendered all five pages.
 
@@ -385,7 +390,7 @@ The docs-consistency PR (2026-11-24) fixed the stale publication and deployment 
 
 ## 13. Priorities
 
-1. **Verify the deployment:** done 2026-11-27 (§9). Re-run the playground part after PR #18 is merged and redeployed. Fix only deployment problems; never retrain to fix them.
+1. **Verify the deployment:** done 2026-11-27 (§9), including the playground replays after PRs #18 and #19. Re-check after any deploy that changes the pages. Fix only deployment problems; never retrain to fix them.
 2. **Documentation consistency:** done by the docs-consistency PR (section 12). The UI strings remain, pending the owner.
 3. **Make forecasting resilient:** bugs 1, 2 and 4 are fixed (PR #8). Still open: bug 3 (shared rate limit), bugs 6 and 7, and a documented table of which models are available for each failure.
 4. **Prospective evaluation:**

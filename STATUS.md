@@ -570,3 +570,12 @@ Owner's request: the site's forecasts use only the HGB, and the other nine study
 - **Fix:** every playground loader's cache key now includes a stamp (name, mtime, size) of the files it reads.
 - **Tests:** a regression test reproduces the stale result in one process and fails without the fix. Full suite: 209 passed, 5 skipped.
 - **Until the fix is deployed,** rebooting the app from the Streamlit dashboard clears the cache.
+
+### 2026-11-27: PR #19 merged; playground replays confirmed on the live site (branch `docs/live-replays-checked`)
+
+- PR #19 merged as `da1101d`, 23:47 UTC. CI run 46084465213 passed.
+- **On https://watershed-lwe3carmkq2mgurch5jurm.streamlit.app/playground after the redeploy:**
+  - "Replay a past 30-day forecast" works in the confirmation, 2024–2025 and 2026 windows;
+  - all ten models are shown and none withheld;
+  - no app reboot was needed. The window that had shown the stale "not available" result picked up the file.
+- `docs/PROJECT_HANDOFF.md` is updated: *Last verified*, `main` and CI rows, website row, §9, history (PRs #17–#19) and §13.
